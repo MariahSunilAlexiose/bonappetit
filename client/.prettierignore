@@ -1,0 +1,13 @@
+/husky
+/.vscode
+/node_modules
+/public
+yarn.lock
+.env*.local
+.gitignore
+/.prettierignore
+/.prettierrc.json
+/package.json
+/README.md
+/src/fonts
+/jsconfig.json

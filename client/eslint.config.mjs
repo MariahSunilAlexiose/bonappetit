@@ -1,7 +1,6 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
-import pluginReact from "eslint-plugin-react";
-
+import pluginJs from "@eslint/js"
+import pluginReact from "eslint-plugin-react"
+import globals from "globals"
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
@@ -10,8 +9,8 @@ export default [
     languageOptions: { globals: globals.browser },
     settings: {
       react: {
-        version: "detect"
-      }
+        version: "detect",
+      },
     },
     rules: {
       "valid-typeof": "error",
@@ -25,31 +24,25 @@ export default [
       "no-dupe-args": "error",
       "no-cond-assign": "error",
       "no-compare-neg-zero": "error",
-      "no-func-assign": "error"
+      "no-func-assign": "error",
     },
     ignores: [
       "*.css",
       "*.json",
       ".md",
+      ".husky/*",
       ".vscode/*",
       "node_modules/*",
+      "src/fonts/*",
       "public/*",
       "yarn.lock",
       ".env*.local",
+      ".prettierignore",
       ".gitignore",
       "README.md",
+      "jsconfig.json",
     ],
-  },
-  {
-    files: ["**/*.test.js"],
-    languageOptions: {
-      globals: {
-        jest: true,
-        test: "readonly",
-        expect: "readonly"
-      }
-    }
   },
   pluginJs.configs.recommended,
   pluginReact.configs.flat.recommended,
-];
+]
