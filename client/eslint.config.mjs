@@ -26,23 +26,25 @@ export default [
       "no-compare-neg-zero": "error",
       "no-func-assign": "error",
     },
-    ignores: [
-      "*.css",
-      "*.json",
-      ".md",
-      ".husky/*",
-      ".vscode/*",
-      "node_modules/*",
-      "src/fonts/*",
-      "public/*",
-      "yarn.lock",
-      ".env*.local",
-      ".prettierignore",
-      ".gitignore",
-      "README.md",
-      "jsconfig.json",
-    ],
   },
   pluginJs.configs.recommended,
   pluginReact.configs.flat.recommended,
+  {
+    ignores: [
+      "*.css",
+      "*.json",
+      ".husky/*",
+      ".vscode/*",
+      "node_modules/*",
+      "public/*",
+      ".env*.local",
+      ".gitignore",
+      ".prettierignore",
+      ".prettierrc.json",
+      ".gitignore",
+      "README.md",
+      "tailwind.config.js",
+      "yarn.lock"
+    ]
+  }
 ]
