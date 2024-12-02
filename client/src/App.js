@@ -1,40 +1,46 @@
-import React, { useEffect, useState } from "react"
+import React from "react"
 
-import axios from "axios"
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
-import { Logo } from "./assets/icons"
+import { Sidebar } from "./components"
+import { Analytics, Dashboard, Employees, Inventory, Orders } from "./pages"
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Dashboard />,
+  },
+  {
+    path: "/orders",
+    element: <Orders />,
+    // children: [
+    //   {
+    //     path: '/order/:orderID',
+    //     element: <OrderPage />,
+    //   },
+    // ],
+  },
+  {
+    path: "/employees",
+    element: <Employees />,
+  },
+  {
+    path: "/inventory",
+    element: <Inventory />,
+  },
+  {
+    path: "/analytics",
+    element: <Analytics />,
+  },
+])
 
 function App() {
-  const [data, setData] = useState([])
-  useEffect(() => {
-    axios
-      .get("/customers")
-      .then((res) => {
-        setData(res.data)
-      })
-      .catch((err) => console.log(err))
-  }, [])
-  console.log(data)
   return (
-    <div className="text-center">
-      <header className="bg-[#282c34] min-h-screen flex flex-col items-center justify-center text-[calc(10px_+_2vmin)] text-white">
-        <img
-          src={Logo}
-          className="h-[40vmin] pointer-events-none motion-safe:animate-[App-logo-spin_infinite_20s_linear]"
-          alt="logo"
-        />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="text-[#61dafb]"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App">
+      <div className="AppGlass">
+        <Sidebar />
+        <RouterProvider router={router} />
+      </div>
     </div>
   )
 }

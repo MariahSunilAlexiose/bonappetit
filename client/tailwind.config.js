@@ -7,7 +7,17 @@ module.exports = {
     "./src/styles/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      yellow: "var(--yellow)",
+      orange: "var(--orange)",
+      black: "var(--black)",
+      gray: "var(--gray)",
+      blue: "var(--blue)",
+      darkBlue: "var(--darkBlue)",
+      boxShadow: "var(--boxShadow)",
+      smboxShadow: "var(--smboxShadow)",
+      activeItem: "var(--activeItem)",
+    },
   },
   plugins: [],
 }
