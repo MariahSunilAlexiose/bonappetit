@@ -48,21 +48,21 @@ const Card = ({ title, color, value, png }) => {
   const [expanded, setExpanded] = useState(false)
   return (
     <motion.div
-      className="CompactCard"
+      className="flex flex-1 !h-28 text-white relative cursor-pointer p-4 rounded-xl !hover:shadow-none"
       style={{
         background: color.backGround,
         boxShadow: color.boxShadow,
       }}
-      layoutId="expandableCard"
-      onClick={() => setExpanded(true)}
     >
-      <div className="radialBar">
-        <span>{title}</span>
-      </div>
-      <div className="detail">
-        <img src={png} alt={title} width={30} height={30} />
-        <span>${value}</span>
-        <span>Last 24 hours</span>
+      <div className="flex flex-1">
+        <div className="self-start">
+          <img src={png} alt={title} width={40} height={40} />
+          <span className="text-[17px] font-bold">{title}</span>
+        </div>
+        <div className="detail flex-1 flex flex-col self-end text-right">
+          <span className="text-2xl font-extrabold">${value}</span>
+          <span className="font-medium text-md">Last 24 hours</span>
+        </div>
       </div>
     </motion.div>
   )

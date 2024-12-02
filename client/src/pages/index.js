@@ -1,7 +1,7 @@
 import Analytics from "./Analytics"
+import CustomerOrders from "./CustomerOrders"
 import Dashboard from "./Dashboard"
 import Employees from "./Employees"
 import Inventory from "./Inventory"
-import Orders from "./Orders"
 
-export { Dashboard, Analytics, Employees, Inventory, Orders }
+export { Dashboard, Analytics, Employees, Inventory, CustomerOrders }

@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react"
 
 import axios from "axios"
 
-import { Cards, Table } from "../components"
+import { Table } from "../components"
 
-const Dashboard = () => {
+const CustomerOrders = () => {
   const [orders, setOrders] = useState([])
   const [restaurants, setRestaurants] = useState([])
   const [customers, setCustomers] = useState([])
@@ -44,16 +44,13 @@ const Dashboard = () => {
       restaurantID: restaurantMap[order.restaurantID] || order.restaurantID,
     }))
     .sort((a, b) => new Date(b.date) - new Date(a.date))
-    .slice(0, 8)
 
   return (
-    <div className="MainDash gap-5">
-      <h1 className="pt-14">Dashboard</h1>
-      <Cards />
-      <h2>Last Transactions</h2>
+    <div>
+      <h1 className="py-14">Customer Orders</h1>
       <Table data={transformedOrders} />
     </div>
   )
 }
 
-export default Dashboard
+export default CustomerOrders

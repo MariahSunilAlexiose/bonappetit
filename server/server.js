@@ -1,6 +1,6 @@
 const express = require("express");
 const mysql = require("mysql");
-const cors = require("cors");
+const cors = require("cors"); 
 const path = require("path");
 const app = express();
 //path.resolve()
@@ -42,10 +42,10 @@ app.get("/inventory", (req, res) => {
   });
 });
 
-app.get("/orders", (req, res) => {
-  const sql = "SELECT * FROM order";
+app.get("/customerOrders", (req, res) => {
+  const sql = "SELECT * FROM `order`";
   db.query(sql, (err, result) => {
-    if (err) res.json({ message: "Server error" });
+    if (err) res.json({ message: "Server error", err });
     return res.json(result);
   });
 });

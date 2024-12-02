@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 
 import { motion } from "framer-motion"
+import { Link } from "react-router-dom"
 
 import {
   ArrowRightStartOnRectangleIcon,
@@ -21,8 +22,8 @@ const SidebarData = [
   },
   {
     icon: ClipboardDocumentListIcon,
-    name: "Orders",
-    page: "/orders",
+    name: "Customer Orders",
+    page: "/customerOrders",
   },
   {
     icon: UsersIcon,
@@ -75,20 +76,19 @@ const Sidebar = () => {
         </div>
 
         <div className="menu">
-          {SidebarData.map((item, index) => {
-            return (
-              <div
-                className={selected === index ? "menuItem active" : "menuItem"}
-                key={index}
-                onClick={() => {
-                  setSelected(index)
-                }}
-              >
-                <img src={item.icon} alt={item.name} width={20} height={20} />
-                <span>{item.name}</span>
-              </div>
-            )
-          })}
+          {SidebarData.map((item, index) => (
+            <Link
+              to={item.page}
+              className={selected === index ? "menuItem active" : "menuItem"}
+              onClick={() => {
+                setSelected(index)
+              }}
+              key={index}
+            >
+              <img src={item.icon} alt={item.name} width={20} height={20} />
+              <span>{item.name}</span>
+            </Link>
+          ))}
           <div className="menuItem">
             <img
               src={ArrowRightStartOnRectangleIcon}
