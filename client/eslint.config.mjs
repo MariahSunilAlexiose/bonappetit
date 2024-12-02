@@ -25,6 +25,7 @@ export default [
       "no-cond-assign": "error",
       "no-compare-neg-zero": "error",
       "no-func-assign": "error",
+      "react/prop-types": "off"
     },
   },
   pluginJs.configs.recommended,
