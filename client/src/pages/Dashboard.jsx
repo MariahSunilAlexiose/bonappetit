@@ -1,57 +1,13 @@
-import React, { useEffect, useState } from "react"
+import React from "react"
 
-import axios from "axios"
-
-import { Cards, Table } from "../components"
+import { Cards } from "../components"
 
 const Dashboard = () => {
-  const [orders, setOrders] = useState([])
-  const [restaurants, setRestaurants] = useState([])
-  const [customers, setCustomers] = useState([])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const ordersRes = await axios.get("/customerOrders")
-        const restaurantsRes = await axios.get("/restaurants")
-        const customersRes = await axios.get("/customers")
-
-        setOrders(ordersRes.data)
-        setRestaurants(restaurantsRes.data)
-        setCustomers(customersRes.data)
-      } catch (err) {
-        console.log(err)
-      }
-    }
-
-    fetchData()
-  }, [])
-
-  const mapIDToName = (data, idField, nameField) => {
-    return data.reduce((map, item) => {
-      map[item[idField]] = item[nameField]
-      return map
-    }, {})
-  }
-
-  const customerMap = mapIDToName(customers, "customerID", "name")
-  const restaurantMap = mapIDToName(restaurants, "restaurantID", "name")
-
-  const transformedOrders = orders
-    .map((order) => ({
-      ...order,
-      customerID: customerMap[order.customerID] || order.customerID,
-      restaurantID: restaurantMap[order.restaurantID] || order.restaurantID,
-    }))
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
-    .slice(0, 8)
-
   return (
     <div className="MainDash gap-5">
       <h1 className="pt-14">Dashboard</h1>
       <Cards />
       <h2>Last Transactions</h2>
-      <Table data={transformedOrders} />
     </div>
   )
 }

@@ -4,11 +4,13 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 
 import { Sidebar } from "./components"
 import {
-  Analytics,
-  CustomerOrders,
+  AddForm,
+  Customers,
   Dashboard,
   Employees,
   Inventory,
+  Restaurants,
+  Suppliers,
 } from "./pages"
 
 function App() {
@@ -19,10 +21,12 @@ function App() {
           <Sidebar />
           <Routes>
             <Route index element={<Dashboard />} />
+            <Route path="/customers" element={<Customers />} />
             <Route path="/employees" element={<Employees />} />
             <Route path="/inventory" element={<Inventory />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/customerOrders" element={<CustomerOrders />} />
+            <Route path="/restaurants" element={<Restaurants />} />
+            <Route path="/suppliers" element={<Suppliers />} />
+            <Route path="/add_form" element={<AddForm />} />
           </Routes>
         </div>
       </BrowserRouter>

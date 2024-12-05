@@ -87,8 +87,8 @@ const Pagination = ({
         key={idx}
         className={
           currentPage === page
-            ? "border rounded border-[#2563eb] bg-transparent shadow-sm hover:bg-[#e2e8f0] hover:text-[#0f172a]"
-            : "rounded hover:bg-[#e2e8f0] hover:text-[#0f172a]"
+            ? "border rounded border-[#2563eb] bg-transparent shadow-sm hover:bg-blue-200"
+            : "rounded hover:bg-blue-200"
         }
       >
         <PaginationLink href="#" onClick={() => setCurrentPage(page)}>
@@ -132,7 +132,7 @@ const Pagination = ({
         <PaginationItem>
           <PaginationLink
             aria-label="Go to previous page"
-            className="flex rounded p-1 shadow-sm hover:bg-[#e2e8f0]"
+            className="flex rounded p-1 shadow-sm hover:bg-blue-200"
             href="#"
             onClick={handlePrevPage}
           >
@@ -147,7 +147,7 @@ const Pagination = ({
         <PaginationItem className="px-2.5">
           <PaginationLink
             aria-label="Go to next page"
-            className="flex rounded p-1 shadow-sm hover:bg-[#e2e8f0]"
+            className="flex rounded p-1 shadow-sm hover:bg-blue-200"
             href="#"
             onClick={handleNextPage}
           >

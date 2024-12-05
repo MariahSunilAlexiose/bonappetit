@@ -28,8 +28,8 @@
   }
 
   .logo > img {
-    width: 3rem;
-    height: 3rem;
+    width: 2.5rem;
+    height: 2.5rem;
   }
 
   /* menu */
@@ -53,12 +53,6 @@
 
   .menuItem:hover {
     cursor: pointer;
-  }
-
-  .menu .menuItem:last-child {
-    position: absolute;
-    bottom: 2.3rem;
-    width: 100%;
   }
 
   .active {

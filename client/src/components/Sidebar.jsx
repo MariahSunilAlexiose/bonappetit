@@ -1,50 +1,50 @@
 import React, { useState } from "react"
 
 import { motion } from "framer-motion"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 import {
-  ArrowRightStartOnRectangleIcon,
   Bars3Icon,
-  BookmarkSquareIcon,
-  ChartBarSquareIcon,
+  BoxesIcon,
   ClipboardDocumentListIcon,
-  HomeIcon,
+  KnifeForkIcon,
   LogoIcon,
   UsersIcon,
+  WorkerIcon,
 } from "../assets/icons"
 
 const SidebarData = [
   {
-    icon: HomeIcon,
-    name: "Dashboard",
-    page: "/",
-  },
-  {
-    icon: ClipboardDocumentListIcon,
-    name: "Customer Orders",
-    page: "/customerOrders",
+    icon: KnifeForkIcon,
+    name: "Restaurants",
+    page: "/restaurants",
   },
   {
     icon: UsersIcon,
+    name: "Customers",
+    page: "/customers",
+  },
+  {
+    icon: WorkerIcon,
     name: "Employees",
     page: "/employees",
   },
   {
-    icon: BookmarkSquareIcon,
+    icon: ClipboardDocumentListIcon,
     name: "Inventory",
     page: "/inventory",
   },
   {
-    icon: ChartBarSquareIcon,
-    name: "Analytics",
-    page: "/analytics",
+    icon: BoxesIcon,
+    name: "Suppliers",
+    page: "/suppliers",
   },
 ]
 
 const Sidebar = () => {
   const [selected, setSelected] = useState(0)
   const [expanded, setExpanded] = useState(true)
+  const navigate = useNavigate()
   const sidebarVariants = {
     true: {
       left: "0",
@@ -68,11 +68,9 @@ const Sidebar = () => {
         variants={sidebarVariants}
         animate={window.innerWidth <= 768 ? `${expanded}` : ""}
       >
-        <div className="logo">
-          <img src={LogoIcon} alt="logo" />
-          <span>
-            Sh<span>o</span>ps
-          </span>
+        <div className="ml-3 flex gap-2" onClick={() => navigate("/")}>
+          <img src={LogoIcon} alt="logo" width={70} height={70} />
+          <span className="text-2xl">Bon Appetit</span>
         </div>
 
         <div className="menu">
@@ -89,14 +87,6 @@ const Sidebar = () => {
               <span>{item.name}</span>
             </Link>
           ))}
-          <div className="menuItem">
-            <img
-              src={ArrowRightStartOnRectangleIcon}
-              alt="Arrow Right Start on Rectangle Icon"
-              width={20}
-              height={20}
-            />
-          </div>
         </div>
       </motion.div>
     </>

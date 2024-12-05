@@ -1,7 +1,17 @@
-import Analytics from "./Analytics"
-import CustomerOrders from "./CustomerOrders"
+import AddForm from "./AddForm"
+import Customers from "./Customers"
 import Dashboard from "./Dashboard"
 import Employees from "./Employees"
 import Inventory from "./Inventory"
+import Restaurants from "./Restaurants"
+import Suppliers from "./Suppliers"
 
-export { Dashboard, Analytics, Employees, Inventory, CustomerOrders }
+export {
+  AddForm,
+  Suppliers,
+  Customers,
+  Restaurants,
+  Dashboard,
+  Employees,
+  Inventory,
+}
