@@ -72,7 +72,7 @@ const Inventory = () => {
         </button>
       </div>
       <div className="pt-7">
-        <Table data={inventory} />
+        <Table data={inventory} tableName="inventory" />
       </div>
     </div>
   )

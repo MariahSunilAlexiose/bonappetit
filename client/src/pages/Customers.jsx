@@ -48,7 +48,7 @@ const Customers = () => {
         </button>
       </div>
       <div className="pt-7">
-        <Table data={customers} />
+        <Table data={customers} tableName="customer" />
       </div>
     </div>
   )

@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 
+import axios from "axios"
 import PropTypes from "prop-types"
 
 import Pagination from "./Pagination"
@@ -24,7 +25,7 @@ const keyMapping = {
   supplierName: "Supplier",
 }
 
-const Table = ({ data }) => {
+const Table = ({ tableName, data }) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage] = useState(5)
   const lastItemIndex = currentPage * itemsPerPage
@@ -36,6 +37,15 @@ const Table = ({ data }) => {
   }
 
   const headers = Object.keys(data[0]).map((key) => keyMapping[key] || key)
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`/delete_${tableName}/${id}`)
+      window.location.reload()
+    } catch (err) {
+      console.log("Error deleting data:", err)
+    }
+  }
 
   return (
     <div className="relative w-full overflow-auto text-center">
@@ -71,7 +81,19 @@ const Table = ({ data }) => {
                   Edit
                 </button>
                 <button
-                  // onClick={() => handleDelete(index)}
+                  onClick={() => {
+                    if (tableName === "supplier") {
+                      handleDelete(row.supplierID)
+                    } else if (tableName === "customer") {
+                      handleDelete(row.customerID)
+                    } else if (tableName === "employee") {
+                      handleDelete(row.employeeID)
+                    } else if (tableName === "inventory") {
+                      handleDelete(row.inventoryID)
+                    } else {
+                      handleDelete(row.restaurantID)
+                    }
+                  }}
                   className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
                 >
                   Delete
@@ -94,6 +116,7 @@ const Table = ({ data }) => {
 }
 
 Table.propTypes = {
+  tableName: PropTypes.string.isRequired,
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
 }
 

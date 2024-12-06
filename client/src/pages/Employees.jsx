@@ -59,7 +59,7 @@ const Employees = () => {
         </button>
       </div>
       <div className="pt-7">
-        <Table data={employees} />
+        <Table data={employees} tableName="employee" />
       </div>
     </div>
   )

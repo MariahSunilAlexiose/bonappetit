@@ -51,7 +51,7 @@ const Restaurants = () => {
         </button>
       </div>
       <div className="pt-7">
-        <Table data={restaurants} />
+        <Table data={restaurants} tableName="restaurant" />
       </div>
     </div>
   )
