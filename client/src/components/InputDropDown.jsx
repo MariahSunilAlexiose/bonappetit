@@ -1,10 +1,26 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import PropTypes from "prop-types"
 
-const InputDropDown = ({ options, onChange, label }) => {
+import { ChevronUpDownIcon } from "../assets/icons"
+
+const InputDropDown = ({ options, onChange, label, defaultValue }) => {
   const [open, setOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
+
+  useEffect(() => {
+    if (defaultValue) {
+      setSearchTerm(defaultValue)
+    }
+  }, [defaultValue])
+
+  const handleSelectOption = (option) => {
+    setSearchTerm(option.name)
+    setOpen(false)
+    label === "restaurants"
+      ? onChange(option.restaurantID)
+      : onChange(option.supplierID)
+  }
 
   return (
     <div className="rounded-md border bg-popover p-0 text-popover-foreground shadow-md outline-none">
@@ -20,33 +36,33 @@ const InputDropDown = ({ options, onChange, label }) => {
             placeholder="Search option..."
             onChange={(e) => setSearchTerm(e.target.value)}
           />
+          <img
+            src={ChevronUpDownIcon}
+            alt="Chevron Up Down Icon"
+            width={20}
+            height={20}
+            onClick={() => setOpen(true)}
+          />
         </div>
         <div className="max-h-[300px] overflow-y-auto overflow-x-hidden">
           {open && options && (
             <div className="overflow-hidden p-1">
+              {options
+                .filter((option) =>
+                  option.name.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                .map((option, index) => (
+                  <div
+                    key={index}
+                    className="hover:bg-accent/40 relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none disabled:pointer-events-none disabled:opacity-50"
+                    onClick={() => handleSelectOption(option)}
+                  >
+                    {option.name}
+                  </div>
+                ))}
               {options.filter((option) =>
                 option.name.toLowerCase().includes(searchTerm.toLowerCase())
-              ).length > 0 ? (
-                options
-                  .filter((option) =>
-                    option.name.toLowerCase().includes(searchTerm.toLowerCase())
-                  )
-                  .map((option, index) => (
-                    <div
-                      key={index}
-                      className="hover:bg-accent/40 relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none disabled:pointer-events-none disabled:opacity-50"
-                      onClick={() => {
-                        setSearchTerm(option.name)
-                        setOpen(false)
-                        label === "restaurants"
-                          ? onChange(option.restaurantID)
-                          : onChange(option.supplierID)
-                      }}
-                    >
-                      {option.name}
-                    </div>
-                  ))
-              ) : (
+              ).length === 0 && (
                 <div className="py-6 text-center text-sm">No option found.</div>
               )}
             </div>
@@ -67,6 +83,7 @@ InputDropDown.propTypes = {
   ).isRequired,
   onChange: PropTypes.func.isRequired,
   label: PropTypes.string.isRequired,
+  defaultValue: PropTypes.string,
 }
 
 export default InputDropDown

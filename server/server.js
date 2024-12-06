@@ -176,12 +176,13 @@ app.get("/get_employee/:id", (req, res) => {
 app.post("/edit_employee/:id", (req, res) => {
   const id = req.params.id;
   const sql =
-    "UPDATE employee SET name=?, role=?, phone=?, address=?, restaurantID=? WHERE employeeID=?";
+    "UPDATE employee SET name=?, role=?, phone=?, address=?, salary=?, restaurantID=? WHERE employeeID=?";
   const values = [
     req.body.name,
     req.body.role,
     req.body.phone,
     req.body.address,
+    req.body.salary,
     req.body.restaurantID,
     id,
   ];

@@ -7,6 +7,7 @@ import {
   AddForm,
   Customers,
   Dashboard,
+  EditForm,
   Employees,
   Inventory,
   Restaurants,
@@ -27,6 +28,7 @@ function App() {
             <Route path="/restaurants" element={<Restaurants />} />
             <Route path="/suppliers" element={<Suppliers />} />
             <Route path="/add_form" element={<AddForm />} />
+            <Route path="/edit_form" element={<EditForm />} />
           </Routes>
         </div>
       </BrowserRouter>

@@ -2,6 +2,7 @@ import React, { useState } from "react"
 
 import axios from "axios"
 import PropTypes from "prop-types"
+import { useNavigate } from "react-router-dom"
 
 import Pagination from "./Pagination"
 
@@ -26,6 +27,7 @@ const keyMapping = {
 }
 
 const Table = ({ tableName, data }) => {
+  const navigate = useNavigate()
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage] = useState(5)
   const lastItemIndex = currentPage * itemsPerPage
@@ -47,6 +49,7 @@ const Table = ({ tableName, data }) => {
     }
   }
 
+  let toBeUpdatedKeys = Object.keys(data[0])
   return (
     <div className="relative w-full overflow-auto text-center">
       <table className="w-full text-sm justify-center items-center">
@@ -75,7 +78,15 @@ const Table = ({ tableName, data }) => {
               ))}
               <td className="w-1/6 flex font-medium p-2 align-middle">
                 <button
-                  // onClick={() => handleEdit(index)}
+                  onClick={() =>
+                    navigate("/edit_form", {
+                      state: {
+                        toBeUpdatedKeys,
+                        tableName,
+                        dataToBeUpdated: row,
+                      },
+                    })
+                  }
                   className="mr-1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded"
                 >
                   Edit

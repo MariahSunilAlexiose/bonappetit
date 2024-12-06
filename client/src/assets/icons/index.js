@@ -5,6 +5,7 @@ import BusinessAndFinanceIcon from "./business-and-finance.svg"
 import ChartBarSquareIcon from "./chart-bar-square.svg"
 import ChevronLeftIcon from "./chevron-left.svg"
 import ChevronRightIcon from "./chevron-right.svg"
+import ChevronUpDownIcon from "./chevron-up-down.svg"
 import ClipboardDocumentListIcon from "./clipboard-document-list.svg"
 import CurrencyDollarIcon from "./currency-dollar.svg"
 import EllipsisHorizontalIcon from "./ellipsis-horizontal.svg"
@@ -16,6 +17,7 @@ import UsersIcon from "./users.svg"
 import WorkerIcon from "./worker.svg"
 
 export {
+  ChevronUpDownIcon,
   PlusIcon,
   RateIcon,
   KnifeForkIcon,

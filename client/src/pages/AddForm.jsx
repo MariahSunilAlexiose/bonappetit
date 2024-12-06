@@ -32,8 +32,6 @@ const AddForm = () => {
   const [formData, setFormData] = useState({})
   const [restaurants, setRestaurants] = useState([])
   const [suppliers, setSuppliers] = useState([])
-  const [selectedRestaurantID, setSelectedRestaurantID] = useState(0)
-  const [selectedSupplierID, setSelectedSupplierID] = useState(0)
 
   console.log(formData)
 
@@ -44,21 +42,6 @@ const AddForm = () => {
       [name]: value,
     }))
   }
-
-  useEffect(() => {
-    if (tableName === "employees") {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        restaurantID: selectedRestaurantID,
-      }))
-    } else if (tableName === "inventory") {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        restaurantID: selectedRestaurantID,
-        supplierID: selectedSupplierID,
-      }))
-    }
-  }, [selectedRestaurantID, selectedSupplierID, tableName])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -152,7 +135,12 @@ const AddForm = () => {
             <InputDropDown
               label="restaurants"
               options={restaurants}
-              onChange={setSelectedRestaurantID}
+              onChange={(newRestaurantID) => {
+                setFormData((prevFormData) => ({
+                  ...prevFormData,
+                  restaurantID: newRestaurantID,
+                }))
+              }}
             />
           </div>
         )}
@@ -167,7 +155,12 @@ const AddForm = () => {
             <InputDropDown
               label="suppliers"
               options={suppliers}
-              onChange={setSelectedSupplierID}
+              onChange={(newSupplierID) => {
+                setFormData((prevFormData) => ({
+                  ...prevFormData,
+                  supplierID: newSupplierID,
+                }))
+              }}
             />
           </div>
         )}
