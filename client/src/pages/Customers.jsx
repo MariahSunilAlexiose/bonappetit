@@ -22,16 +22,6 @@ const Customers = () => {
     fetchData()
   }, [])
 
-  const lastID = Math.max(...customers.map((item) => item.customerID))
-  const tableName = "customer"
-
-  let toBeUpdatedKeys = []
-
-  if (customers && customers.length > 0) {
-    toBeUpdatedKeys = Object.keys(customers[0]).filter(
-      (key) => key !== "customerID"
-    )
-  }
   return (
     <div className="py-10">
       <div className="flex justify-between">
@@ -40,7 +30,13 @@ const Customers = () => {
           className="mr-1 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded-full"
           onClick={() =>
             navigate("/add_form", {
-              state: { toBeUpdatedKeys, lastID, tableName },
+              state: {
+                toBeAddedKeys: Object.keys(customers[0]).filter(
+                  (key) => key !== "customerID"
+                ),
+                lastID: Math.max(...customers.map((item) => item.customerID)),
+                tableName: "customer",
+              },
             })
           }
         >

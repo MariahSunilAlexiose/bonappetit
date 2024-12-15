@@ -18,20 +18,8 @@ const Suppliers = () => {
         console.log(err)
       }
     }
-
     fetchData()
   }, [])
-
-  const lastID = Math.max(...suppliers.map((item) => item.supplierID))
-
-  let toBeUpdatedKeys = []
-  let tableName = "supplier"
-
-  if (suppliers && suppliers.length > 0) {
-    toBeUpdatedKeys = Object.keys(suppliers[0]).filter(
-      (key) => key !== "supplierID"
-    )
-  }
 
   return (
     <div className="py-10">
@@ -41,7 +29,13 @@ const Suppliers = () => {
           className="mr-1 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded-full"
           onClick={() =>
             navigate("/add_form", {
-              state: { toBeUpdatedKeys, lastID, tableName },
+              state: {
+                toBeAddedKeys: Object.keys(suppliers[0]).filter(
+                  (key) => key !== "supplierID"
+                ),
+                lastID: Math.max(...suppliers.map((item) => item.supplierID)),
+                tableName: "supplier",
+              },
             })
           }
         >

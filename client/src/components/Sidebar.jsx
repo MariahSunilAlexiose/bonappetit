@@ -42,7 +42,7 @@ const SidebarData = [
 ]
 
 const Sidebar = () => {
-  const [selected, setSelected] = useState(0)
+  const [selected, setSelected] = useState(-1)
   const [expanded, setExpanded] = useState(true)
   const navigate = useNavigate()
   const sidebarVariants = {

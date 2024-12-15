@@ -1,54 +1,53 @@
 import React, { useEffect, useState } from "react"
 
 import axios from "axios"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 import { PlusIcon } from "../assets/icons"
 import { Table } from "../components"
 
-const Employees = () => {
+const InventoryOrderPage = () => {
   const navigate = useNavigate()
-  const [employees, setEmployees] = useState([])
+  const { inventoryOrderID } = useParams()
+  const [inventoryOrderItem, setInventoryOrderItem] = useState([])
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("/employee_view")
-        setEmployees(res.data)
+        const res = await axios.get(
+          `/get_inventoryorderitem/${inventoryOrderID}`
+        )
+        setInventoryOrderItem(res.data)
       } catch (err) {
         console.log(err)
       }
     }
 
     fetchData()
-  }, [])
+  }, [inventoryOrderID])
   return (
     <div className="py-10">
       <div className="flex justify-between">
-        <h1>Employees</h1>
+        <h1>Inventory Order Details</h1>
         <button
           className="mr-1 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded-full"
-          onClick={() =>
+          onClick={() => {
             navigate("/add_form", {
               state: {
-                toBeAddedKeys: Object.keys(employees[0]).filter(
-                  (key) => key !== "restaurantName" && key !== "employeeID"
+                toBeAddedKeys: Object.keys(inventoryOrderItem[0]).filter(
+                  (key) => key !== "name"
                 ),
-                lastID: employees.length
-                  ? Math.max(...employees.map((item) => item.employeeID))
-                  : 0,
-                tableName: "employee",
+                tableName: "inventoryorderitem",
+                id: inventoryOrderID,
               },
             })
-          }
+          }}
         >
           <img alt="Plus Icon" src={PlusIcon} width={20} height={20} />
         </button>
       </div>
-      <div className="pt-7">
-        <Table data={employees} tableName="employee" />
-      </div>
+      <Table data={inventoryOrderItem} tableName="inventoryorderitem" />
     </div>
   )
 }
 
-export default Employees
+export default InventoryOrderPage

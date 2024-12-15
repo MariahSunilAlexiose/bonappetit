@@ -5,6 +5,7 @@ import PropTypes from "prop-types"
 const Input = ({
   name,
   type,
+  id,
   value,
   onChange,
   placeholder = "",
@@ -17,6 +18,7 @@ const Input = ({
     <input
       name={name}
       type={type}
+      id={id}
       value={value}
       step={step}
       min={min}
@@ -32,10 +34,11 @@ const Input = ({
 
 Input.propTypes = {
   name: PropTypes.string.isRequired,
-  type: PropTypes.oneOf(["text", "number", "email", "tel", "password"])
+  type: PropTypes.oneOf(["text", "number", "email", "tel", "password", "date"])
     .isRequired,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   onChange: PropTypes.func.isRequired,
+  id: PropTypes.string,
   placeholder: PropTypes.string,
   step: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   min: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

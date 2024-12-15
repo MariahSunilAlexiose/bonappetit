@@ -19,7 +19,13 @@ const InputDropDown = ({ options, onChange, label, defaultValue }) => {
     setOpen(false)
     label === "restaurants"
       ? onChange(option.restaurantID)
-      : onChange(option.supplierID)
+      : label === "employees"
+        ? onChange(option.employeeID)
+        : label === "menuitem"
+          ? onChange(option.menuitemID)
+          : label === "customerorder"
+            ? onChange(option.customerOrderID)
+            : onChange(option.supplierID)
   }
 
   return (

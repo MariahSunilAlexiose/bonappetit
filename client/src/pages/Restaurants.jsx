@@ -10,8 +10,6 @@ const Restaurants = () => {
   const navigate = useNavigate()
   const [restaurants, setRestaurants] = useState([])
 
-  const tableName = "restaurant"
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -21,19 +19,8 @@ const Restaurants = () => {
         console.log(err)
       }
     }
-
     fetchData()
   }, [])
-
-  const lastID = Math.max(...restaurants.map((item) => item.restaurantID))
-
-  let toBeUpdatedKeys = []
-
-  if (restaurants && restaurants.length > 0) {
-    toBeUpdatedKeys = Object.keys(restaurants[0]).filter(
-      (key) => key !== "restaurantID"
-    )
-  }
 
   return (
     <div className="py-10">
@@ -43,7 +30,15 @@ const Restaurants = () => {
           className="mr-1 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded-full"
           onClick={() =>
             navigate("/add_form", {
-              state: { toBeUpdatedKeys, lastID, tableName },
+              state: {
+                toBeAddedKeys: Object.keys(restaurants[0]).filter(
+                  (key) => key !== "restaurantID"
+                ),
+                lastID: Math.max(
+                  ...restaurants.map((item) => item.restaurantID)
+                ),
+                tableName: "restaurant",
+              },
             })
           }
         >

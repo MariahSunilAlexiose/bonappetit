@@ -16,10 +16,7 @@ const PaginationItem = React.forwardRef(function PaginationItem(
   return <li ref={ref} className={className} {...props} />
 })
 
-// Add prop validation for PaginationItem
-PaginationItem.propTypes = {
-  className: PropTypes.string,
-}
+PaginationItem.propTypes = { className: PropTypes.string }
 
 const PaginationLink = ({ isActive, ...props }) => (
   <Link
@@ -29,7 +26,6 @@ const PaginationLink = ({ isActive, ...props }) => (
   />
 )
 
-// Add prop validation for PaginationLink
 PaginationLink.propTypes = {
   isActive: PropTypes.bool,
 }
@@ -55,6 +51,10 @@ const Pagination = ({
   currentPage,
   setCurrentPage,
 }) => {
+  if (totalItems <= itemsPerPage) {
+    return null
+  }
+
   const pageNumbers = []
   for (let i = 1; i <= Math.ceil(totalItems / itemsPerPage); i++) {
     pageNumbers.push(i)
@@ -80,7 +80,6 @@ const Pagination = ({
     }
   }
 
-  // Function to render page numbers with ellipsis
   const renderPages = () => {
     const renderedPages = activePages.map((page, idx) => (
       <PaginationItem
@@ -97,7 +96,6 @@ const Pagination = ({
       </PaginationItem>
     ))
 
-    // Add ellipsis at the start if necessary
     if (activePages[0] > 1) {
       renderedPages.unshift(
         <PaginationEllipsis
@@ -107,7 +105,6 @@ const Pagination = ({
       )
     }
 
-    // Add ellipsis at the end if necessary
     if (activePages[activePages.length - 1] < pageNumbers.length) {
       renderedPages.push(
         <PaginationEllipsis
@@ -163,7 +160,6 @@ const Pagination = ({
   )
 }
 
-// Add prop validation for Pagination
 Pagination.propTypes = {
   totalItems: PropTypes.number.isRequired,
   itemsPerPage: PropTypes.number.isRequired,
