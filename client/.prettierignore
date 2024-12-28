@@ -1,0 +1,13 @@
+/node_modules
+/husky
+/.vscode
+/public
+.env
+.gitignore
+.prettierignore
+.prettierrc.json
+eslint.config.mjs
+package.json
+README.md
+tailwind.config.js
+yarn.lock

@@ -1,0 +1,4 @@
+echo 'Styling, testing your project before committing...'
+cd client
+yarn lint-staged
+echo 'Committing...'
