@@ -35,6 +35,70 @@ app.listen(port, () => {
 
 app.get("/", (req, res) => { res.send("Welcome to the BonAppetit API!"); });
 
+app.get("/total_sales", (req, res) => {
+  const sql = `
+  SELECT ROUND(SUM(c.quantity * m.price), 2) AS total_sales
+  FROM customerOrderItem c
+  JOIN menuItem m ON c.menuItemID = m.menuItemID;
+  `;
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err);
+      return res.status(500).json({ message: "Server error" });
+    }
+    res.json(result);
+  });
+});
+
+app.get("/total_profit", (req, res) => {
+  const sql = `
+  SELECT ROUND(total_sales - (total_inventory_expenses + total_salary_expenses), 2) AS total_profit
+  FROM (
+      SELECT
+          (SELECT SUM(oi.quantity * m.price)
+          FROM customerOrderItem oi
+          JOIN menuItem m ON oi.menuItemID = m.menuItemID) AS total_sales,
+          (SELECT SUM(ioi.quantity * ioi.unitPrice)
+          FROM inventoryorderItem ioi
+          JOIN inventoryorder io ON ioi.inventoryOrderID = io.inventoryOrderID) AS total_inventory_expenses,
+          (SELECT SUM(salary)
+          FROM employee) AS total_salary_expenses
+  ) AS derived;
+  `;
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err);
+      return res.status(500).json({ message: "Server error" });
+    }
+    res.json(result);
+  });
+})
+
+app.get("/avg_rating", (req, res) => {
+  const sql = `
+  SELECT ROUND(AVG(rating), 2) AS average_rating
+  FROM restaurant;
+  `;
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err);
+      return res.status(500).json({ message: "Server error" });
+    }
+    res.json(result);
+  });
+})
+
+app.get("/last_transactions", (req, res) => {
+  const sql = "SELECT * from inventoryordersview order by date desc limit 5";
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err);
+      return res.status(500).json({ message: "Server error" });
+    }
+    res.json(result);
+  });
+});
+
 app.get("/customers", (req, res) => {
   const sql = "SELECT * FROM customer";
   db.query(sql, (err, result) => {
