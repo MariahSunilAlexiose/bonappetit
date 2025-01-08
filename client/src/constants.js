@@ -19,22 +19,15 @@ export const keyMapping = {
   menuitemID: "Menu Item ID",
   price: "Price",
   description: "Description",
-  inventoryOrderID: "Inventory Order ID",
+  inventoryorderID: "Inventory Order ID",
   date: "Date",
   paymentStatus: "Payment Status",
   deliveryStatus: "Delivery Status",
   employeeName: "Employee",
-  customerOrderID: "Customer Order ID",
-  menuItemName: "Menu Item",
+  customerorderID: "Customer Order ID",
+  menuitemName: "Menu Item",
 }
 
-export const paymentstatus = {
-  pending: "Pending",
-  completed: "Completed",
-}
+export const paymentStatus = ["Pending", "Completed"]
 
-export const deliverystatus = {
-  notdelivered: "Not Delivered",
-  intransit: "In Transit",
-  delivered: "Delivered",
-}
+export const deliveryStatus = ["Not Delivered", "In Transit", "Delivered"]
