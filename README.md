@@ -55,17 +55,17 @@ The server side handles the backend operations and API endpoints using Node.js a
 1. Clone the repository
 `git clone https://github.com/MariahSunilAlexiose/bonappetit.git`
 
-	`cd bonappetit`
+`cd bonappetit`
 
 2. Install dependencies for client
 `cd client`
 
-	`yarn`
+`yarn`
 
 3. Install dependencies for server
 `cd server` 
 
-	`yarn`
+`yarn`
 
 4. Add the env variables for the server
 
@@ -74,4 +74,5 @@ PORT=8080
 DB_HOST=localhost
 DB_USER=
 DB_PASSWORD=
-DB_DATABASE=bonappetit```
+DB_DATABASE=bonappetit
+```
