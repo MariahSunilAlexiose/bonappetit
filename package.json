@@ -1,0 +1,20 @@
+{
+  "name": "bonappetit",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/MariahSunilAlexiose/bonappetit.git",
+  "author": "Mariah Sunil Alexiose <mariah.sunilalexiose@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@eslint/js": "^9.19.0",
+    "eslint": "^9.19.0",
+    "eslint-plugin-react": "^7.37.4",
+    "globals": "^15.14.0"
+  },
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "react": "^19.0.0"
+  }
+}
