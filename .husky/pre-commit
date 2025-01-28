@@ -1,0 +1,5 @@
+echo 'Styling, testing your project before committing...'
+
+npx lint-staged
+
+echo 'Committing...'

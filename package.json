@@ -9,12 +9,22 @@
     "@eslint/js": "^9.19.0",
     "eslint": "^9.19.0",
     "eslint-plugin-react": "^7.37.4",
-    "globals": "^15.14.0"
+    "globals": "^15.14.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3"
   },
   "scripts": {
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "prepare": "husky"
   },
   "dependencies": {
     "react": "^19.0.0"
+  },
+  "lint-staged": {
+    "*.{jsx, js}": [
+      "eslint",
+      "eslint --fix",
+      "git add"
+    ]
   }
 }
