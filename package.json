@@ -17,7 +17,7 @@
     "prettier": "^3.4.2"
   },
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint . && eslint --fix",
     "prepare": "husky",
     "prettier": "prettier --write ."
   },
@@ -25,10 +25,9 @@
     "react": "^19.0.0"
   },
   "lint-staged": {
-    "*.{jsx, js}": [
-      "eslint",
-      "eslint --fix",
-      "git add",
+    "*": [
+      "yarn lint",
+      "git add -A",
       "yarn prettier"
     ]
   }
