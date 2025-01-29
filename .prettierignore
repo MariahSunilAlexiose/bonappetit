@@ -1,0 +1,10 @@
+.husky/**
+node_modules/**
+yarn.lock
+client/node_modules/**
+client/public/**
+client/yarn.lock
+server/node_modules/**
+server/.env
+server/yarn.lock
+.vscode/**

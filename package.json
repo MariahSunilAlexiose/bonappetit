@@ -7,15 +7,19 @@
   "license": "MIT",
   "devDependencies": {
     "@eslint/js": "^9.19.0",
+    "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
     "eslint": "^9.19.0",
+    "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-react": "^7.37.4",
     "globals": "^15.14.0",
     "husky": "^9.1.7",
-    "lint-staged": "^15.4.3"
+    "lint-staged": "^15.4.3",
+    "prettier": "^3.4.2"
   },
   "scripts": {
     "lint": "eslint .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "prettier": "prettier --write ."
   },
   "dependencies": {
     "react": "^19.0.0"
@@ -24,7 +28,8 @@
     "*.{jsx, js}": [
       "eslint",
       "eslint --fix",
-      "git add"
+      "git add",
+      "yarn prettier"
     ]
   }
 }
