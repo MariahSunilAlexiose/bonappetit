@@ -20,7 +20,8 @@
   "scripts": {
     "lint": "eslint . && eslint --fix",
     "prepare": "husky",
-    "prettier": "prettier --write ."
+    "prettier": "prettier --write .",
+    "format": "eslint . && eslint --fix && prettier --write ."
   },
   "dependencies": {
     "react": "^19.0.0"
@@ -29,7 +30,8 @@
     "*": [
       "yarn lint",
       "git add -A",
-      "yarn prettier"
+      "yarn prettier",
+      "git add ."
     ]
   }
 }
