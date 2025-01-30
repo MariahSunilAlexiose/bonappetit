@@ -1,13 +1,12 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
-import pluginReact from "eslint-plugin-react";
-
+import pluginJs from "@eslint/js"
+import pluginReact from "eslint-plugin-react"
+import globals from "globals"
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
-  {files: ["**/*.{js,mjs,cjs,jsx}"]},
+  { files: ["**/*.{js,mjs,cjs,jsx}"] },
   {
-    languageOptions: { globals: {...globals.browser, ...globals.node} },
+    languageOptions: { globals: { ...globals.browser, ...globals.node } },
     rules: {
       "valid-typeof": "error",
       "use-isnan": "error",
@@ -21,16 +20,16 @@ export default [
       "no-cond-assign": "error",
       "no-compare-neg-zero": "error",
       "no-func-assign": "error",
-      "react/prop-types": "off"
-    }
+      "react/prop-types": "off",
+    },
   },
   pluginJs.configs.recommended,
   pluginReact.configs.flat.recommended,
   {
     settings: {
       react: {
-        version: "detect"
-      }
+        version: "detect",
+      },
     },
     ignores: [
       "*.css",
@@ -41,7 +40,7 @@ export default [
       ".env",
       ".gitignore",
       "README.md",
-      "yarn.lock"
-    ]
+      "yarn.lock",
+    ],
   },
-];
+]
