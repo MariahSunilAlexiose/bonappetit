@@ -7,8 +7,10 @@
   "bracketSpacing": true,
   "bracketSameLine": false,
   "plugins": [
-    "@ianvs/prettier-plugin-sort-imports"
+    "@ianvs/prettier-plugin-sort-imports",
+    "prettier-plugin-tailwindcss"
   ],
+  "tailwindConfig": "./client/tailwind.config.js",
   "importOrder": [
     "^(react/(.*)$)|^(react$)",
     "",
