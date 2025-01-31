@@ -1,7 +1,11 @@
 import React from "react"
 
 function App() {
-  return <div className="m-2 bg-white p-4 text-black">BonAppetit</div>
+  return (
+    <div className="flex h-screen items-center justify-center bg-appGradient text-deepBlack">
+      BonAppetit
+    </div>
+  )
 }
 
 export default App

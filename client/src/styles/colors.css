@@ -1,0 +1,15 @@
+@tailwind base;
+
+@layer base {
+  :root {
+    --sunriseYellow: linear-gradient(180deg, #f8d49a -146.42%, #fad79d -46.42%);
+    --warmOrange: #fca61f;
+    --deepBlack: #242d49;
+    --naturalGrey: #788097;
+    --skyBlue: linear-gradient(180deg, #67bfff 0%, #84c4f3 100%);
+    --darkBlue: #265475b0;
+    --boxShadow: 0px 19px 60px rgb(0 0 0 / 8%);
+    --smboxShadow: -79px 51px 60px rgba(0, 0, 0, 0.08);
+    --activeItem: #67bfff54;
+  }
+}

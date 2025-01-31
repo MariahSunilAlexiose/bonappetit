@@ -1,3 +1,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import "./colors.css";
+
+@layer base {
+  /* Hide scrollbar for Chrome, Safari, and Opera */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  * {
+    -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+  }
+
+  .AppBackground {
+    background: linear-gradient(
+      106.37deg,
+      #b3d9ff 29.63%,
+      #84c4f3 51.55%,
+      #67bfff 90.85%
+    );
+  }
+}
