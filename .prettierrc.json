@@ -12,9 +12,10 @@
   ],
   "tailwindConfig": "./client/tailwind.config.js",
   "importOrder": [
-    "^(react/(.*)$)|^(react$)",
+    "^react$",
+    "^(react-router-dom/(.*)$)|^(react-router-dom$)",
     "",
-    "^(next/(.*)$)|^(next$)",
+    "<THIRD_PARTY_MODULES>",
     "",
     "^(@context|@cmp|@|@img)(/.*)$",
     "",
