@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 
 import { Sidebar } from "./components"
 import {
+  CustomerPage,
   Customers,
   Employees,
   Inventory,
@@ -27,6 +28,7 @@ function App() {
               path="/restaurants/:restaurantName"
               element={<RestaurantPage />}
             />
+            <Route path="/customers/:customerName" element={<CustomerPage />} />
           </Routes>
         </div>
       </BrowserRouter>

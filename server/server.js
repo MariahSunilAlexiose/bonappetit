@@ -90,6 +90,18 @@ app.get("/customers", (req, res) => {
   })
 })
 
+app.get("/get_customer/:name", (req, res) => {
+  const name = req.params.name
+  const sql = "SELECT * FROM customer WHERE name = ?"
+  db.query(sql, [name], (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json(result)
+  })
+})
+
 // employees
 app.get("/employees", (req, res) => {
   const sql = "SELECT * FROM employeesview"
