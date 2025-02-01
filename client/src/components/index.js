@@ -1,4 +1,5 @@
+import Pagination from "./Pagination"
 import Sidebar from "./Sidebar"
 import Table from "./Table"
 
-export { Table, Sidebar }
+export { Pagination, Table, Sidebar }
