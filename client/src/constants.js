@@ -13,7 +13,7 @@ export const keyMapping = {
   quantity: "Quantity",
   unitPrice: "Unit Price",
   supplierID: "Supplier ID",
-  contactperson: "Contact Person",
+  contactPerson: "Contact Person",
   restaurantName: "Restaurant",
   supplierName: "Supplier",
   menuitemID: "Menu Item ID",

@@ -2,7 +2,13 @@ import React from "react"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 
 import { Sidebar } from "./components"
-import { Customers, Employees, Inventory, Restaurants } from "./pages"
+import {
+  Customers,
+  Employees,
+  Inventory,
+  Restaurants,
+  Suppliers,
+} from "./pages"
 
 function App() {
   return (
@@ -15,6 +21,7 @@ function App() {
             <Route path="/customers" element={<Customers />} />
             <Route path="/employees" element={<Employees />} />
             <Route path="/inventory" element={<Inventory />} />
+            <Route path="/suppliers" element={<Suppliers />} />
           </Routes>
         </div>
       </BrowserRouter>

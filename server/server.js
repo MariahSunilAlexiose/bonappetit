@@ -84,3 +84,15 @@ app.get("/inventory", (req, res) => {
     res.json(result)
   })
 })
+
+// supplier
+app.get("/suppliers", (req, res) => {
+  const sql = "SELECT * FROM supplier"
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json(result)
+  })
+})
