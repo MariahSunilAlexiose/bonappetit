@@ -102,6 +102,31 @@ app.get("/get_customer/:name", (req, res) => {
   })
 })
 
+// customer orders
+app.get("/customerorders/:custid", (req, res) => {
+  const custid = req.params.custid
+  const sql = `
+    SELECT 
+      co.customerOrderID,
+      r.name AS restaurantName,
+      co.date,
+      co.paymentStatus,
+      co.deliveryStatus
+  FROM 
+      customerOrder co
+  JOIN 
+      restaurant r ON co.restaurantID = r.restaurantID
+  WHERE 
+      co.customerID = ?;`
+  db.query(sql, [custid], (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json(result)
+  })
+})
+
 // employees
 app.get("/employees", (req, res) => {
   const sql = "SELECT * FROM employeesview"
