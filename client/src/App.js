@@ -6,6 +6,7 @@ import {
   Customers,
   Employees,
   Inventory,
+  RestaurantPage,
   Restaurants,
   Suppliers,
 } from "./pages"
@@ -22,6 +23,10 @@ function App() {
             <Route path="/employees" element={<Employees />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/suppliers" element={<Suppliers />} />
+            <Route
+              path="/restaurants/:restaurantName"
+              element={<RestaurantPage />}
+            />
           </Routes>
         </div>
       </BrowserRouter>

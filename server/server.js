@@ -49,6 +49,18 @@ app.get("/restaurants", (req, res) => {
   })
 })
 
+app.get("/get_restaurant/:restaurantName", (req, res) => {
+  const restaurantName = req.params.restaurantName
+  const sql = "SELECT * FROM restaurant WHERE name = ?"
+  db.query(sql, [restaurantName], (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json(result)
+  })
+})
+
 // customers
 app.get("/customers", (req, res) => {
   const sql = "SELECT * FROM customer"
