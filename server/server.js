@@ -60,3 +60,15 @@ app.get("/customers", (req, res) => {
     res.json(result)
   })
 })
+
+// employees
+app.get("/employees", (req, res) => {
+  const sql = "SELECT * FROM employeesview"
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json(result)
+  })
+})

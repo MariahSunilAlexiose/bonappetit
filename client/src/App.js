@@ -2,7 +2,7 @@ import React from "react"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 
 import { Sidebar } from "./components"
-import { Customers, Restaurants } from "./pages"
+import { Customers, Employees, Restaurants } from "./pages"
 
 function App() {
   return (
@@ -13,6 +13,7 @@ function App() {
           <Routes>
             <Route path="/restaurants" element={<Restaurants />} />
             <Route path="/customers" element={<Customers />} />
+            <Route path="/employees" element={<Employees />} />
           </Routes>
         </div>
       </BrowserRouter>
