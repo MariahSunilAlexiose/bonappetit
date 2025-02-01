@@ -1,5 +1,6 @@
 import Customers from "./Customers"
 import Employees from "./Employees"
+import Inventory from "./Inventory"
 import Restaurants from "./Restaurants"
 
-export { Employees, Customers, Restaurants }
+export { Inventory, Employees, Customers, Restaurants }
