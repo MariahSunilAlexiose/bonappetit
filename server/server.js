@@ -61,6 +61,23 @@ app.get("/get_restaurant/:restaurantName", (req, res) => {
   })
 })
 
+// menu
+app.get("/get_menu/:restaurantName", (req, res) => {
+  const restaurantName = req.params.restaurantName
+  const sql = `
+    SELECT m.*
+    FROM menuItem m
+    JOIN restaurant r ON m.restaurantID = r.restaurantID
+    WHERE r.name = ?`
+  db.query(sql, [restaurantName], (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json(result)
+  })
+})
+
 // customers
 app.get("/customers", (req, res) => {
   const sql = "SELECT * FROM customer"
