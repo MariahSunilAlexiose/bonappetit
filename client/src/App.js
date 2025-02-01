@@ -2,7 +2,7 @@ import React from "react"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 
 import { Sidebar } from "./components"
-import { Restaurants } from "./pages"
+import { Customers, Restaurants } from "./pages"
 
 function App() {
   return (
@@ -12,6 +12,7 @@ function App() {
           <Sidebar />
           <Routes>
             <Route path="/restaurants" element={<Restaurants />} />
+            <Route path="/customers" element={<Customers />} />
           </Routes>
         </div>
       </BrowserRouter>

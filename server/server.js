@@ -48,3 +48,15 @@ app.get("/restaurants", (req, res) => {
     res.json(result)
   })
 })
+
+// customers
+app.get("/customers", (req, res) => {
+  const sql = "SELECT * FROM customer"
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json(result)
+  })
+})

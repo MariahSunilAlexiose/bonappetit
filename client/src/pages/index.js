@@ -1,3 +1,4 @@
+import Customers from "./Customers"
 import Restaurants from "./Restaurants"
 
-export { Restaurants }
+export { Customers, Restaurants }
