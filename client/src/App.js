@@ -6,6 +6,7 @@ import {
   CustomerOrderPage,
   CustomerPage,
   Customers,
+  EmployeePage,
   Employees,
   Inventory,
   RestaurantPage,
@@ -34,6 +35,7 @@ function App() {
               path="/customers/:customer/customerorder/:customerOrderID"
               element={<CustomerOrderPage />}
             />
+            <Route path="/employees/:employeeName" element={<EmployeePage />} />
           </Routes>
         </div>
       </BrowserRouter>

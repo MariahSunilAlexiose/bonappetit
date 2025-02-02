@@ -192,6 +192,31 @@ app.get("/employees", (req, res) => {
   })
 })
 
+app.get("/get_employee/:employeeName", (req, res) => {
+  const employeeName = req.params.employeeName
+  const sql = `
+  SELECT 
+    e.name,
+    e.role,
+    e.phone,
+    e.address,
+    r.name AS restaurantName,
+    e.salary
+  FROM 
+    employee e
+  JOIN
+    restaurant r ON r.restaurantID = e.restaurantID
+  WHERE 
+    e.name = ?`
+  db.query(sql, [employeeName], (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json(result)
+  })
+})
+
 // inventory
 app.get("/inventory", (req, res) => {
   const sql = "SELECT * FROM inventoryview"

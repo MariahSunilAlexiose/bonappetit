@@ -57,7 +57,6 @@ const Table = ({ tableName, data }) => {
                 } else if (tableName === "customerorder") {
                   navigate(`customerorder/${row["customerOrderID"]}`)
                 } else if (
-                  tableName !== "employee" &&
                   tableName !== "menuitem" &&
                   tableName !== "inventory" &&
                   tableName !== "inventoryorderitem" &&
