@@ -196,6 +196,7 @@ app.get("/get_employee/:employeeName", (req, res) => {
   const employeeName = req.params.employeeName
   const sql = `
   SELECT 
+    e.employeeID,
     e.name,
     e.role,
     e.phone,
@@ -209,6 +210,33 @@ app.get("/get_employee/:employeeName", (req, res) => {
   WHERE 
     e.name = ?`
   db.query(sql, [employeeName], (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json(result)
+  })
+})
+
+app.get("/get_employeeorders/:employeeID", (req, res) => {
+  const { employeeID } = req.params
+  const sql = `
+    SELECT 
+      co.customerorderID, 
+      c.name AS customerName,
+      r.name AS restaurantName,
+      co.date,
+      co.paymentStatus,
+      co.deliveryStatus
+    FROM 
+      customerorder co
+    JOIN 
+      customer c ON c.customerID = co.customerID 
+    JOIN 
+      restaurant r ON r.restaurantID = co.restaurantID 
+    WHERE 
+      co.employeeID = ?`
+  db.query(sql, [employeeID], (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
       return res.status(500).json({ message: "Server error" })

@@ -36,6 +36,10 @@ function App() {
               element={<CustomerOrderPage />}
             />
             <Route path="/employees/:employeeName" element={<EmployeePage />} />
+            <Route
+              path="/employees/:employeeName/customerorder/:customerorderID"
+              element={<CustomerOrderPage />}
+            />
           </Routes>
         </div>
       </BrowserRouter>

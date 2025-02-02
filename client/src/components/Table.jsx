@@ -54,7 +54,10 @@ const Table = ({ tableName, data }) => {
               onClick={() => {
                 if (tableName === "inventoryorder") {
                   navigate(`inventoryorder/${row["inventoryOrderID"]}`)
-                } else if (tableName === "customerorder") {
+                } else if (
+                  tableName === "customerorder" ||
+                  tableName === "employeeorder"
+                ) {
                   navigate(`customerorder/${row["customerorderID"]}`)
                 } else if (
                   tableName !== "menuitem" &&
