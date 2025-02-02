@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 
 import { Sidebar } from "./components"
 import {
+  CustomerOrderPage,
   CustomerPage,
   Customers,
   Employees,
@@ -29,6 +30,10 @@ function App() {
               element={<RestaurantPage />}
             />
             <Route path="/customers/:customerName" element={<CustomerPage />} />
+            <Route
+              path="/customers/:customer/customerorder/:customerOrderID"
+              element={<CustomerOrderPage />}
+            />
           </Routes>
         </div>
       </BrowserRouter>
