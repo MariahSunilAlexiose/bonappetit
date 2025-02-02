@@ -127,7 +127,7 @@ app.get("/customerorders/:custid", (req, res) => {
   })
 })
 
-// customer order item
+// customer order
 app.get("/customerorder/:id", (req, res) => {
   const id = req.params.id
   const sql = `
@@ -150,6 +150,28 @@ app.get("/customerorder/:id", (req, res) => {
   WHERE 
       co.customerorderID = ?;`
   db.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json(result)
+  })
+})
+
+// customer order item
+app.get("/get_customerorderitems/:orderId", (req, res) => {
+  const { orderId } = req.params
+  const sql = `
+    SELECT 
+      m.name as menuitemName, 
+      quantity 
+    FROM 
+      customerOrderItem c 
+    JOIN 
+      menuitem m ON m.menuitemID = c.menuitemID 
+    WHERE 
+      c.customerOrderID = ?`
+  db.query(sql, [orderId], (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
       return res.status(500).json({ message: "Server error" })

@@ -3,16 +3,22 @@ import { useParams } from "react-router-dom"
 
 import axios from "axios"
 
+import { Table } from "../components"
 import { formatDate } from "../constants"
 
 const CustomerOrderPage = () => {
   const { customerOrderID } = useParams()
   const [customerOrder, setCustomerOrder] = useState([])
+  const [customerOrderItems, setCustomerOrderItems] = useState([])
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await axios.get(`/customerorder/${customerOrderID}`)
         setCustomerOrder(res.data[0])
+        const resItems = await axios.get(
+          `/get_customerorderitems/${customerOrderID}`
+        )
+        setCustomerOrderItems(resItems.data)
       } catch (err) {
         console.log(err)
       }
@@ -35,6 +41,12 @@ const CustomerOrderPage = () => {
           <h2>Delivery Status: {customerOrder.deliverystatus}</h2>
           <h2>Employee Name: {customerOrder.employeeName}</h2>
         </div>
+      </div>
+      <div className="pt-7">
+        <div>
+          <h1>Customer Order Details</h1>
+        </div>
+        <Table data={customerOrderItems} tableName="customerorderitem" />
       </div>
     </div>
   )

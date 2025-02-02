@@ -25,7 +25,7 @@ export const keyMapping = {
   deliveryStatus: "Delivery Status",
   employeeName: "Employee",
   customerOrderID: "Customer Order ID",
-  menuItemName: "Menu Item",
+  menuitemName: "Menu Item",
 }
 
 export const paymentstatus = {

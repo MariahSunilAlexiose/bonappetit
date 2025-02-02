@@ -61,7 +61,8 @@ const Table = ({ tableName, data }) => {
                   tableName !== "menuitem" &&
                   tableName !== "inventory" &&
                   tableName !== "inventoryorderitem" &&
-                  tableName !== "supplier"
+                  tableName !== "supplier" &&
+                  tableName !== "customerorderitem"
                 ) {
                   const currentPath = window.location.pathname
                   navigate(`${currentPath}/${row["name"]}`)
