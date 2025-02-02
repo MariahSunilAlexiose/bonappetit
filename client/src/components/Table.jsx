@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import PropTypes from "prop-types"
 
-import { keyMapping } from "../constants"
+import { formatDate, keyMapping } from "../constants"
 
 import Pagination from "./Pagination"
 
@@ -15,15 +15,6 @@ const handleDelete = async (id, tableName) => {
   } catch (err) {
     console.log("Error deleting data:", err)
   }
-}
-
-const formatDate = (dateString) => {
-  const options = { day: "numeric", month: "short", year: "numeric" }
-  const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
-    new Date(dateString)
-  )
-  const [month, day, year] = formattedDate.replace(",", "").split(" ")
-  return `${day} ${month} ${year}`
 }
 
 const Table = ({ tableName, data }) => {

@@ -38,3 +38,12 @@ export const deliverystatus = {
   intransit: "In Transit",
   delivered: "Delivered",
 }
+
+export const formatDate = (dateString) => {
+  const options = { day: "numeric", month: "short", year: "numeric" }
+  const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
+    new Date(dateString)
+  )
+  const [month, day, year] = formattedDate.replace(",", "").split(" ")
+  return `${day} ${month} ${year}`
+}
