@@ -53,7 +53,7 @@ const Table = ({ tableName, data }) => {
               className={`cursor-pointer border-b transition-colors ${tableName !== "employee" && tableName !== "menuitem" && tableName !== "inventory" && tableName !== "inventoryorderitem" && tableName !== "customerorderitem" && tableName !== "supplier" && `hover:bg-[#f1f5f9]`}`}
               onClick={() => {
                 if (tableName === "inventoryorder") {
-                  navigate(`inventoryorder/${row["inventoryOrderID"]}`)
+                  navigate(`inventoryorder/${row["inventoryorderID"]}`)
                 } else if (
                   tableName === "customerorder" ||
                   tableName === "employeeorder"
