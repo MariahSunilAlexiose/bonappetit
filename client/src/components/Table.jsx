@@ -55,7 +55,7 @@ const Table = ({ tableName, data }) => {
                 if (tableName === "inventoryorder") {
                   navigate(`inventoryorder/${row["inventoryOrderID"]}`)
                 } else if (tableName === "customerorder") {
-                  navigate(`customerorder/${row["customerOrderID"]}`)
+                  navigate(`customerorder/${row["customerorderID"]}`)
                 } else if (
                   tableName !== "menuitem" &&
                   tableName !== "inventory" &&
@@ -112,7 +112,7 @@ const Table = ({ tableName, data }) => {
                     } else if (tableName === "menuitem") {
                       handleDelete(row.menuitemID, tableName)
                     } else if (tableName === "customerorder") {
-                      handleDelete(row.customerOrderID, tableName)
+                      handleDelete(row.customerorderID, tableName)
                     } else {
                       handleDelete(row.restaurantID, tableName)
                     }

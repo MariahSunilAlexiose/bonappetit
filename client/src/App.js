@@ -32,7 +32,7 @@ function App() {
             />
             <Route path="/customers/:customerName" element={<CustomerPage />} />
             <Route
-              path="/customers/:customer/customerorder/:customerOrderID"
+              path="/customers/:customer/customerorder/:customerorderID"
               element={<CustomerOrderPage />}
             />
             <Route path="/employees/:employeeName" element={<EmployeePage />} />

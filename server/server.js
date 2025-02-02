@@ -107,13 +107,13 @@ app.get("/customerorders/:custid", (req, res) => {
   const custid = req.params.custid
   const sql = `
     SELECT 
-      co.customerOrderID,
+      co.customerorderID,
       r.name AS restaurantName,
       co.date,
       co.paymentStatus,
       co.deliveryStatus
   FROM 
-      customerOrder co
+      customerorder co
   JOIN 
       restaurant r ON co.restaurantID = r.restaurantID
   WHERE 
@@ -166,11 +166,11 @@ app.get("/get_customerorderitems/:orderId", (req, res) => {
       m.name as menuitemName, 
       quantity 
     FROM 
-      customerOrderItem c 
+      customerorderItem c 
     JOIN 
       menuitem m ON m.menuitemID = c.menuitemID 
     WHERE 
-      c.customerOrderID = ?`
+      c.customerorderID = ?`
   db.query(sql, [orderId], (err, result) => {
     if (err) {
       console.error("Error executing query:", err)

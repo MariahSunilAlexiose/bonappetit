@@ -18,7 +18,7 @@ export const keyMapping = {
   contactPerson: "Contact Person",
   customerID: "Customer ID",
   customerName: "Customer Name",
-  customerOrderID: "Customer Order ID",
+  customerorderID: "Customer Order ID",
   employeeID: "Employee ID",
   employeeName: "Employee",
   inventoryID: "Inventory ID",
