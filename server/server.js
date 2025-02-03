@@ -329,3 +329,15 @@ app.get("/suppliers", (req, res) => {
     res.json(result)
   })
 })
+
+app.get("/get_supplier/:supplierName", (req, res) => {
+  const { supplierName } = req.params
+  const sql = "SELECT * FROM supplier WHERE name = ?"
+  db.query(sql, [supplierName], (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json(result)
+  })
+})

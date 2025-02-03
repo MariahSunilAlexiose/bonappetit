@@ -63,7 +63,6 @@ const Table = ({ tableName, data }) => {
                   tableName !== "menuitem" &&
                   tableName !== "inventoryorderitem" &&
                   tableName !== "inventoryorders" &&
-                  tableName !== "supplier" &&
                   tableName !== "customerorderitem"
                 ) {
                   const currentPath = window.location.pathname
