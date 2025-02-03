@@ -9,6 +9,7 @@ import {
   EmployeePage,
   Employees,
   Inventory,
+  InventoryItem,
   RestaurantPage,
   Restaurants,
   Suppliers,
@@ -39,6 +40,10 @@ function App() {
             <Route
               path="/employees/:employeeName/customerorder/:customerorderID"
               element={<CustomerOrderPage />}
+            />
+            <Route
+              path="/inventory/:inventoryItemName"
+              element={<InventoryItem />}
             />
           </Routes>
         </div>

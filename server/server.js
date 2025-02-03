@@ -257,6 +257,32 @@ app.get("/inventory", (req, res) => {
   })
 })
 
+app.get("/get_inventoryItem/:inventoryName", (req, res) => {
+  const inventoryName = req.params.inventoryName
+  const sql = `
+  SELECT 
+    i.inventoryID,
+    i.quantity,
+    i.unitPrice,
+    r.name AS restaurantName,
+    s.name AS supplierName
+  FROM 
+    inventory i
+  JOIN
+    restaurant r ON r.restaurantID = i.restaurantID
+  JOIN 
+    supplier s ON s.supplierID = i.supplierID  
+  WHERE 
+    i.name = ?`
+  db.query(sql, [inventoryName], (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json(result)
+  })
+})
+
 // supplier
 app.get("/suppliers", (req, res) => {
   const sql = "SELECT * FROM supplier"
