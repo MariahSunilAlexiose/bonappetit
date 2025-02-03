@@ -322,6 +322,36 @@ app.get("/get_inventoryorders/:inventoryID", (req, res) => {
   })
 })
 
+app.get("/get_inventoryorders_by_supplier/:supplierID", (req, res) => {
+  const { supplierID } = req.params
+  const sql = `
+    SELECT
+      io.date,
+      r.name AS restaurantName,
+      ioi.unitPrice,
+      ioi.quantity,
+      e.name AS employeeName,
+      io.paymentStatus,
+      io.deliveryStatus
+    FROM 
+      inventoryorderitem ioi
+    JOIN 
+      inventoryorder io ON ioi.inventoryorderID = io.inventoryorderID
+    JOIN 
+      restaurant r ON io.restaurantID = r.restaurantID
+    JOIN 
+      employee e ON io.employeeID = e.employeeID
+    WHERE 
+      io.supplierID = ?`
+  db.query(sql, [supplierID], (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json(result)
+  })
+})
+
 // supplier
 app.get("/suppliers", (req, res) => {
   const sql = "SELECT * FROM supplier"
