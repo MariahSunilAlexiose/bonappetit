@@ -1,4 +1,4 @@
-import CustomerOrderPage from "./CustomerOrderPage"
+import CustomerOrder from "./CustomerOrder"
 import CustomerPage from "./CustomerPage"
 import Customers from "./Customers"
 import EmployeePage from "./EmployeePage"
@@ -12,7 +12,7 @@ import Suppliers from "./Suppliers"
 export {
   InventoryItem,
   EmployeePage,
-  CustomerOrderPage,
+  CustomerOrder,
   CustomerPage,
   RestaurantPage,
   Suppliers,

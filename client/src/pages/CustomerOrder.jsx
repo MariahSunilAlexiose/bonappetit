@@ -6,7 +6,7 @@ import axios from "axios"
 import { Table } from "../components"
 import { formatDate } from "../constants"
 
-const CustomerOrderPage = () => {
+const CustomerOrder = () => {
   const { customerorderID } = useParams()
   const [customerOrder, setCustomerOrder] = useState([])
   const [customerOrderItems, setCustomerOrderItems] = useState([])
@@ -52,4 +52,4 @@ const CustomerOrderPage = () => {
   )
 }
 
-export default CustomerOrderPage
+export default CustomerOrder

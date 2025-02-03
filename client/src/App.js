@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 
 import { Sidebar } from "./components"
 import {
-  CustomerOrderPage,
+  CustomerOrder,
   CustomerPage,
   Customers,
   EmployeePage,
@@ -34,12 +34,12 @@ function App() {
             <Route path="/customers/:customerName" element={<CustomerPage />} />
             <Route
               path="/customers/:customer/customerorder/:customerorderID"
-              element={<CustomerOrderPage />}
+              element={<CustomerOrder />}
             />
             <Route path="/employees/:employeeName" element={<EmployeePage />} />
             <Route
               path="/employees/:employeeName/customerorder/:customerorderID"
-              element={<CustomerOrderPage />}
+              element={<CustomerOrder />}
             />
             <Route
               path="/inventory/:inventoryItemName"
