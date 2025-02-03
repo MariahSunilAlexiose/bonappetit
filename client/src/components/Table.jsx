@@ -62,6 +62,7 @@ const Table = ({ tableName, data }) => {
                 } else if (
                   tableName !== "menuitem" &&
                   tableName !== "inventoryorderitem" &&
+                  tableName !== "inventoryorders" &&
                   tableName !== "supplier" &&
                   tableName !== "customerorderitem"
                 ) {
