@@ -50,7 +50,7 @@ app.get("/restaurants", (req, res) => {
 })
 
 app.get("/get_restaurant/:restaurantName", (req, res) => {
-  const restaurantName = req.params.restaurantName
+  const { restaurantName } = req.params
   const sql = "SELECT * FROM restaurant WHERE name = ?"
   db.query(sql, [restaurantName], (err, result) => {
     if (err) {
@@ -63,12 +63,16 @@ app.get("/get_restaurant/:restaurantName", (req, res) => {
 
 // menu
 app.get("/get_menu/:restaurantName", (req, res) => {
-  const restaurantName = req.params.restaurantName
+  const { restaurantName } = req.params
   const sql = `
-    SELECT m.*
-    FROM menuItem m
-    JOIN restaurant r ON m.restaurantID = r.restaurantID
-    WHERE r.name = ?`
+    SELECT 
+      m.*
+    FROM 
+      menuItem m
+    JOIN 
+      restaurant r ON m.restaurantID = r.restaurantID
+    WHERE 
+      r.name = ?`
   db.query(sql, [restaurantName], (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
@@ -91,7 +95,7 @@ app.get("/customers", (req, res) => {
 })
 
 app.get("/get_customer/:name", (req, res) => {
-  const name = req.params.name
+  const { name } = req.params
   const sql = "SELECT * FROM customer WHERE name = ?"
   db.query(sql, [name], (err, result) => {
     if (err) {
@@ -104,7 +108,7 @@ app.get("/get_customer/:name", (req, res) => {
 
 // customer orders
 app.get("/customerorders/:custid", (req, res) => {
-  const custid = req.params.custid
+  const { custid } = req.params
   const sql = `
     SELECT 
       co.customerorderID,
@@ -112,11 +116,11 @@ app.get("/customerorders/:custid", (req, res) => {
       co.date,
       co.paymentStatus,
       co.deliveryStatus
-  FROM 
+    FROM 
       customerorder co
-  JOIN 
+    JOIN 
       restaurant r ON co.restaurantID = r.restaurantID
-  WHERE 
+    WHERE 
       co.customerID = ?;`
   db.query(sql, [custid], (err, result) => {
     if (err) {
@@ -129,25 +133,25 @@ app.get("/customerorders/:custid", (req, res) => {
 
 // customer order
 app.get("/customerorder/:id", (req, res) => {
-  const id = req.params.id
+  const { id } = req.params
   const sql = `
-  SELECT 
-    co.customerorderID,
-    c.name AS customerName,
-    r.name AS restaurantName,
-    co.date,
-    co.paymentstatus,
-    co.deliverystatus,
-    e.name as employeeName
-  FROM 
+    SELECT 
+      co.customerorderID,
+      c.name AS customerName,
+      r.name AS restaurantName,
+      co.date,
+      co.paymentstatus,
+      co.deliverystatus,
+      e.name as employeeName
+    FROM 
       customerorder co
-  JOIN 
+    JOIN 
       customer c ON co.customerID = c.customerID
-  JOIN 
+    JOIN 
       restaurant r ON co.restaurantID = r.restaurantID
-  JOIN 
+    JOIN 
       employee e ON co.restaurantID = e.employeeID
-  WHERE 
+    WHERE 
       co.customerorderID = ?;`
   db.query(sql, [id], (err, result) => {
     if (err) {
@@ -164,9 +168,9 @@ app.get("/get_customerorderitems/:orderId", (req, res) => {
   const sql = `
     SELECT 
       m.name as menuitemName, 
-      quantity 
+      c.quantity 
     FROM 
-      customerorderItem c 
+      customerorderitem c 
     JOIN 
       menuitem m ON m.menuitemID = c.menuitemID 
     WHERE 
@@ -193,22 +197,22 @@ app.get("/employees", (req, res) => {
 })
 
 app.get("/get_employee/:employeeName", (req, res) => {
-  const employeeName = req.params.employeeName
+  const { employeeName } = req.params
   const sql = `
-  SELECT 
-    e.employeeID,
-    e.name,
-    e.role,
-    e.phone,
-    e.address,
-    r.name AS restaurantName,
-    e.salary
-  FROM 
-    employee e
-  JOIN
-    restaurant r ON r.restaurantID = e.restaurantID
-  WHERE 
-    e.name = ?`
+    SELECT 
+      e.employeeID,
+      e.name,
+      e.role,
+      e.phone,
+      e.address,
+      r.name AS restaurantName,
+      e.salary
+    FROM 
+      employee e
+    JOIN
+      restaurant r ON r.restaurantID = e.restaurantID
+    WHERE 
+      e.name = ?`
   db.query(sql, [employeeName], (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
@@ -258,22 +262,22 @@ app.get("/inventory", (req, res) => {
 })
 
 app.get("/get_inventoryItem/:inventoryName", (req, res) => {
-  const inventoryName = req.params.inventoryName
+  const { inventoryName } = req.params
   const sql = `
-  SELECT 
-    i.inventoryID,
-    i.quantity,
-    i.unitPrice,
-    r.name AS restaurantName,
-    s.name AS supplierName
-  FROM 
-    inventory i
-  JOIN
-    restaurant r ON r.restaurantID = i.restaurantID
-  JOIN 
-    supplier s ON s.supplierID = i.supplierID  
-  WHERE 
-    i.name = ?`
+    SELECT 
+      i.inventoryID,
+      i.quantity,
+      i.unitPrice,
+      r.name AS restaurantName,
+      s.name AS supplierName
+    FROM 
+      inventory i
+    JOIN
+      restaurant r ON r.restaurantID = i.restaurantID
+    JOIN 
+      supplier s ON s.supplierID = i.supplierID  
+    WHERE 
+      i.name = ?`
   db.query(sql, [inventoryName], (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
