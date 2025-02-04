@@ -68,7 +68,7 @@ app.get("/get_menu/:restaurantName", (req, res) => {
     SELECT 
       m.*
     FROM 
-      menuItem m
+      menuitem m
     JOIN 
       restaurant r ON m.restaurantID = r.restaurantID
     WHERE 
@@ -79,6 +79,18 @@ app.get("/get_menu/:restaurantName", (req, res) => {
       return res.status(500).json({ message: "Server error" })
     }
     res.json(result)
+  })
+})
+
+app.delete("/delete_menuitem/:id", (req, res) => {
+  const { id } = req.params
+  const sql = "DELETE FROM menuitem WHERE menuitemID = ?"
+  db.query(sql, [id], (err) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json({ success: "Menu item deleted successfully" })
   })
 })
 
