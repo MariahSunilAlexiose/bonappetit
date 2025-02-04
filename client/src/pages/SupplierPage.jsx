@@ -36,7 +36,7 @@ const SupplierPage = () => {
       <div className="flex justify-between">
         <h1>Orders</h1>
       </div>
-      <Table data={supplierOrders} tableName="supplierorders" />
+      <Table data={supplierOrders} tableName="supplierorder" />
     </div>
   )
 }

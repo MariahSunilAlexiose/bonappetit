@@ -37,7 +37,7 @@ const InventoryItem = () => {
         <div>
           <h1>Inventory Item Orders</h1>
         </div>
-        <Table data={inventoryOrders} tableName="inventoryorders" />
+        <Table data={inventoryOrders} tableName="inventoryorder" />
       </div>
     </div>
   )
