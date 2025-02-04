@@ -130,6 +130,18 @@ app.get("/get_customer/:name", (req, res) => {
   })
 })
 
+app.delete("/delete_customer/:id", (req, res) => {
+  const { id } = req.params
+  const sql = "DELETE FROM customer WHERE customerID = ?"
+  db.query(sql, [id], (err) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json({ success: "Customer deleted successfully" })
+  })
+})
+
 // customer orders
 app.get("/customerorders/:custid", (req, res) => {
   const { custid } = req.params
