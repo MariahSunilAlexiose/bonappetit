@@ -40,6 +40,17 @@ export const deliverystatus = {
   delivered: "Delivered",
 }
 
+export const idMap = {
+  supplier: "supplierID",
+  customer: "customerID",
+  employee: "employeeID",
+  inventory: "inventoryID",
+  menuitem: "menuitemID",
+  customerorder: "customerorderID",
+  restaurant: "restaurantID",
+  customerorderitem: ["customerorderID", "menuitemID"],
+}
+
 export const formatDate = (dateString) => {
   const options = { day: "numeric", month: "short", year: "numeric" }
   const formattedDate = new Intl.DateTimeFormat("en-US", options).format(

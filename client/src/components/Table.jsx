@@ -4,13 +4,19 @@ import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import PropTypes from "prop-types"
 
-import { formatDate, keyMapping } from "../constants"
+import { formatDate, idMap, keyMapping } from "../constants"
 
 import Pagination from "./Pagination"
 
-const handleDelete = async (id, tableName) => {
+const handleDelete = async (tableName, id1, id2) => {
   try {
-    await axios.delete(`/delete_${tableName}/${id}`)
+    let url = ""
+    if (tableName === "customerorderitem") {
+      url = `/delete_customerorderitem/${id1}/${id2}`
+    } else {
+      url = `/delete_${tableName}/${id1}`
+    }
+    await axios.delete(url)
     window.location.reload()
   } catch (err) {
     console.log("Error deleting data:", err)
@@ -34,6 +40,11 @@ const Table = ({ tableName, data }) => {
   }
 
   const currentItems = filteredData.slice(firstItemIndex, lastItemIndex)
+
+  const dataMap = new Map()
+  data.forEach((item, index) => {
+    dataMap.set(index, item)
+  })
 
   if (!data || data.length === 0) {
     return <div>No data available</div>
@@ -113,21 +124,13 @@ const Table = ({ tableName, data }) => {
                 <button
                   onClick={(e) => {
                     e.stopPropagation()
-                    // console.log(row, tableName)
-                    if (tableName === "supplier") {
-                      handleDelete(row.supplierID, tableName)
-                    } else if (tableName === "customer") {
-                      handleDelete(row.customerID, tableName)
-                    } else if (tableName === "employee") {
-                      handleDelete(row.employeeID, tableName)
-                    } else if (tableName === "inventory") {
-                      handleDelete(row.inventoryID, tableName)
-                    } else if (tableName === "menuitem") {
-                      handleDelete(row.menuitemID, tableName)
-                    } else if (tableName === "customerorder") {
-                      handleDelete(row.customerorderID, tableName)
+                    const ids = idMap[tableName]
+                    if (tableName === "customerorderitem") {
+                      const orderId = dataMap.get(index)[ids[0]]
+                      const itemId = dataMap.get(index)[ids[1]]
+                      handleDelete(tableName, orderId, itemId)
                     } else {
-                      handleDelete(row.restaurantID, tableName)
+                      handleDelete(tableName, row[ids])
                     }
                   }}
                   className="rounded bg-red-500 px-2 py-1 text-white hover:bg-red-700"
