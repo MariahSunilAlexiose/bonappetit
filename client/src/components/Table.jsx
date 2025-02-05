@@ -23,7 +23,17 @@ const Table = ({ tableName, data }) => {
   const [itemsPerPage] = useState(5)
   const lastItemIndex = currentPage * itemsPerPage
   const firstItemIndex = lastItemIndex - itemsPerPage
-  const currentItems = data.slice(firstItemIndex, lastItemIndex)
+  let filteredData
+  if (tableName === "customerorderitem") {
+    filteredData = data.map((item) => ({
+      menuitemName: item.menuitemName,
+      quantity: item.quantity,
+    }))
+  } else {
+    filteredData = data
+  }
+
+  const currentItems = filteredData.slice(firstItemIndex, lastItemIndex)
 
   if (!data || data.length === 0) {
     return <div>No data available</div>
@@ -34,7 +44,7 @@ const Table = ({ tableName, data }) => {
       <table className="w-full items-center justify-center text-sm">
         <thead className="[&_tr]:border-b">
           <tr className="border-b transition-colors">
-            {Object.keys(data[0])
+            {Object.keys(filteredData[0])
               .map((key) => keyMapping[key] || key)
               .map((header) => (
                 <th
@@ -71,7 +81,7 @@ const Table = ({ tableName, data }) => {
                 }
               }}
             >
-              {Object.keys(data[0]).map((header) => (
+              {Object.keys(filteredData[0]).map((header) => (
                 <td
                   key={header}
                   className={`w-1/6 p-2 align-middle ${row[header] === "Not Delivered" ? "text-red-500" : row[header] === "Completed" ? "text-green-600" : row[header] === "Delivered" ? "text-blue-600" : row[header] === "In Transit" ? "text-orange-400" : row[header] === "Pending" ? "text-pink-600" : ""}`}

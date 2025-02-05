@@ -202,9 +202,11 @@ app.get("/customerorder/:id", (req, res) => {
 app.get("/get_customerorderitems/:orderId", (req, res) => {
   const { orderId } = req.params
   const sql = `
-    SELECT 
+    SELECT
+      c.customerorderID,
+      c.menuitemID,
       m.name as menuitemName, 
-      c.quantity 
+      c.quantity
     FROM 
       customerorderitem c 
     JOIN 
