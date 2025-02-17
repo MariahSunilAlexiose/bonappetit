@@ -132,13 +132,33 @@ app.get("/get_customer/:name", (req, res) => {
 
 app.delete("/delete_customer/:id", (req, res) => {
   const { id } = req.params
-  const sql = "DELETE FROM customer WHERE customerID = ?"
-  db.query(sql, [id], (err) => {
+  const deleteCustomerOrderItemSql =
+    "DELETE FROM customerorderitem WHERE customerorderID IN (SELECT customerorderID FROM customerorder WHERE customerID = ?)"
+  const deleteCustomerOrderSql =
+    "DELETE FROM customerorder WHERE customerID = ?"
+  const deleteCustomerSql = "DELETE FROM customer WHERE customerID = ?"
+
+  db.query(deleteCustomerOrderItemSql, [id], (err) => {
     if (err) {
       console.error("Error executing query:", err)
       return res.status(500).json({ message: "Server error" })
     }
-    res.json({ success: "Customer deleted successfully" })
+
+    db.query(deleteCustomerOrderSql, [id], (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+
+      db.query(deleteCustomerSql, [id], (err) => {
+        if (err) {
+          console.error("Error executing query:", err)
+          return res.status(500).json({ message: "Server error" })
+        }
+
+        res.json({ success: "Customer deleted successfully" })
+      })
+    })
   })
 })
 
