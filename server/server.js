@@ -198,6 +198,30 @@ app.get("/customerorder/:id", (req, res) => {
   })
 })
 
+app.delete("/delete_customerorder/:id", (req, res) => {
+  const { id } = req.params
+  const deleteCustomerOrderItemSql =
+    "DELETE FROM customerorderitem WHERE customerorderID = ?"
+  const deleteCustomerOrderSql =
+    "DELETE FROM customerorder WHERE customerorderID = ?"
+
+  db.query(deleteCustomerOrderItemSql, [id], (err) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+
+    db.query(deleteCustomerOrderSql, [id], (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+
+      res.json({ success: "Customer order deleted successfully" })
+    })
+  })
+})
+
 // customer order item
 app.get("/get_customerorderitems/:orderId", (req, res) => {
   const { orderId } = req.params
