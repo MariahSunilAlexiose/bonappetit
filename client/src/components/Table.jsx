@@ -9,7 +9,6 @@ import { formatDate, idMap, keyMapping } from "../constants"
 import Pagination from "./Pagination"
 
 const handleDelete = async (tableName, id1, id2) => {
-  console.log(tableName, id1, id2)
   try {
     let url = ""
     if (tableName === "customerorderitem") {

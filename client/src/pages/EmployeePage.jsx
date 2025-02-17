@@ -18,7 +18,6 @@ const EmployeePage = () => {
           `/get_employeeorders/${res.data[0].employeeID}`
         )
         setOrders(resOrders.data)
-        console.log(resOrders.data)
       } catch (err) {
         console.log(err)
       }
