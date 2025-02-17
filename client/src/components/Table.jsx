@@ -9,10 +9,13 @@ import { formatDate, idMap, keyMapping } from "../constants"
 import Pagination from "./Pagination"
 
 const handleDelete = async (tableName, id1, id2) => {
+  console.log(tableName, id1, id2)
   try {
     let url = ""
     if (tableName === "customerorderitem") {
       url = `/delete_customerorderitem/${id1}/${id2}`
+    } else if (tableName === "employeeorder") {
+      url = `/delete_customerorder/${id1}`
     } else {
       url = `/delete_${tableName}/${id1}`
     }

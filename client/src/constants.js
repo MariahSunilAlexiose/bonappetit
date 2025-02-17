@@ -49,6 +49,7 @@ export const idMap = {
   customerorder: "customerorderID",
   restaurant: "restaurantID",
   customerorderitem: ["customerorderID", "menuitemID"],
+  employeeorder: "customerorderID",
 }
 
 export const formatDate = (dateString) => {
