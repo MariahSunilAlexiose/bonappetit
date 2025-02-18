@@ -382,6 +382,28 @@ app.get("/get_inventoryItem/:inventoryName", (req, res) => {
   })
 })
 
+app.delete("/delete_inventory/:id", (req, res) => {
+  const { id } = req.params
+  const deleteInventoryOrderItemSql =
+    "DELETE FROM inventoryorderitem WHERE inventoryID = ?"
+  const deleteInventorySql = "DELETE FROM inventory WHERE inventoryID = ?"
+
+  db.query(deleteInventoryOrderItemSql, [id], (err) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    db.query(deleteInventorySql, [id], (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+
+      res.json({ success: "Inventory deleted successfully" })
+    })
+  })
+})
+
 // inventory orders
 app.get("/get_inventoryorders/:inventoryID", (req, res) => {
   const { inventoryID } = req.params
