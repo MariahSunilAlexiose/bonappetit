@@ -388,6 +388,7 @@ app.get("/get_inventoryorders/:inventoryID", (req, res) => {
   const sql = `
     SELECT 
       io.inventoryorderID,
+      ioi.inventoryID,
       io.date,
       r.name AS restaurantName,
       s.name AS supplierName, 
@@ -444,6 +445,19 @@ app.get("/get_inventoryorders_by_supplier/:supplierID", (req, res) => {
       return res.status(500).json({ message: "Server error" })
     }
     res.json(result)
+  })
+})
+
+app.delete("/delete_inventoryorderitem/:orderId/:itemId", (req, res) => {
+  const { orderId, itemId } = req.params
+  const sql =
+    "DELETE FROM inventoryorderitem WHERE inventoryorderID = ? AND inventoryID = ?"
+  db.query(sql, [orderId, itemId], (err) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json({ success: "Inventory order deleted successfully" })
   })
 })
 

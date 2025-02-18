@@ -11,8 +11,11 @@ import Pagination from "./Pagination"
 const handleDelete = async (tableName, id1, id2) => {
   try {
     let url = ""
-    if (tableName === "customerorderitem") {
-      url = `/delete_customerorderitem/${id1}/${id2}`
+    if (
+      tableName === "customerorderitem" ||
+      tableName === "inventoryorderitem"
+    ) {
+      url = `/delete_${tableName}/${id1}/${id2}`
     } else if (tableName === "employeeorder") {
       url = `/delete_customerorder/${id1}`
     } else {
@@ -36,6 +39,18 @@ const Table = ({ tableName, data }) => {
     filteredData = data.map((item) => ({
       menuitemName: item.menuitemName,
       quantity: item.quantity,
+    }))
+  } else if (tableName === "inventoryorderitem") {
+    filteredData = data.map((item) => ({
+      inventoryorderID: item.inventoryorderID,
+      date: item.date,
+      restaurantName: item.restaurantName,
+      supplierName: item.supplierName,
+      unitPrice: item.unitPrice,
+      quantity: item.quantity,
+      employeeName: item.employeeName,
+      paymentStatus: item.paymentStatus,
+      deliveryStatus: item.deliveryStatus,
     }))
   } else {
     filteredData = data
@@ -125,7 +140,10 @@ const Table = ({ tableName, data }) => {
                   onClick={(e) => {
                     e.stopPropagation()
                     const ids = idMap[tableName]
-                    if (tableName === "customerorderitem") {
+                    if (
+                      tableName === "customerorderitem" ||
+                      tableName === "inventoryorderitem"
+                    ) {
                       const orderId = dataMap.get(index)[ids[0]]
                       const itemId = dataMap.get(index)[ids[1]]
                       handleDelete(tableName, orderId, itemId)
