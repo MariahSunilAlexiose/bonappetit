@@ -346,7 +346,16 @@ app.get("/get_employeeorders/:employeeID", (req, res) => {
 
 // inventory
 app.get("/inventory", (req, res) => {
-  const sql = "SELECT * FROM inventoryview"
+  const sql = `
+    SELECT 
+      i.inventoryID,
+      i.name,
+      i.quantity,
+      r.name AS restaurantName
+    FROM 
+      inventory i
+    JOIN 
+      restaurant r ON i.restaurantID = r.restaurantID;`
   db.query(sql, (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
@@ -362,15 +371,11 @@ app.get("/get_inventoryItem/:inventoryName", (req, res) => {
     SELECT 
       i.inventoryID,
       i.quantity,
-      i.unitPrice,
-      r.name AS restaurantName,
-      s.name AS supplierName
+      r.name AS restaurantName
     FROM 
       inventory i
     JOIN
       restaurant r ON r.restaurantID = i.restaurantID
-    JOIN 
-      supplier s ON s.supplierID = i.supplierID  
     WHERE 
       i.name = ?`
   db.query(sql, [inventoryName], (err, result) => {

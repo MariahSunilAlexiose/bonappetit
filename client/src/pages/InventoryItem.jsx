@@ -30,9 +30,7 @@ const InventoryItem = () => {
     <div className="py-14">
       <h1>{inventoryItemName}</h1>
       <h2>Quantity: {inventoryItem.quantity}</h2>
-      <h2>Unit Price: {inventoryItem.unitPrice}</h2>
       <h2>Restaurant: {inventoryItem.restaurantName}</h2>
-      <h2>Supplier: {inventoryItem.supplierName}</h2>
       <div className="pt-7">
         <div>
           <h1>Inventory Item Orders</h1>
