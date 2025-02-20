@@ -94,7 +94,7 @@ const Table = ({ tableName, data }) => {
                   tableName === "customerorder" ||
                   tableName === "employeeorder"
                 ) {
-                  navigate(`customerorder/${row["customerorderID"]}`)
+                  navigate(`order/${row["customerorderID"]}`)
                 } else if (tableName === "supplierorder") {
                   navigate(`order/${row["inventoryorderID"]}`)
                 } else if (

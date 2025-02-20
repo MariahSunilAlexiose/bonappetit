@@ -7,24 +7,22 @@ import { Table } from "../components"
 import { formatDate } from "../constants"
 
 const CustomerOrder = () => {
-  const { customerorderID } = useParams()
+  const { orderID } = useParams()
   const [customerOrder, setCustomerOrder] = useState([])
   const [customerOrderItems, setCustomerOrderItems] = useState([])
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`/customerorder/${customerorderID}`)
+        const res = await axios.get(`/customerorder/${orderID}`)
         setCustomerOrder(res.data[0])
-        const resItems = await axios.get(
-          `/get_customerorderitems/${customerorderID}`
-        )
+        const resItems = await axios.get(`/get_customerorderitems/${orderID}`)
         setCustomerOrderItems(resItems.data)
       } catch (err) {
         console.log(err)
       }
     }
     fetchData()
-  }, [customerorderID])
+  }, [orderID])
   return (
     <div className="py-14">
       <h1>Customer Order</h1>

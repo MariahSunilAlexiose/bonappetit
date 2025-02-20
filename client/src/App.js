@@ -35,12 +35,12 @@ function App() {
             />
             <Route path="/customers/:customerName" element={<CustomerPage />} />
             <Route
-              path="/customers/:customer/customerorder/:customerorderID"
+              path="/customers/:customer/order/:orderID"
               element={<CustomerOrder />}
             />
             <Route path="/employees/:employeeName" element={<EmployeePage />} />
             <Route
-              path="/employees/:employeeName/customerorder/:customerorderID"
+              path="/employees/:employeeName/order/:orderID"
               element={<CustomerOrder />}
             />
             <Route
