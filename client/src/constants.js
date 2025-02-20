@@ -53,6 +53,7 @@ export const idMap = {
   employeeorder: "customerorderID",
   inventoryorderitem: ["inventoryorderID", "inventoryID"],
   supplierorderitem: ["inventoryorderID", "inventoryID"],
+  supplierorder: "inventoryorderID",
 }
 
 export const formatDate = (dateString) => {

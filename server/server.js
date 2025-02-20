@@ -508,10 +508,8 @@ app.get("/get_inventoryorderitems/:orderId", (req, res) => {
   const { orderId } = req.params
   const sql = `
     SELECT 
-      ioi.inventoryorderID, 
-      i.name AS inventoryName, 
-      ioi.quantity, 
-      ioi.unitPrice 
+      ioi.*, 
+      i.name AS inventoryName
     FROM 
       inventoryorderitem ioi 
     JOIN 
@@ -524,6 +522,29 @@ app.get("/get_inventoryorderitems/:orderId", (req, res) => {
       return res.status(500).json({ message: "Server error" })
     }
     res.json(result)
+  })
+})
+
+app.delete("/delete_inventoryorder/:id", (req, res) => {
+  const { id } = req.params
+  const deleteInventoryOrderItemSql =
+    "DELETE FROM inventoryorderitem WHERE inventoryorderID = ?"
+  const deleteInventoryOrderSql =
+    "DELETE FROM inventoryorder WHERE inventoryorderID = ?"
+
+  db.query(deleteInventoryOrderItemSql, [id], (err) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    db.query(deleteInventoryOrderSql, [id], (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+
+      res.json({ success: "Inventory deleted successfully" })
+    })
   })
 })
 

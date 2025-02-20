@@ -20,6 +20,8 @@ const handleDelete = async (tableName, id1, id2) => {
       url = `/delete_inventoryorderitem/${id1}/${id2}`
     } else if (tableName === "employeeorder") {
       url = `/delete_customerorder/${id1}`
+    } else if (tableName === "supplierorder") {
+      url = `/delete_inventoryorder/${id1}`
     } else {
       url = `/delete_${tableName}/${id1}`
     }
