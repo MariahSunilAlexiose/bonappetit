@@ -16,6 +16,8 @@ const handleDelete = async (tableName, id1, id2) => {
       tableName === "inventoryorderitem"
     ) {
       url = `/delete_${tableName}/${id1}/${id2}`
+    } else if (tableName === "supplierorderitem") {
+      url = `/delete_inventoryorderitem/${id1}/${id2}`
     } else if (tableName === "employeeorder") {
       url = `/delete_customerorder/${id1}`
     } else {
@@ -51,6 +53,13 @@ const Table = ({ tableName, data }) => {
       employeeName: item.employeeName,
       paymentStatus: item.paymentStatus,
       deliveryStatus: item.deliveryStatus,
+    }))
+  } else if (tableName === "supplierorderitem") {
+    filteredData = data.map((item) => ({
+      inventoryorderID: item.inventoryorderID,
+      inventoryName: item.inventoryName,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
     }))
   } else {
     filteredData = data
@@ -144,7 +153,8 @@ const Table = ({ tableName, data }) => {
                     const ids = idMap[tableName]
                     if (
                       tableName === "customerorderitem" ||
-                      tableName === "inventoryorderitem"
+                      tableName === "inventoryorderitem" ||
+                      tableName === "supplierorderitem"
                     ) {
                       const orderId = dataMap.get(index)[ids[0]]
                       const itemId = dataMap.get(index)[ids[1]]
