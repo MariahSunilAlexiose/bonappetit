@@ -88,18 +88,19 @@ const Table = ({ tableName, data }) => {
           {currentItems.map((row, index) => (
             <tr
               key={index}
-              className={`cursor-pointer border-b transition-colors ${tableName !== "employee" && tableName !== "menuitem" && tableName !== "inventory" && tableName !== "inventoryorder" && tableName !== "inventoryorderitem" && tableName !== "customerorderitem" && tableName !== "supplierorder" && `hover:bg-[#f1f5f9]`}`}
+              className={`cursor-pointer border-b transition-colors ${tableName !== "employee" && tableName !== "menuitem" && tableName !== "inventory" && tableName !== "inventoryorder" && tableName !== "inventoryorderitem" && tableName !== "customerorderitem" && `hover:bg-[#f1f5f9]`}`}
               onClick={() => {
                 if (
                   tableName === "customerorder" ||
                   tableName === "employeeorder"
                 ) {
                   navigate(`customerorder/${row["customerorderID"]}`)
+                } else if (tableName === "supplierorder") {
+                  navigate(`order/${row["inventoryorderID"]}`)
                 } else if (
                   tableName !== "menuitem" &&
                   tableName !== "inventoryorderitem" &&
                   tableName !== "inventoryorder" &&
-                  tableName !== "supplierorder" &&
                   tableName !== "customerorderitem"
                 ) {
                   const currentPath = window.location.pathname

@@ -449,24 +449,76 @@ app.get("/get_inventoryorders_by_supplier/:supplierID", (req, res) => {
   const { supplierID } = req.params
   const sql = `
     SELECT
+      io.inventoryorderID,
       io.date,
       r.name AS restaurantName,
-      ioi.unitPrice,
-      ioi.quantity,
       e.name AS employeeName,
+      s.name AS supplierName,
       io.paymentStatus,
       io.deliveryStatus
-    FROM 
-      inventoryorderitem ioi
-    JOIN 
-      inventoryorder io ON ioi.inventoryorderID = io.inventoryorderID
+    FROM
+      inventoryorder io
     JOIN 
       restaurant r ON io.restaurantID = r.restaurantID
     JOIN 
       employee e ON io.employeeID = e.employeeID
+    JOIN 
+      supplier s ON io.supplierID = s.supplierID
     WHERE 
       io.supplierID = ?`
   db.query(sql, [supplierID], (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json(result)
+  })
+})
+
+app.get("/get_inventoryorder/:orderID", (req, res) => {
+  const { orderID } = req.params
+  const sql = `
+    SELECT 
+      io.date,
+      s.name AS supplierName,
+      e.name AS employeeName,
+      r.name AS restaurantName,
+      io.paymentStatus,
+      io.deliveryStatus
+    FROM 
+      inventoryorder io
+    JOIN
+      supplier s ON io.supplierID = s.supplierID
+    JOIN
+      employee e ON io.supplierID = e.employeeID
+    JOIN
+      restaurant r ON io.restaurantID = r.restaurantID
+    WHERE 
+      io.inventoryorderID = ?`
+  db.query(sql, [orderID], (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json(result)
+  })
+})
+
+app.get("/get_inventoryorderitems/:orderId", (req, res) => {
+  const { orderId } = req.params
+  const sql = `
+    SELECT 
+      ioi.inventoryorderID, 
+      i.name AS inventoryName, 
+      ioi.quantity, 
+      ioi.unitPrice 
+    FROM 
+      inventoryorderitem ioi 
+    JOIN 
+      inventory i ON ioi.inventoryID = i.inventoryID
+    WHERE 
+      ioi.inventoryorderID = ?`
+  db.query(sql, [orderId], (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
       return res.status(500).json({ message: "Server error" })

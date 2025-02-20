@@ -23,6 +23,7 @@ export const keyMapping = {
   employeeName: "Employee",
   inventoryID: "Inventory ID",
   inventoryorderID: "Inventory Order ID",
+  inventoryName: "Inventory Name",
   supplierID: "Supplier ID",
   supplierName: "Supplier",
   menuitemID: "Menu Item ID",

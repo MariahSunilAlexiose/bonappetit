@@ -12,6 +12,7 @@ import {
   InventoryItem,
   RestaurantPage,
   Restaurants,
+  SupplierOrder,
   SupplierPage,
   Suppliers,
 } from "./pages"
@@ -47,6 +48,10 @@ function App() {
               element={<InventoryItem />}
             />
             <Route path="/suppliers/:supplierName" element={<SupplierPage />} />
+            <Route
+              path="/suppliers/:supplierName/order/:orderID"
+              element={<SupplierOrder />}
+            />
           </Routes>
         </div>
       </BrowserRouter>
