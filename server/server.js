@@ -63,13 +63,31 @@ app.get("/get_restaurant/:restaurantName", (req, res) => {
 
 app.delete("/delete_restaurant/:id", (req, res) => {
   const { id } = req.params
-  const sql = "DELETE FROM restaurant WHERE restaurantID = ?"
-  db.query(sql, [id], (err) => {
+  const deleteMenuItemSql = "DELETE FROM menuitem WHERE restaurantID = ?"
+  const deleteEmployeeSql = "DELETE FROM employee WHERE restaurantID = ?"
+  const deleteRestaurantSql = "DELETE FROM restaurant WHERE restaurantID = ?"
+
+  db.query(deleteEmployeeSql, [id], (err) => {
     if (err) {
       console.error("Error executing query:", err)
       return res.status(500).json({ message: "Server error" })
     }
-    res.json({ success: "Restaurant deleted successfully" })
+
+    db.query(deleteMenuItemSql, [id], (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+
+      db.query(deleteRestaurantSql, [id], (err) => {
+        if (err) {
+          console.error("Error executing query:", err)
+          return res.status(500).json({ message: "Server error" })
+        }
+
+        res.json({ success: "Restaurant deleted successfully" })
+      })
+    })
   })
 })
 
