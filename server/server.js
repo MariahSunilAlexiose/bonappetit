@@ -584,3 +584,25 @@ app.get("/get_supplier/:supplierName", (req, res) => {
     res.json(result)
   })
 })
+
+app.delete("/delete_supplier/:id", (req, res) => {
+  const { id } = req.params
+  const deleteInventoryOrderSql =
+    "DELETE FROM inventoryorder WHERE supplierID = ?"
+  const deleteSupplierSql = "DELETE FROM supplier WHERE supplierID = ?"
+
+  db.query(deleteInventoryOrderSql, [id], (err) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+
+    db.query(deleteSupplierSql, [id], (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Supplier deleted successfully" })
+    })
+  })
+})
