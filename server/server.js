@@ -344,6 +344,38 @@ app.get("/get_employeeorders/:employeeID", (req, res) => {
   })
 })
 
+app.delete("/delete_employee/:id", (req, res) => {
+  const { id } = req.params
+  const deleteCustomerOrderItemSql =
+    "DELETE FROM customerorderitem WHERE customerorderID IN (SELECT customerorderID FROM customerorder WHERE customerID = ?)"
+  const deleteCustomerOrderSql =
+    "DELETE FROM customerorder WHERE customerID = ?"
+  const deleteEmployeeSql = "DELETE FROM employee WHERE employeeID = ?"
+
+  db.query(deleteCustomerOrderItemSql, [id], (err) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+
+    db.query(deleteCustomerOrderSql, [id], (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+
+      db.query(deleteEmployeeSql, [id], (err) => {
+        if (err) {
+          console.error("Error executing query:", err)
+          return res.status(500).json({ message: "Server error" })
+        }
+
+        res.json({ success: "Employee deleted successfully" })
+      })
+    })
+  })
+})
+
 // inventory
 app.get("/inventory", (req, res) => {
   const sql = `
