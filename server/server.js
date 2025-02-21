@@ -141,13 +141,17 @@ app.get("/get_menu/:restaurantName", (req, res) => {
   const { restaurantName } = req.params
   const sql = `
     SELECT 
-      m.*
+      *
     FROM 
-      menuitem m
-    JOIN 
-      restaurant r ON m.restaurantID = r.restaurantID
+      menuitem
     WHERE 
-      r.name = ?`
+      restaurantID = 
+        (SELECT 
+            restaurantID 
+          FROM
+            restaurant 
+          WHERE 
+            name = ?)`
   db.query(sql, [restaurantName], (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
@@ -258,17 +262,21 @@ app.delete("/delete_customer/:id", (req, res) => {
 app.get("/customerorders/:custid", (req, res) => {
   const { custid } = req.params
   const sql = `
-    SELECT 
+    SELECT
       co.customerorderID,
-      r.name AS restaurantName,
+      (SELECT
+          r.name
+        FROM
+          restaurant r
+        WHERE
+          r.restaurantID = co.restaurantID
+      ) AS restaurantName,
       co.date,
       co.paymentStatus,
       co.deliveryStatus
-    FROM 
+    FROM
       customerorder co
-    JOIN 
-      restaurant r ON co.restaurantID = r.restaurantID
-    WHERE 
+    WHERE
       co.customerID = ?;`
   db.query(sql, [custid], (err, result) => {
     if (err) {
@@ -285,21 +293,33 @@ app.get("/customerorder/:id", (req, res) => {
   const sql = `
     SELECT 
       co.customerorderID,
-      c.name AS customerName,
-      r.name AS restaurantName,
+      (SELECT
+        c.name
+      FROM
+        customer c
+      WHERE
+        c.customerID = co.customerID
+      ) AS customerName,
+      (SELECT
+        r.name
+      FROM
+        restaurant r
+      WHERE
+        r.restaurantID = co.restaurantID
+      ) AS restaurantName,
       co.date,
       co.paymentstatus,
       co.deliverystatus,
-      e.name as employeeName
-    FROM 
+      (SELECT
+        e.name
+      FROM
+        employee e
+      WHERE
+        e.employeeID = co.employeeID
+      ) AS employeeName
+    FROM
       customerorder co
-    JOIN 
-      customer c ON co.customerID = c.customerID
-    JOIN 
-      restaurant r ON co.restaurantID = r.restaurantID
-    JOIN 
-      employee e ON co.restaurantID = e.employeeID
-    WHERE 
+    WHERE
       co.customerorderID = ?;`
   db.query(sql, [id], (err, result) => {
     if (err) {
@@ -346,12 +366,16 @@ app.get("/get_customerorderitems/:orderId", (req, res) => {
     SELECT
       c.customerorderID,
       c.menuitemID,
-      m.name as menuitemName, 
+      (SELECT
+        m.name
+      FROM
+        menuitem m
+      WHERE
+        m.menuitemID = c.menuitemID
+      ) AS menuitemName,
       c.quantity
     FROM 
-      customerorderitem c 
-    JOIN 
-      menuitem m ON m.menuitemID = c.menuitemID 
+      customerorderitem c
     WHERE 
       c.customerorderID = ?`
   db.query(sql, [orderId], (err, result) => {
@@ -406,12 +430,16 @@ app.get("/get_employee/:employeeName", (req, res) => {
       e.role,
       e.phone,
       e.address,
-      r.name AS restaurantName,
+      (SELECT
+        r.name
+        FROM
+          restaurant r
+        WHERE
+          r.restaurantID = e.restaurantID
+      ) AS restaurantName,
       e.salary
     FROM 
       employee e
-    JOIN
-      restaurant r ON r.restaurantID = e.restaurantID
     WHERE 
       e.name = ?`
   db.query(sql, [employeeName], (err, result) => {
@@ -427,18 +455,26 @@ app.get("/get_employeeorders/:employeeID", (req, res) => {
   const { employeeID } = req.params
   const sql = `
     SELECT 
-      co.customerorderID, 
-      c.name AS customerName,
-      r.name AS restaurantName,
+      co.customerorderID,
+      (SELECT
+          c.name
+        FROM
+          customer c
+        WHERE
+          c.customerID = co.customerID
+      ) AS customerName,
+      (SELECT
+          r.name
+        FROM
+          restaurant r
+        WHERE
+          r.restaurantID = co.restaurantID
+      ) AS restaurantName,
       co.date,
       co.paymentStatus,
       co.deliveryStatus
     FROM 
       customerorder co
-    JOIN 
-      customer c ON c.customerID = co.customerID 
-    JOIN 
-      restaurant r ON r.restaurantID = co.restaurantID 
     WHERE 
       co.employeeID = ?`
   db.query(sql, [employeeID], (err, result) => {
@@ -517,11 +553,15 @@ app.get("/inventory", (req, res) => {
       i.inventoryID,
       i.name,
       i.quantity,
-      r.name AS restaurantName
+      (SELECT
+          r.name
+        FROM
+          restaurant r
+        WHERE
+          r.restaurantID = i.restaurantID
+      ) AS restaurantName
     FROM 
-      inventory i
-    JOIN 
-      restaurant r ON i.restaurantID = r.restaurantID;`
+      inventory i;`
   db.query(sql, (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
@@ -537,11 +577,15 @@ app.get("/get_inventoryItem/:inventoryName", (req, res) => {
     SELECT 
       i.inventoryID,
       i.quantity,
-      r.name AS restaurantName
+      (SELECT
+          r.name
+        FROM
+          restaurant r
+        WHERE
+          r.restaurantID = i.restaurantID
+      ) AS restaurantName
     FROM 
       inventory i
-    JOIN
-      restaurant r ON r.restaurantID = i.restaurantID
     WHERE 
       i.name = ?`
   db.query(sql, [inventoryName], (err, result) => {
@@ -589,23 +633,35 @@ app.get("/get_inventoryorders/:inventoryID", (req, res) => {
       io.inventoryorderID,
       ioi.inventoryID,
       io.date,
-      r.name AS restaurantName,
-      s.name AS supplierName, 
+      (SELECT
+          r.name
+        FROM
+          restaurant r
+        WHERE
+          r.restaurantID = io.restaurantID
+      ) AS restaurantName,
+      (SELECT
+          s.name
+        FROM
+          supplier s
+        WHERE
+          s.supplierID = io.supplierID 
+      ) AS supplierName,
       ioi.unitPrice,
       ioi.quantity,
-      e.name AS employeeName,
+      (SELECT
+          e.name
+        FROM
+          employee e
+        WHERE
+          e.employeeID = io.employeeID
+      ) AS employeeName,
       io.paymentStatus,
       io.deliveryStatus
     FROM 
       inventoryorderitem ioi
     JOIN 
       inventoryorder io ON ioi.inventoryorderID = io.inventoryorderID
-    JOIN
-      restaurant r ON r.restaurantID = io.restaurantID
-    JOIN 
-      employee e ON e.employeeID = io.employeeID 
-    JOIN 
-      supplier s ON s.supplierID = io.supplierID 
     WHERE 
       ioi.inventoryID = ?`
   db.query(sql, [inventoryID], (err, result) => {
@@ -623,19 +679,31 @@ app.get("/get_inventoryorders_by_supplier/:supplierID", (req, res) => {
     SELECT
       io.inventoryorderID,
       io.date,
-      r.name AS restaurantName,
-      e.name AS employeeName,
-      s.name AS supplierName,
+      (SELECT
+          r.name
+        FROM
+          restaurant r
+        WHERE
+          r.restaurantID = io.restaurantID
+      ) AS restaurantName,
+      (SELECT
+          s.name
+        FROM
+          supplier s
+        WHERE
+          s.supplierID = io.supplierID
+      ) AS supplierName,
+      (SELECT
+          e.name
+        FROM
+          employee e
+        WHERE
+          e.employeeID = io.employeeID
+      ) AS employeeName,
       io.paymentStatus,
       io.deliveryStatus
     FROM
       inventoryorder io
-    JOIN 
-      restaurant r ON io.restaurantID = r.restaurantID
-    JOIN 
-      employee e ON io.employeeID = e.employeeID
-    JOIN 
-      supplier s ON io.supplierID = s.supplierID
     WHERE 
       io.supplierID = ?`
   db.query(sql, [supplierID], (err, result) => {
@@ -652,19 +720,31 @@ app.get("/get_inventoryorder/:orderID", (req, res) => {
   const sql = `
     SELECT 
       io.date,
-      s.name AS supplierName,
-      e.name AS employeeName,
-      r.name AS restaurantName,
+      (SELECT
+          r.name
+        FROM
+          restaurant r
+        WHERE
+          r.restaurantID = io.restaurantID
+      ) AS restaurantName,
+      (SELECT
+          s.name
+        FROM
+          supplier s
+        WHERE
+          s.supplierID = io.supplierID
+      ) AS supplierName,
+      (SELECT
+          e.name
+        FROM
+          employee e
+        WHERE
+          e.employeeID = io.employeeID
+      ) AS employeeName,
       io.paymentStatus,
       io.deliveryStatus
     FROM 
       inventoryorder io
-    JOIN
-      supplier s ON io.supplierID = s.supplierID
-    JOIN
-      employee e ON io.supplierID = e.employeeID
-    JOIN
-      restaurant r ON io.restaurantID = r.restaurantID
     WHERE 
       io.inventoryorderID = ?`
   db.query(sql, [orderID], (err, result) => {
@@ -681,11 +761,15 @@ app.get("/get_inventoryorderitems/:orderId", (req, res) => {
   const sql = `
     SELECT 
       ioi.*, 
-      i.name AS inventoryName
+      (SELECT
+          i.name
+        FROM
+          inventory i
+        WHERE
+          i.inventoryID = ioi.inventoryID
+      ) AS inventoryName
     FROM 
-      inventoryorderitem ioi 
-    JOIN 
-      inventory i ON ioi.inventoryID = i.inventoryID
+      inventoryorderitem ioi
     WHERE 
       ioi.inventoryorderID = ?`
   db.query(sql, [orderId], (err, result) => {
