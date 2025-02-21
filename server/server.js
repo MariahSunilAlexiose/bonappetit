@@ -424,19 +424,14 @@ app.get("/get_employee/:employeeName", (req, res) => {
   const { employeeName } = req.params
   const sql = `
     SELECT 
-      e.employeeID,
-      e.name,
-      e.role,
-      e.phone,
-      e.address,
+      e.*,
       (SELECT
         r.name
         FROM
           restaurant r
         WHERE
           r.restaurantID = e.restaurantID
-      ) AS restaurantName,
-      e.salary
+      ) AS restaurantName
     FROM 
       employee e
     WHERE 
