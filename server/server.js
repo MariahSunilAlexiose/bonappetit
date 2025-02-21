@@ -449,7 +449,7 @@ app.get("/get_employeeorders/:employeeID", (req, res) => {
   const { employeeID } = req.params
   const sql = `
     SELECT 
-      co.customerorderID,
+      co.*,
       (SELECT
           c.name
         FROM
@@ -463,10 +463,7 @@ app.get("/get_employeeorders/:employeeID", (req, res) => {
           restaurant r
         WHERE
           r.restaurantID = co.restaurantID
-      ) AS restaurantName,
-      co.date,
-      co.paymentStatus,
-      co.deliveryStatus
+      ) AS restaurantName
     FROM 
       customerorder co
     WHERE 
