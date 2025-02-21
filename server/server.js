@@ -263,7 +263,7 @@ app.get("/customerorders/:custid", (req, res) => {
   const { custid } = req.params
   const sql = `
     SELECT
-      co.customerorderID,
+      co.*,
       (SELECT
           r.name
         FROM
@@ -271,9 +271,13 @@ app.get("/customerorders/:custid", (req, res) => {
         WHERE
           r.restaurantID = co.restaurantID
       ) AS restaurantName,
-      co.date,
-      co.paymentStatus,
-      co.deliveryStatus
+      (SELECT
+          e.name
+        FROM
+          employee e
+        WHERE
+          e.employeeID = co.employeeID
+      ) AS employeeName
     FROM
       customerorder co
     WHERE
@@ -292,7 +296,7 @@ app.get("/customerorder/:id", (req, res) => {
   const { id } = req.params
   const sql = `
     SELECT 
-      co.customerorderID,
+      co.*,
       (SELECT
         c.name
       FROM
@@ -307,9 +311,6 @@ app.get("/customerorder/:id", (req, res) => {
       WHERE
         r.restaurantID = co.restaurantID
       ) AS restaurantName,
-      co.date,
-      co.paymentstatus,
-      co.deliverystatus,
       (SELECT
         e.name
       FROM
@@ -364,16 +365,14 @@ app.get("/get_customerorderitems/:orderId", (req, res) => {
   const { orderId } = req.params
   const sql = `
     SELECT
-      c.customerorderID,
-      c.menuitemID,
+      c.*,
       (SELECT
         m.name
       FROM
         menuitem m
       WHERE
         m.menuitemID = c.menuitemID
-      ) AS menuitemName,
-      c.quantity
+      ) AS menuitemName
     FROM 
       customerorderitem c
     WHERE 

@@ -28,16 +28,16 @@ const CustomerOrder = () => {
       <h1>Customer Order</h1>
       <div className="flex gap-28">
         <div>
-          <h2>Customer Name: {customerOrder.customerName}</h2>
-          <h2>Restaurant Name: {customerOrder.restaurantName}</h2>
           {customerOrder.date && (
             <h2>Date: {formatDate(customerOrder.date)}</h2>
           )}
+          <h2>Customer Name: {customerOrder.customerName}</h2>
+          <h2>Restaurant Name: {customerOrder.restaurantName}</h2>
         </div>
         <div>
-          <h2>Payment Status: {customerOrder.paymentstatus}</h2>
-          <h2>Delivery Status: {customerOrder.deliverystatus}</h2>
           <h2>Employee Name: {customerOrder.employeeName}</h2>
+          <h2>Payment Status: {customerOrder.paymentStatus}</h2>
+          <h2>Delivery Status: {customerOrder.deliveryStatus}</h2>
         </div>
       </div>
       <div className="pt-7">
