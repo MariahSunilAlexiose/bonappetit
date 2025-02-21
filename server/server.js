@@ -39,7 +39,11 @@ app.get("/", (req, res) => {
 
 // restaurants
 app.get("/restaurants", (req, res) => {
-  const sql = "SELECT * FROM restaurant"
+  const sql = `
+    SELECT 
+      *
+    FROM
+      restaurant`
   db.query(sql, (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
@@ -51,7 +55,13 @@ app.get("/restaurants", (req, res) => {
 
 app.get("/get_restaurant/:restaurantName", (req, res) => {
   const { restaurantName } = req.params
-  const sql = "SELECT * FROM restaurant WHERE name = ?"
+  const sql = `
+    SELECT
+      *
+    FROM
+      restaurant
+    WHERE
+      name = ?`
   db.query(sql, [restaurantName], (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
@@ -63,13 +73,31 @@ app.get("/get_restaurant/:restaurantName", (req, res) => {
 
 app.delete("/delete_restaurant/:id", (req, res) => {
   const { id } = req.params
-  const deleteMenuItemSql = "DELETE FROM menuitem WHERE restaurantID = ?"
-  const deleteEmployeeSql = "DELETE FROM employee WHERE restaurantID = ?"
-  const deleteRestaurantSql = "DELETE FROM restaurant WHERE restaurantID = ?"
-  const deleteInventorySql = "DELETE FROM inventory WHERE inventoryID = ?"
-  const deleteInventoryOrderItemSql =
-    "DELETE FROM inventoryorderitem WHERE inventoryID = ?"
-
+  const deleteMenuItemSql = `
+    DELETE FROM 
+      menuitem
+    WHERE
+      restaurantID = ?`
+  const deleteEmployeeSql = `
+    DELETE FROM
+      employee
+    WHERE
+      restaurantID = ?`
+  const deleteRestaurantSql = `
+    DELETE FROM
+      restaurant
+    WHERE
+      restaurantID = ?`
+  const deleteInventorySql = `
+    DELETE FROM
+      inventory
+    WHERE
+      inventoryID = ?`
+  const deleteInventoryOrderItemSql = `
+    DELETE FROM
+      inventoryorderitem
+    WHERE
+      inventoryID = ?`
   db.query(deleteInventoryOrderItemSql, [id], (err) => {
     if (err) {
       console.error("Error executing query:", err)
@@ -131,7 +159,11 @@ app.get("/get_menu/:restaurantName", (req, res) => {
 
 app.delete("/delete_menuitem/:id", (req, res) => {
   const { id } = req.params
-  const sql = "DELETE FROM menuitem WHERE menuitemID = ?"
+  const sql = `
+    DELETE FROM
+      menuitem
+    WHERE
+      menuitemID = ?`
   db.query(sql, [id], (err) => {
     if (err) {
       console.error("Error executing query:", err)
@@ -143,7 +175,11 @@ app.delete("/delete_menuitem/:id", (req, res) => {
 
 // customers
 app.get("/customers", (req, res) => {
-  const sql = "SELECT * FROM customer"
+  const sql = `
+    SELECT 
+      *
+    FROM
+      customer`
   db.query(sql, (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
@@ -155,7 +191,13 @@ app.get("/customers", (req, res) => {
 
 app.get("/get_customer/:name", (req, res) => {
   const { name } = req.params
-  const sql = "SELECT * FROM customer WHERE name = ?"
+  const sql = `
+    SELECT 
+      *
+    FROM
+      customer
+    WHERE
+      name = ?`
   db.query(sql, [name], (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
@@ -167,12 +209,27 @@ app.get("/get_customer/:name", (req, res) => {
 
 app.delete("/delete_customer/:id", (req, res) => {
   const { id } = req.params
-  const deleteCustomerOrderItemSql =
-    "DELETE FROM customerorderitem WHERE customerorderID IN (SELECT customerorderID FROM customerorder WHERE customerID = ?)"
-  const deleteCustomerOrderSql =
-    "DELETE FROM customerorder WHERE customerID = ?"
-  const deleteCustomerSql = "DELETE FROM customer WHERE customerID = ?"
-
+  const deleteCustomerOrderItemSql = `
+    DELETE FROM
+      customerorderitem
+    WHERE
+      customerorderID IN (
+        SELECT 
+          customerorderID
+        FROM
+          customerorder
+        WHERE
+          customerID = ?)`
+  const deleteCustomerOrderSql = `
+    DELETE FROM
+      customerorder
+    WHERE
+      customerID = ?`
+  const deleteCustomerSql = `
+    DELETE FROM
+      customer
+    WHERE
+      customerID = ?`
   db.query(deleteCustomerOrderItemSql, [id], (err) => {
     if (err) {
       console.error("Error executing query:", err)
@@ -255,11 +312,16 @@ app.get("/customerorder/:id", (req, res) => {
 
 app.delete("/delete_customerorder/:id", (req, res) => {
   const { id } = req.params
-  const deleteCustomerOrderItemSql =
-    "DELETE FROM customerorderitem WHERE customerorderID = ?"
-  const deleteCustomerOrderSql =
-    "DELETE FROM customerorder WHERE customerorderID = ?"
-
+  const deleteCustomerOrderItemSql = `
+    DELETE FROM
+      customerorderitem
+    WHERE
+      customerorderID = ?`
+  const deleteCustomerOrderSql = `
+    DELETE FROM
+      customerorder
+    WHERE
+      customerorderID = ?`
   db.query(deleteCustomerOrderItemSql, [id], (err) => {
     if (err) {
       console.error("Error executing query:", err)
@@ -303,8 +365,13 @@ app.get("/get_customerorderitems/:orderId", (req, res) => {
 
 app.delete("/delete_customerorderitem/:orderId/:itemId", (req, res) => {
   const { orderId, itemId } = req.params
-  const sql =
-    "DELETE FROM customerorderitem WHERE customerorderID = ? AND menuitemID = ?"
+  const sql = `
+    DELETE FROM
+      customerorderitem
+    WHERE
+      customerorderID = ?
+        AND
+      menuitemID = ?`
   db.query(sql, [orderId, itemId], (err) => {
     if (err) {
       console.error("Error executing query:", err)
@@ -316,7 +383,11 @@ app.delete("/delete_customerorderitem/:orderId/:itemId", (req, res) => {
 
 // employees
 app.get("/employees", (req, res) => {
-  const sql = "SELECT * FROM employeesview"
+  const sql = `
+    SELECT 
+      *
+    FROM
+      employeesview`
   db.query(sql, (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
@@ -381,13 +452,32 @@ app.get("/get_employeeorders/:employeeID", (req, res) => {
 
 app.delete("/delete_employee/:id", (req, res) => {
   const { id } = req.params
-  const deleteInventoryOrderSql =
-    "DELETE FROM inventoryorder WHERE employeeID = ?"
-  const deleteCustomerOrderItemSql =
-    "DELETE FROM customerorderitem WHERE customerorderID IN (SELECT customerorderID FROM customerorder WHERE customerID = ?)"
-  const deleteCustomerOrderSql =
-    "DELETE FROM customerorder WHERE customerID = ?"
-  const deleteEmployeeSql = "DELETE FROM employee WHERE employeeID = ?"
+  const deleteInventoryOrderSql = `
+    DELETE FROM
+      inventoryorder
+    WHERE
+      employeeID = ?`
+  const deleteCustomerOrderItemSql = `
+    DELETE FROM 
+      customerorderitem 
+    WHERE
+      customerorderID IN 
+        (SELECT
+            customerorderID
+          FROM
+            customerorder
+          WHERE
+            customerID = ?)`
+  const deleteCustomerOrderSql = `
+    DELETE FROM
+      customerorder
+    WHERE
+      customerID = ?`
+  const deleteEmployeeSql = `
+    DELETE FROM
+      employee
+    WHERE
+      employeeID = ?`
 
   db.query(deleteInventoryOrderSql, [id], (err) => {
     if (err) {
@@ -465,10 +555,16 @@ app.get("/get_inventoryItem/:inventoryName", (req, res) => {
 
 app.delete("/delete_inventory/:id", (req, res) => {
   const { id } = req.params
-  const deleteInventoryOrderItemSql =
-    "DELETE FROM inventoryorderitem WHERE inventoryID = ?"
-  const deleteInventorySql = "DELETE FROM inventory WHERE inventoryID = ?"
-
+  const deleteInventoryOrderItemSql = `
+    DELETE FROM
+      inventoryorderitem
+    WHERE
+      inventoryID = ?`
+  const deleteInventorySql = `
+    DELETE FROM
+      inventory
+    WHERE
+      inventoryID = ?`
   db.query(deleteInventoryOrderItemSql, [id], (err) => {
     if (err) {
       console.error("Error executing query:", err)
@@ -603,16 +699,22 @@ app.get("/get_inventoryorderitems/:orderId", (req, res) => {
 
 app.delete("/delete_inventoryorder/:id", (req, res) => {
   const { id } = req.params
-  const deleteInventoryOrderItemSql =
-    "DELETE FROM inventoryorderitem WHERE inventoryorderID = ?"
-  const deleteInventoryOrderSql =
-    "DELETE FROM inventoryorder WHERE inventoryorderID = ?"
-
+  const deleteInventoryOrderItemSql = `
+    DELETE FROM
+      inventoryorderitem
+    WHERE
+      inventoryorderID = ?`
+  const deleteInventoryOrderSql = `
+    DELETE FROM
+      inventoryorder
+    WHERE
+      inventoryorderID = ?`
   db.query(deleteInventoryOrderItemSql, [id], (err) => {
     if (err) {
       console.error("Error executing query:", err)
       return res.status(500).json({ message: "Server error" })
     }
+
     db.query(deleteInventoryOrderSql, [id], (err) => {
       if (err) {
         console.error("Error executing query:", err)
@@ -626,8 +728,13 @@ app.delete("/delete_inventoryorder/:id", (req, res) => {
 
 app.delete("/delete_inventoryorderitem/:orderId/:itemId", (req, res) => {
   const { orderId, itemId } = req.params
-  const sql =
-    "DELETE FROM inventoryorderitem WHERE inventoryorderID = ? AND inventoryID = ?"
+  const sql = `
+    DELETE FROM
+      inventoryorderitem
+    WHERE
+      inventoryorderID = ?
+        AND
+      inventoryID = ?`
   db.query(sql, [orderId, itemId], (err) => {
     if (err) {
       console.error("Error executing query:", err)
@@ -639,7 +746,11 @@ app.delete("/delete_inventoryorderitem/:orderId/:itemId", (req, res) => {
 
 // supplier
 app.get("/suppliers", (req, res) => {
-  const sql = "SELECT * FROM supplier"
+  const sql = `
+    SELECT 
+      *
+    FROM
+      supplier`
   db.query(sql, (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
@@ -651,7 +762,13 @@ app.get("/suppliers", (req, res) => {
 
 app.get("/get_supplier/:supplierName", (req, res) => {
   const { supplierName } = req.params
-  const sql = "SELECT * FROM supplier WHERE name = ?"
+  const sql = `
+    SELECT 
+      *
+    FROM
+      supplier
+    WHERE
+      name = ?`
   db.query(sql, [supplierName], (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
@@ -663,10 +780,16 @@ app.get("/get_supplier/:supplierName", (req, res) => {
 
 app.delete("/delete_supplier/:id", (req, res) => {
   const { id } = req.params
-  const deleteInventoryOrderSql =
-    "DELETE FROM inventoryorder WHERE supplierID = ?"
-  const deleteSupplierSql = "DELETE FROM supplier WHERE supplierID = ?"
-
+  const deleteInventoryOrderSql = `
+    DELETE FROM
+      inventoryorder
+    WHERE
+      supplierID = ?`
+  const deleteSupplierSql = `
+    DELETE FROM
+      supplier
+    WHERE
+      supplierID = ?`
   db.query(deleteInventoryOrderSql, [id], (err) => {
     if (err) {
       console.error("Error executing query:", err)
