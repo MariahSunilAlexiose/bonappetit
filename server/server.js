@@ -136,6 +136,25 @@ app.delete("/delete_restaurant/:id", (req, res) => {
   })
 })
 
+app.post("/add_restaurant", (req, res) => {
+  const sql =
+    "INSERT INTO restaurant (restaurantID, name, address, phone, rating) VALUES (?, ?, ?, ?, ?)"
+  const values = [
+    req.body.restaurantID,
+    req.body.name,
+    req.body.address,
+    req.body.phone,
+    req.body.rating,
+  ]
+  db.query(sql, values, (err) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json({ success: "Restaurant added successfully!" })
+  })
+})
+
 // menu
 app.get("/get_menu/:restaurantName", (req, res) => {
   const { restaurantName } = req.params
