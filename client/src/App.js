@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 
 import { Sidebar } from "./components"
 import {
+  AddForm,
   CustomerOrder,
   CustomerPage,
   Customers,
@@ -52,6 +53,7 @@ function App() {
               path="/suppliers/:supplierName/order/:orderID"
               element={<SupplierOrder />}
             />
+            <Route path="/add_form" element={<AddForm />} />
           </Routes>
         </div>
       </BrowserRouter>

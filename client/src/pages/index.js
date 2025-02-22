@@ -1,3 +1,4 @@
+import AddForm from "./AddForm"
 import CustomerOrder from "./CustomerOrder"
 import CustomerPage from "./CustomerPage"
 import Customers from "./Customers"
@@ -12,6 +13,7 @@ import SupplierPage from "./SupplierPage"
 import Suppliers from "./Suppliers"
 
 export {
+  AddForm,
   SupplierOrder,
   SupplierPage,
   InventoryItem,
