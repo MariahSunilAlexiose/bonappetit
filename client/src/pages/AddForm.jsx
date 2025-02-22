@@ -178,7 +178,7 @@ const AddForm = () => {
                 step={
                   key === "rating"
                     ? "0.1"
-                    : key === "salary" || key === "unitPrice"
+                    : key === "salary" || key === "unitPrice" || key === "price"
                       ? "0.01"
                       : undefined
                 }
@@ -422,7 +422,7 @@ const AddForm = () => {
         <div className="flex justify-end">
           <button
             type="submit"
-            className="mt-4 rounded bg-blue-500 p-2 text-white"
+            className="mr-5 rounded bg-blue-500 p-2 text-white"
           >
             Add
           </button>
