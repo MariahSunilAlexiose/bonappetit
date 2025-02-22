@@ -307,6 +307,25 @@ app.delete("/delete_customer/:id", (req, res) => {
   })
 })
 
+app.post("/add_customer", (req, res) => {
+  const sql =
+    "INSERT INTO customer (customerID, name, email, phone, address) VALUES (?, ?, ?, ?, ?)"
+  const values = [
+    req.body.customerID,
+    req.body.name,
+    req.body.email,
+    req.body.phone,
+    req.body.address,
+  ]
+  db.query(sql, values, (err) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json({ success: "Customer added successfully!" })
+  })
+})
+
 // customer orders
 app.get("/customerorders/:custid", (req, res) => {
   const { custid } = req.params
