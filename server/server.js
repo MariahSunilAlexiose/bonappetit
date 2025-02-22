@@ -541,9 +541,7 @@ app.delete("/delete_employee/:id", (req, res) => {
 app.get("/inventory", (req, res) => {
   const sql = `
     SELECT 
-      i.inventoryID,
-      i.name,
-      i.quantity,
+      i.*,
       (SELECT
           r.name
         FROM
@@ -566,8 +564,7 @@ app.get("/get_inventoryItem/:inventoryName", (req, res) => {
   const { inventoryName } = req.params
   const sql = `
     SELECT 
-      i.inventoryID,
-      i.quantity,
+      i.*,
       (SELECT
           r.name
         FROM
