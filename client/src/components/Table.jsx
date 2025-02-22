@@ -88,6 +88,16 @@ const Table = ({ tableName, data }) => {
       quantity: item.quantity,
       restaurantName: item.restaurantName,
     }))
+  } else if (tableName === "supplierorder") {
+    filteredData = data.map((item) => ({
+      inventoryorderID: item.inventoryorderID,
+      date: item.date,
+      restaurantName: item.restaurantName,
+      supplierName: item.supplierName,
+      employeeName: item.employeeName,
+      paymentStatus: item.paymentStatus,
+      deliveryStatus: item.deliveryStatus,
+    }))
   } else {
     filteredData = data
   }

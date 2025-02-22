@@ -618,9 +618,7 @@ app.get("/get_inventoryorders/:inventoryID", (req, res) => {
   const { inventoryID } = req.params
   const sql = `
     SELECT 
-      io.inventoryorderID,
-      ioi.inventoryID,
-      io.date,
+      *,
       (SELECT
           r.name
         FROM
@@ -635,17 +633,13 @@ app.get("/get_inventoryorders/:inventoryID", (req, res) => {
         WHERE
           s.supplierID = io.supplierID 
       ) AS supplierName,
-      ioi.unitPrice,
-      ioi.quantity,
       (SELECT
           e.name
         FROM
           employee e
         WHERE
           e.employeeID = io.employeeID
-      ) AS employeeName,
-      io.paymentStatus,
-      io.deliveryStatus
+      ) AS employeeName
     FROM 
       inventoryorderitem ioi
     JOIN 
@@ -665,8 +659,7 @@ app.get("/get_inventoryorders_by_supplier/:supplierID", (req, res) => {
   const { supplierID } = req.params
   const sql = `
     SELECT
-      io.inventoryorderID,
-      io.date,
+      *,
       (SELECT
           r.name
         FROM
@@ -687,9 +680,7 @@ app.get("/get_inventoryorders_by_supplier/:supplierID", (req, res) => {
           employee e
         WHERE
           e.employeeID = io.employeeID
-      ) AS employeeName,
-      io.paymentStatus,
-      io.deliveryStatus
+      ) AS employeeName
     FROM
       inventoryorder io
     WHERE 
@@ -707,7 +698,7 @@ app.get("/get_inventoryorder/:orderID", (req, res) => {
   const { orderID } = req.params
   const sql = `
     SELECT 
-      io.date,
+      *,
       (SELECT
           r.name
         FROM
@@ -728,9 +719,7 @@ app.get("/get_inventoryorder/:orderID", (req, res) => {
           employee e
         WHERE
           e.employeeID = io.employeeID
-      ) AS employeeName,
-      io.paymentStatus,
-      io.deliveryStatus
+      ) AS employeeName
     FROM 
       inventoryorder io
     WHERE 
@@ -748,7 +737,7 @@ app.get("/get_inventoryorderitems/:orderId", (req, res) => {
   const { orderId } = req.params
   const sql = `
     SELECT 
-      ioi.*, 
+      *, 
       (SELECT
           i.name
         FROM
