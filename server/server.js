@@ -198,6 +198,24 @@ app.get("/get_menu/:restaurantName", (req, res) => {
   })
 })
 
+app.get("/get_menu_by_id/:restaurantID", (req, res) => {
+  const { restaurantID } = req.params
+  const sql = `
+    SELECT 
+      *
+    FROM 
+      menuitem
+    WHERE 
+      restaurantID = ?`
+  db.query(sql, [restaurantID], (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json(result)
+  })
+})
+
 app.delete("/delete_menuitem/:id", (req, res) => {
   const { id } = req.params
   const sql = `
@@ -590,6 +608,19 @@ app.delete("/delete_customerorderitem/:orderId/:itemId", (req, res) => {
       return res.status(500).json({ message: "Server error" })
     }
     res.json({ success: "Customer order item deleted successfully!" })
+  })
+})
+
+app.post("/add_customerorderitem", (req, res) => {
+  const { customerorderID, menuitemID, quantity } = req.body
+  const sql =
+    "INSERT INTO customerorderitem (customerorderID, menuitemID, quantity) VALUES (?, ?, ?)"
+  db.query(sql, [customerorderID, menuitemID, quantity], (err) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json({ success: "Customer order item added successfully!" })
   })
 })
 

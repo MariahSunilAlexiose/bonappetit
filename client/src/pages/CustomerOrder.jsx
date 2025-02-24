@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 import axios from "axios"
 
+import { PlusIcon } from "../assets/icons"
 import { Table } from "../components"
 import { formatDate } from "../constants"
 
 const CustomerOrder = () => {
+  const navigate = useNavigate()
   const { orderID } = useParams()
   const [customerOrder, setCustomerOrder] = useState([])
   const [customerOrderItems, setCustomerOrderItems] = useState([])
@@ -41,8 +43,24 @@ const CustomerOrder = () => {
         </div>
       </div>
       <div className="pt-7">
-        <div>
+        <div className="flex justify-between">
           <h1>Customer Order Details</h1>
+          <button
+            className="mr-5 rounded-full bg-green-500 px-2 py-1 font-bold text-white hover:bg-green-700"
+            onClick={() => {
+              navigate("/add_form", {
+                state: {
+                  toBeAddedKeys: Object.keys(customerOrderItems[0]).filter(
+                    (key) => key !== "customerorderID" && key !== "menuitemID"
+                  ),
+                  tableName: "customerorderitem",
+                  id: orderID,
+                },
+              })
+            }}
+          >
+            <img alt="Plus Icon" src={PlusIcon} width={20} height={20} />
+          </button>
         </div>
         <Table data={customerOrderItems} tableName="customerorderitem" />
       </div>

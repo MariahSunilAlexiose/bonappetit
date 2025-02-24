@@ -142,6 +142,13 @@ const AddForm = () => {
           customerID: id,
           items: [{ menuitemID: 0, quantity: 1 }],
         }))
+      } else if (tableName === "customerorderitem") {
+        const itemsRes = await axios.get(`/get_menu_by_id/${id}`)
+        setMenuitems(itemsRes.data)
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          customerorderID: id,
+        }))
       }
       // else if (tableName === "inventoryorderitem" || tableName === "inventoryorder") {
       //   const invRes = await axios.get("/inventory");
@@ -168,8 +175,10 @@ const AddForm = () => {
             ? "Inventory Order Item"
             : tableName === "customerorder"
               ? "Customer Order"
-              : tableName.charAt(0).toUpperCase() +
-                tableName.slice(1).toLowerCase()}
+              : tableName === "customerorderitem"
+                ? "Customer Order Item"
+                : tableName.charAt(0).toUpperCase() +
+                  tableName.slice(1).toLowerCase()}
       </h1>
       <form onSubmit={handleSubmit}>
         {toBeAddedKeys &&
@@ -357,6 +366,25 @@ const AddForm = () => {
                       customers,
                       "customer"
                     )}
+                  />
+                </div>
+              ) : key === "menuitemName" ? (
+                <div>
+                  <label
+                    htmlFor="menuitem"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Menu Item
+                  </label>
+                  <InputDropDown
+                    label="menuitem"
+                    options={menuitems}
+                    onChange={(newMenuItemID) => {
+                      setFormData((prevFormData) => ({
+                        ...prevFormData,
+                        menuitemID: newMenuItemID,
+                      }))
+                    }}
                   />
                 </div>
               ) : (
