@@ -946,6 +946,19 @@ app.delete("/delete_inventory/:id", (req, res) => {
   })
 })
 
+app.post("/add_inventory", (req, res) => {
+  const { inventoryID, name, quantity, restaurantID } = req.body
+  const sql =
+    "INSERT INTO inventory (inventoryID, name, quantity, restaurantID) VALUES (?, ?, ?, ?)"
+  db.query(sql, [inventoryID, name, quantity, restaurantID], (err) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json({ success: "Inventory added successfully!" })
+  })
+})
+
 // inventory orders
 app.get("/get_inventoryorders/:inventoryID", (req, res) => {
   const { inventoryID } = req.params

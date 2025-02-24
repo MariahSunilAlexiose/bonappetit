@@ -112,9 +112,7 @@ const AddForm = () => {
         setRestaurants(restRes.data)
       } else if (tableName === "inventory") {
         const restRes = await axios.get("/restaurants")
-        const suppRes = await axios.get("/suppliers")
         setRestaurants(restRes.data)
-        setSuppliers(suppRes.data)
       } else if (tableName === "inventoryorder") {
         const restRes = await axios.get("/restaurants")
         const suppRes = await axios.get("/suppliers")
@@ -511,7 +509,7 @@ const AddForm = () => {
             />
           </div>
         )}
-        {(tableName === "inventory" || tableName === "inventoryorder") && (
+        {tableName === "inventoryorder" && (
           <div className="py-5">
             <label
               htmlFor="restaurants"
@@ -531,7 +529,7 @@ const AddForm = () => {
             />
           </div>
         )}
-        {(tableName === "inventory" || tableName === "inventoryorder") && (
+        {tableName === "inventoryorder" && (
           <div className="py-5">
             <label
               htmlFor="suppliers"
