@@ -30,16 +30,9 @@ export const keyMapping = {
   menuitemName: "Menu Item",
 }
 
-export const paymentstatus = {
-  pending: "Pending",
-  completed: "Completed",
-}
+export const paymentstatus = ["Pending", "Completed"]
 
-export const deliverystatus = {
-  notdelivered: "Not Delivered",
-  intransit: "In Transit",
-  delivered: "Delivered",
-}
+export const deliverystatus = ["Not Delivered", "In Transit", "Delivered"]
 
 export const idMap = {
   supplier: "supplierID",

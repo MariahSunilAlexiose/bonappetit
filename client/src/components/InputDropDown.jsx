@@ -25,7 +25,9 @@ const InputDropDown = ({ options, onChange, label, defaultValue }) => {
           ? onChange(option.menuitemID)
           : label === "customerorder"
             ? onChange(option.customerOrderID)
-            : onChange(option.supplierID)
+            : label === "customers"
+              ? onChange(option.customerID)
+              : onChange(option.supplierID)
   }
 
   return (

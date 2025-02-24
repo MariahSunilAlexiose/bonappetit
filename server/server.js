@@ -53,7 +53,7 @@ app.get("/restaurants", (req, res) => {
   })
 })
 
-app.get("/get_restaurant/:restaurantName", (req, res) => {
+app.get("/get_restaurant_by_name/:restaurantName", (req, res) => {
   const { restaurantName } = req.params
   const sql = `
     SELECT
@@ -63,6 +63,24 @@ app.get("/get_restaurant/:restaurantName", (req, res) => {
     WHERE
       name = ?`
   db.query(sql, [restaurantName], (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json(result)
+  })
+})
+
+app.get("/get_restaurant_by_id/:restaurantID", (req, res) => {
+  const { restaurantID } = req.params
+  const sql = `
+    SELECT
+      *
+    FROM
+      restaurant
+    WHERE
+      restaurantID = ?`
+  db.query(sql, [restaurantID], (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
       return res.status(500).json({ message: "Server error" })
@@ -425,6 +443,109 @@ app.delete("/delete_customerorder/:id", (req, res) => {
 
       res.json({ success: "Customer order deleted successfully" })
     })
+  })
+})
+
+app.get("/customerorders", (req, res) => {
+  const sql = "SELECT * FROM customerorder"
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json(result)
+  })
+})
+
+app.post("/add_customerorder", (req, res) => {
+  const {
+    customerID,
+    date,
+    customerorderID,
+    items,
+    restaurantID,
+    paymentStatus,
+    deliveryStatus,
+    employeeID,
+  } = req.body
+
+  const orderSql = `
+    INSERT INTO customerorder (customerorderID, customerID, restaurantID, date, paymentStatus, deliveryStatus, employeeID)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `
+
+  const itemSql = `
+    INSERT INTO customerorderitem (customerorderID, menuitemID, quantity)
+    VALUES (?, ?, ?)
+  `
+
+  db.beginTransaction((err) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ message: "Error starting transaction: " + err })
+    }
+
+    db.query(
+      orderSql,
+      [
+        customerorderID,
+        customerID,
+        restaurantID,
+        date,
+        paymentStatus,
+        deliveryStatus,
+        employeeID,
+      ],
+      (err) => {
+        if (err) {
+          return db.rollback(() => {
+            res
+              .status(500)
+              .json({ message: "Error inserting into customerorder: " + err })
+          })
+        }
+
+        const orderItems = items.map((item) => [
+          customerorderID,
+          item.menuitemID,
+          item.quantity,
+        ])
+
+        // Using a nested query for each order item
+        const itemQueries = orderItems.map((orderItem) => {
+          return new Promise((resolve, reject) => {
+            db.query(itemSql, orderItem, (err) => {
+              if (err) {
+                return reject(err)
+              }
+              resolve()
+            })
+          })
+        })
+
+        Promise.all(itemQueries)
+          .then(() => {
+            db.commit((err) => {
+              if (err) {
+                return db.rollback(() => {
+                  res
+                    .status(500)
+                    .json({ message: "Error committing transaction: " + err })
+                })
+              }
+              res.json({ success: "Order and items added successfully!" })
+            })
+          })
+          .catch((err) => {
+            db.rollback(() => {
+              res.status(500).json({
+                message: "Error inserting into customerorderitem: " + err,
+              })
+            })
+          })
+      }
+    )
   })
 })
 

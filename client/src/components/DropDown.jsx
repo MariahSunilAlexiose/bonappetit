@@ -14,11 +14,10 @@ const DropDown = ({
 
   useEffect(() => {
     if (defaultValue && options && options.length > 0) {
-      setValue(defaultValue) // Make sure to set it to the defaultValue passed by the parent
+      setValue(defaultValue)
       onChange(defaultValue)
-      console.log(defaultValue)
     }
-  }, [defaultValue, options, onChange])
+  }, [defaultValue, options])
 
   return (
     <div className="bg-popover text-popover-foreground rounded-md border p-0 shadow-md outline-none">

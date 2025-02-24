@@ -18,7 +18,7 @@ const RestaurantPage = () => {
   useEffect(() => {
     const fetchMenuData = async () => {
       try {
-        const res = await axios.get(`/get_restaurant/${restaurantName}`)
+        const res = await axios.get(`/get_restaurant_by_name/${restaurantName}`)
         setRestaurant(res.data[0])
         const totalNo = await axios.get("/menuitems")
         setLastID(Math.max(...totalNo.data.map((item) => item.menuitemID)))
