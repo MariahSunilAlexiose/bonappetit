@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 import axios from "axios"
 
+import { PlusIcon } from "../assets/icons"
 import { Table } from "../components"
 
 const EmployeePage = () => {
+  const navigate = useNavigate()
   const { employeeName } = useParams()
   const [employee, setEmployee] = useState([])
   const [orders, setOrders] = useState([])
+  const [lastID, setLastID] = useState(0)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -18,6 +21,8 @@ const EmployeePage = () => {
           `/get_employeeorders/${res.data[0].employeeID}`
         )
         setOrders(resOrders.data)
+        const totalNo = await axios.get("/customerorders")
+        setLastID(Math.max(...totalNo.data.map((item) => item.customerorderID)))
       } catch (err) {
         console.log(err)
       }
@@ -40,6 +45,26 @@ const EmployeePage = () => {
       </div>
       <div className="flex justify-between pt-5">
         <h1>Orders made by {employeeName}</h1>
+        <button
+          className="mr-5 rounded-full bg-green-500 px-2 py-1 font-bold text-white hover:bg-green-700"
+          onClick={() => {
+            navigate("/add_form", {
+              state: {
+                toBeAddedKeys: Object.keys(orders[0]).filter(
+                  (key) =>
+                    key !== "customerorderID" &&
+                    key !== "restaurantID" &&
+                    key !== "customerID"
+                ),
+                lastID: lastID,
+                tableName: "employeeorder",
+                id: employee.employeeID,
+              },
+            })
+          }}
+        >
+          <img alt="Plus Icon" src={PlusIcon} width={20} height={20} />
+        </button>
       </div>
       <Table data={orders} tableName="employeeorder" />
     </div>

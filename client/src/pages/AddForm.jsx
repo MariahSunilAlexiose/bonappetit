@@ -149,6 +149,20 @@ const AddForm = () => {
           ...prevFormData,
           customerorderID: id,
         }))
+      } else if (tableName === "employeeorder") {
+        const restRes = await axios.get("/restaurants")
+        setRestaurants(restRes.data)
+        const empRes = await axios.get("/employees")
+        setEmployees(empRes.data)
+        const cusRes = await axios.get("/customers")
+        setCustomers(cusRes.data)
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          date: currentDate,
+          employeeID: id,
+          customerorderID: lastID + 1,
+          items: [{ menuitemID: 0, quantity: 1 }],
+        }))
       }
       // else if (tableName === "inventoryorderitem" || tableName === "inventoryorder") {
       //   const invRes = await axios.get("/inventory");
@@ -177,8 +191,10 @@ const AddForm = () => {
               ? "Customer Order"
               : tableName === "customerorderitem"
                 ? "Customer Order Item"
-                : tableName.charAt(0).toUpperCase() +
-                  tableName.slice(1).toLowerCase()}
+                : tableName === "employeeorder"
+                  ? "Employee Order"
+                  : tableName.charAt(0).toUpperCase() +
+                    tableName.slice(1).toLowerCase()}
       </h1>
       <form onSubmit={handleSubmit}>
         {toBeAddedKeys &&
@@ -257,73 +273,81 @@ const AddForm = () => {
                     options={restaurants}
                     onChange={handleRestaurantChange}
                   />
-                  {restaurant && tableName === "customerorder" && (
-                    <div className="py-3">
-                      {formData.items.map((item, index) => (
-                        <div key={index} className="py-3">
-                          <label
-                            htmlFor={`menuitem-${index}`}
-                            className="block text-sm font-medium text-gray-700"
-                          >
-                            Menu Item
-                          </label>
-                          <InputDropDown
-                            label="menuitem"
-                            options={menuitems}
-                            onChange={(newOrderItemID) => {
-                              setFormData((prevFormData) => {
-                                const updatedItems = prevFormData.items.map(
-                                  (i, idx) =>
-                                    idx === index
-                                      ? { ...i, menuitemID: newOrderItemID }
-                                      : i
-                                )
-                                return { ...prevFormData, items: updatedItems }
-                              })
-                            }}
-                          />
-                          <label className="block text-sm font-medium text-gray-700">
-                            Quantity
-                          </label>
-                          <Input
-                            name={`quantity-${index}`}
-                            type="number"
-                            value={item.quantity}
-                            onChange={(e) => {
-                              const value = parseInt(e.target.value, 10)
-                              setFormData((prevFormData) => {
-                                const updatedItems = prevFormData.items.map(
-                                  (i, idx) =>
-                                    idx === index
-                                      ? { ...i, quantity: value }
-                                      : i
-                                )
-                                return { ...prevFormData, items: updatedItems }
-                              })
-                            }}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                            min={1}
-                            required
-                          />
-                        </div>
-                      ))}
-                      <button
-                        type="button"
-                        className="mt-3 inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        onClick={() => {
-                          setFormData((prevFormData) => ({
-                            ...prevFormData,
-                            items: [
-                              ...prevFormData.items,
-                              { menuitemID: 0, quantity: 1 },
-                            ],
-                          }))
-                        }}
-                      >
-                        Add Menu Item
-                      </button>
-                    </div>
-                  )}
+                  {restaurant &&
+                    (tableName === "customerorder" ||
+                      tableName === "employeeorder") && (
+                      <div className="py-3">
+                        {formData.items.map((item, index) => (
+                          <div key={index} className="py-3">
+                            <label
+                              htmlFor={`menuitem-${index}`}
+                              className="block text-sm font-medium text-gray-700"
+                            >
+                              Menu Item
+                            </label>
+                            <InputDropDown
+                              label="menuitem"
+                              options={menuitems}
+                              onChange={(newOrderItemID) => {
+                                setFormData((prevFormData) => {
+                                  const updatedItems = prevFormData.items.map(
+                                    (i, idx) =>
+                                      idx === index
+                                        ? { ...i, menuitemID: newOrderItemID }
+                                        : i
+                                  )
+                                  return {
+                                    ...prevFormData,
+                                    items: updatedItems,
+                                  }
+                                })
+                              }}
+                            />
+                            <label className="block text-sm font-medium text-gray-700">
+                              Quantity
+                            </label>
+                            <Input
+                              name={`quantity-${index}`}
+                              type="number"
+                              value={item.quantity}
+                              onChange={(e) => {
+                                const value = parseInt(e.target.value, 10)
+                                setFormData((prevFormData) => {
+                                  const updatedItems = prevFormData.items.map(
+                                    (i, idx) =>
+                                      idx === index
+                                        ? { ...i, quantity: value }
+                                        : i
+                                  )
+                                  return {
+                                    ...prevFormData,
+                                    items: updatedItems,
+                                  }
+                                })
+                              }}
+                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                              min={1}
+                              required
+                            />
+                          </div>
+                        ))}
+                        <button
+                          type="button"
+                          className="mt-3 inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          onClick={() => {
+                            setFormData((prevFormData) => ({
+                              ...prevFormData,
+                              items: [
+                                ...prevFormData.items,
+                                { menuitemID: 0, quantity: 1 },
+                              ],
+                            }))
+                          }}
+                        >
+                          Add Menu Item
+                        </button>
+                      </div>
+                    )}
                 </div>
               ) : key === "employeeName" ? (
                 <div>
@@ -344,7 +368,7 @@ const AddForm = () => {
                     }}
                   />
                 </div>
-              ) : key === "customerID" ? (
+              ) : key === "customerID" || key === "customerName" ? (
                 <div>
                   <label
                     htmlFor="customer"
@@ -385,6 +409,26 @@ const AddForm = () => {
                         menuitemID: newMenuItemID,
                       }))
                     }}
+                  />
+                </div>
+              ) : key === "employeeID" ? (
+                <div>
+                  <label
+                    htmlFor="employee"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Employee
+                  </label>
+                  <InputDropDown
+                    label="employees"
+                    options={employees}
+                    onChange={(newEmployeeID) => {
+                      setFormData((prevFormData) => ({
+                        ...prevFormData,
+                        employeeID: newEmployeeID,
+                      }))
+                    }}
+                    defaultValue={getNameByID(id, employees, "employee")}
                   />
                 </div>
               ) : (
