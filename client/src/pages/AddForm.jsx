@@ -144,7 +144,17 @@ const AddForm = () => {
         }))
       } else if (tableName === "customerorderitem") {
         const itemsRes = await axios.get(`/get_menu_by_id/${id}`)
-        setMenuitems(itemsRes.data)
+        console.log(itemsRes.data)
+        const resItems = await axios.get(`/get_customerorderitems/${id}`)
+        console.log(resItems.data)
+        const filteredMenuItems = itemsRes.data.filter(
+          (menuItem) =>
+            !resItems.data.some(
+              (customerOrderItem) =>
+                customerOrderItem.menuitemName === menuItem.name
+            )
+        )
+        setMenuitems(filteredMenuItems)
         setFormData((prevFormData) => ({
           ...prevFormData,
           customerorderID: id,
