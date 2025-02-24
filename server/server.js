@@ -757,6 +757,27 @@ app.delete("/delete_employee/:id", (req, res) => {
   })
 })
 
+app.post("/add_employee", (req, res) => {
+  const sql =
+    "INSERT INTO employee (employeeID, name, role, phone, address, salary, restaurantID) VALUES (?, ?, ?, ?, ?, ?, ?)"
+  const values = [
+    req.body.employeeID,
+    req.body.name,
+    req.body.role,
+    req.body.phone,
+    req.body.address,
+    req.body.salary,
+    req.body.restaurantID,
+  ]
+  db.query(sql, values, (err) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json({ success: "Employee added successfully!" })
+  })
+})
+
 // inventory
 app.get("/inventory", (req, res) => {
   const sql = `

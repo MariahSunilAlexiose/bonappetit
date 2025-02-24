@@ -257,7 +257,7 @@ const AddForm = () => {
                     options={restaurants}
                     onChange={handleRestaurantChange}
                   />
-                  {restaurant && (
+                  {restaurant && tableName === "customerorder" && (
                     <div className="py-3">
                       {formData.items.map((item, index) => (
                         <div key={index} className="py-3">
@@ -457,9 +457,7 @@ const AddForm = () => {
             />
           </div>
         )}
-        {(tableName === "employee" ||
-          tableName === "inventory" ||
-          tableName === "inventoryorder") && (
+        {(tableName === "inventory" || tableName === "inventoryorder") && (
           <div className="py-5">
             <label
               htmlFor="restaurants"
