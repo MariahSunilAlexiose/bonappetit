@@ -177,6 +177,13 @@ const AddForm = () => {
           ...prevFormData,
           items: [{ inventoryID: 0, quantity: 1, unitPrice: 0 }],
         }))
+      } else if (tableName === "supplierorderitem") {
+        const invRes = await axios.get("/inventory")
+        setInventory(invRes.data)
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          inventoryorderID: id,
+        }))
       }
     } catch (err) {
       console.log(err)
@@ -205,8 +212,10 @@ const AddForm = () => {
                   ? "Employee Order"
                   : tableName === "supplierorder"
                     ? "Supplier Order"
-                    : tableName.charAt(0).toUpperCase() +
-                      tableName.slice(1).toLowerCase()}
+                    : tableName === "supplierorderitem"
+                      ? "Supplier Order Item"
+                      : tableName.charAt(0).toUpperCase() +
+                        tableName.slice(1).toLowerCase()}
       </h1>
       <form onSubmit={handleSubmit}>
         {toBeAddedKeys &&
@@ -563,7 +572,7 @@ const AddForm = () => {
                     defaultValue={getNameByID(id, suppliers, "supplier")}
                   />
                 </div>
-              ) : key === "inventoryID" ? (
+              ) : key === "inventoryID" || key === "inventoryName" ? (
                 <div>
                   <label
                     htmlFor="inventory"

@@ -1403,3 +1403,22 @@ app.post("/add_supplierorder", (req, res) => {
     )
   })
 })
+
+app.post("/add_supplierorderitem", (req, res) => {
+  db.query(
+    "INSERT INTO inventoryorderitem (inventoryorderID, inventoryID, quantity, unitPrice) VALUES (?, ?, ?, ?)",
+    [
+      req.body.inventoryorderID,
+      req.body.inventoryID,
+      req.body.quantity,
+      req.body.unitPrice,
+    ],
+    (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Supplier order item added successfully!" })
+    }
+  )
+})
