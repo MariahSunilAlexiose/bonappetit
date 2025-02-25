@@ -27,7 +27,9 @@ const InputDropDown = ({ options, onChange, label, defaultValue }) => {
             ? onChange(option.customerOrderID)
             : label === "customers"
               ? onChange(option.customerID)
-              : onChange(option.supplierID)
+              : label === "inventory"
+                ? onChange(option.inventoryID)
+                : onChange(option.supplierID)
   }
 
   return (
@@ -87,6 +89,7 @@ InputDropDown.propTypes = {
       name: PropTypes.string.isRequired,
       restaurantID: PropTypes.number,
       supplierID: PropTypes.number,
+      inventoryID: PropTypes.number,
     })
   ).isRequired,
   onChange: PropTypes.func.isRequired,

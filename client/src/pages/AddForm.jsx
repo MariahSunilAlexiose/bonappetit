@@ -82,6 +82,13 @@ const AddForm = () => {
           inventoryID: id,
           inventoryorderID: lastID + 1,
         })
+      } else if (tableName === "supplierorder") {
+        await axios.post("/add_supplierorder", {
+          ...formData,
+          date: currentDate,
+          supplierID: id,
+          inventoryorderID: lastID + 1,
+        })
       } else {
         await axios.post(`/add_${tableName}`, {
           ...formData,
@@ -155,6 +162,21 @@ const AddForm = () => {
           customerorderID: lastID + 1,
           items: [{ menuitemID: 0, quantity: 1 }],
         }))
+      } else if (tableName === "supplierorder") {
+        const restRes = await axios.get("/restaurants")
+        setRestaurants(restRes.data)
+        const empRes = await axios.get("/employees")
+        setEmployees(empRes.data)
+        const cusRes = await axios.get("/customers")
+        setCustomers(cusRes.data)
+        const supRes = await axios.get("/suppliers")
+        setSuppliers(supRes.data)
+        const invRes = await axios.get("/inventory")
+        setInventory(invRes.data)
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          items: [{ inventoryID: 0, quantity: 1, unitPrice: 0 }],
+        }))
       }
     } catch (err) {
       console.log(err)
@@ -181,8 +203,10 @@ const AddForm = () => {
                 ? "Customer Order Item"
                 : tableName === "employeeorder"
                   ? "Employee Order"
-                  : tableName.charAt(0).toUpperCase() +
-                    tableName.slice(1).toLowerCase()}
+                  : tableName === "supplierorder"
+                    ? "Supplier Order"
+                    : tableName.charAt(0).toUpperCase() +
+                      tableName.slice(1).toLowerCase()}
       </h1>
       <form onSubmit={handleSubmit}>
         {toBeAddedKeys &&
@@ -336,6 +360,106 @@ const AddForm = () => {
                         </button>
                       </div>
                     )}
+                  {restaurant && tableName === "supplierorder" && (
+                    <div className="py-3">
+                      {formData.items.map((item, index) => (
+                        <div key={index} className="py-3">
+                          <label
+                            htmlFor={`inventoryitem-${index}`}
+                            className="block text-sm font-medium text-gray-700"
+                          >
+                            Inventory Item
+                          </label>
+                          <InputDropDown
+                            label="inventory"
+                            options={inventory}
+                            onChange={(newItemID) => {
+                              setFormData((prevFormData) => {
+                                const updatedItems = prevFormData.items.map(
+                                  (i, idx) =>
+                                    idx === index
+                                      ? { ...i, inventoryID: newItemID }
+                                      : i
+                                )
+                                return {
+                                  ...prevFormData,
+                                  items: updatedItems,
+                                }
+                              })
+                            }}
+                          />
+                          <label className="block text-sm font-medium text-gray-700">
+                            Quantity
+                          </label>
+                          <Input
+                            name={`quantity-${index}`}
+                            type="number"
+                            value={item.quantity}
+                            onChange={(e) => {
+                              const value = parseInt(e.target.value, 10)
+                              setFormData((prevFormData) => {
+                                const updatedItems = prevFormData.items.map(
+                                  (i, idx) =>
+                                    idx === index
+                                      ? { ...i, quantity: value }
+                                      : i
+                                )
+                                return {
+                                  ...prevFormData,
+                                  items: updatedItems,
+                                }
+                              })
+                            }}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            min={1}
+                            required
+                          />
+                          <label className="block text-sm font-medium text-gray-700">
+                            Unit Price
+                          </label>
+                          <Input
+                            name={`unitPrice-${index}`}
+                            type="number"
+                            value={item.unitPrice}
+                            onChange={(e) => {
+                              const value = parseInt(e.target.value, 10)
+                              setFormData((prevFormData) => {
+                                const updatedItems = prevFormData.items.map(
+                                  (i, idx) =>
+                                    idx === index
+                                      ? { ...i, unitPrice: value }
+                                      : i
+                                )
+                                return {
+                                  ...prevFormData,
+                                  items: updatedItems,
+                                }
+                              })
+                            }}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            step="0.01"
+                            min="0"
+                            required
+                          />
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        className="mt-3 inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        onClick={() => {
+                          setFormData((prevFormData) => ({
+                            ...prevFormData,
+                            items: [
+                              ...prevFormData.items,
+                              { menuitemID: 0, quantity: 1 },
+                            ],
+                          }))
+                        }}
+                      >
+                        Add Inventory Item
+                      </button>
+                    </div>
+                  )}
                 </div>
               ) : key === "employeeName" ? (
                 <div>
@@ -419,7 +543,7 @@ const AddForm = () => {
                     defaultValue={getNameByID(id, employees, "employee")}
                   />
                 </div>
-              ) : key === "supplierName" ? (
+              ) : key === "supplierID" || key === "supplierName" ? (
                 <div>
                   <label
                     htmlFor="suppliers"
@@ -436,6 +560,7 @@ const AddForm = () => {
                         supplierID: newSupplierID,
                       }))
                     }}
+                    defaultValue={getNameByID(id, suppliers, "supplier")}
                   />
                 </div>
               ) : key === "inventoryID" ? (

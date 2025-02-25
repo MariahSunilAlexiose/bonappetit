@@ -1052,13 +1052,6 @@ app.get("/get_inventoryorders_by_supplier/:supplierID", (req, res) => {
           r.restaurantID = io.restaurantID
       ) AS restaurantName,
       (SELECT
-          s.name
-        FROM
-          supplier s
-        WHERE
-          s.supplierID = io.supplierID
-      ) AS supplierName,
-      (SELECT
           e.name
         FROM
           employee e
@@ -1334,4 +1327,79 @@ app.post("/add_supplier", (req, res) => {
       res.json({ success: "Supplier added successfully!" })
     }
   )
+})
+
+app.post("/add_supplierorder", (req, res) => {
+  db.beginTransaction((err) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ message: "Error starting transaction: " + err })
+    }
+
+    db.query(
+      "INSERT INTO inventoryorder (inventoryorderID, supplierID, employeeID, restaurantID, date, paymentStatus, deliveryStatus) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [
+        req.body.inventoryorderID,
+        req.body.supplierID,
+        req.body.employeeID,
+        req.body.restaurantID,
+        req.body.date,
+        req.body.paymentStatus,
+        req.body.deliveryStatus,
+      ],
+      (err) => {
+        if (err) {
+          return db.rollback(() => {
+            res
+              .status(500)
+              .json({ message: "Error inserting into supplierorder: " + err })
+          })
+        }
+
+        const itemQueries = req.body.items
+          .map((item) => [
+            req.body.inventoryorderID,
+            item.inventoryID,
+            item.quantity,
+            item.unitPrice,
+          ])
+          .map((orderItem) => {
+            return new Promise((resolve, reject) => {
+              db.query(
+                "INSERT INTO inventoryorderitem (inventoryorderID, inventoryID, quantity, unitPrice) VALUES (?, ?, ?, ?)",
+                orderItem,
+                (err) => {
+                  if (err) {
+                    return reject(err)
+                  }
+                  resolve()
+                }
+              )
+            })
+          })
+
+        Promise.all(itemQueries)
+          .then(() => {
+            db.commit((err) => {
+              if (err) {
+                return db.rollback(() => {
+                  res
+                    .status(500)
+                    .json({ message: "Error committing transaction: " + err })
+                })
+              }
+              res.json({ success: "Order and items added successfully!" })
+            })
+          })
+          .catch((err) => {
+            db.rollback(() => {
+              res.status(500).json({
+                message: "Error inserting into supplierorderitem: " + err,
+              })
+            })
+          })
+      }
+    )
+  })
 })

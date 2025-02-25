@@ -93,7 +93,6 @@ const Table = ({ tableName, data }) => {
       inventoryorderID: item.inventoryorderID,
       date: item.date,
       restaurantName: item.restaurantName,
-      supplierName: item.supplierName,
       employeeName: item.employeeName,
       paymentStatus: item.paymentStatus,
       deliveryStatus: item.deliveryStatus,
