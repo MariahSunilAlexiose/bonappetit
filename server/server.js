@@ -1313,3 +1313,25 @@ app.delete("/delete_supplier/:id", (req, res) => {
     })
   })
 })
+
+app.post("/add_supplier", (req, res) => {
+  const sql =
+    "INSERT INTO supplier (supplierID, name, contactPerson, phone, address) VALUES (?, ?, ?, ?, ?)"
+  db.query(
+    sql,
+    [
+      req.body.supplierID,
+      req.body.name,
+      req.body.contactPerson,
+      req.body.phone,
+      req.body.address,
+    ],
+    (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Supplier added successfully!" })
+    }
+  )
+})
