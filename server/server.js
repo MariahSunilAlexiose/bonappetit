@@ -960,6 +960,44 @@ app.post("/add_inventory", (req, res) => {
 })
 
 // inventory orders
+app.get("/get_inventoryorders", (req, res) => {
+  const sql = `
+    SELECT 
+      *,
+      (SELECT
+          r.name
+        FROM
+          restaurant r
+        WHERE
+          r.restaurantID = io.restaurantID
+      ) AS restaurantName,
+      (SELECT
+          s.name
+        FROM
+          supplier s
+        WHERE
+          s.supplierID = io.supplierID 
+      ) AS supplierName,
+      (SELECT
+          e.name
+        FROM
+          employee e
+        WHERE
+          e.employeeID = io.employeeID
+      ) AS employeeName
+    FROM 
+      inventoryorderitem ioi
+    JOIN 
+      inventoryorder io ON ioi.inventoryorderID = io.inventoryorderID`
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+    res.json(result)
+  })
+})
+
 app.get("/get_inventoryorders/:inventoryID", (req, res) => {
   const { inventoryID } = req.params
   const sql = `
@@ -1076,6 +1114,69 @@ app.get("/get_inventoryorder/:orderID", (req, res) => {
       return res.status(500).json({ message: "Server error" })
     }
     res.json(result)
+  })
+})
+
+app.post("/add_inventoryorder", (req, res) => {
+  db.beginTransaction((err) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ message: "Error starting transaction: " + err })
+    }
+
+    const inventoryOrderSql =
+      "INSERT INTO inventoryorder (inventoryorderID, supplierID, employeeID, restaurantID, date, paymentStatus, deliveryStatus) VALUES (?, ?, ?, ?, ?, ?, ?)"
+    const inventoryOrderValues = [
+      req.body.inventoryorderID,
+      req.body.supplierID,
+      req.body.employeeID,
+      req.body.restaurantID,
+      req.body.date,
+      req.body.paymentStatus,
+      req.body.deliveryStatus,
+    ]
+
+    db.query(inventoryOrderSql, inventoryOrderValues, (err) => {
+      if (err) {
+        return db.rollback(() => {
+          res
+            .status(500)
+            .json({ message: "Error inserting into inventory order: " + err })
+        })
+      }
+
+      const orderItem = [
+        req.body.inventoryorderID,
+        req.body.inventoryID,
+        req.body.quantity,
+        req.body.unitPrice,
+      ]
+
+      const inventoryOrderItemSql =
+        "INSERT INTO inventoryorderitem (inventoryOrderID, inventoryID, quantity, unitPrice) VALUES (?, ?, ?, ?)"
+
+      db.query(inventoryOrderItemSql, orderItem, (err) => {
+        if (err) {
+          return db.rollback(() => {
+            res.status(500).json({
+              message: "Error inserting into inventory order item: " + err,
+            })
+          })
+        }
+
+        db.commit((err) => {
+          if (err) {
+            return db.rollback(() => {
+              res
+                .status(500)
+                .json({ message: "Error committing transaction: " + err })
+            })
+          }
+          res.json({ success: "Inventory item order added successfully!" })
+        })
+      })
+    })
   })
 })
 

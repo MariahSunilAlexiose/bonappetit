@@ -3,12 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 
 import axios from "axios"
 
-import {
-  DropDown,
-  Input,
-  InputDropDown,
-  MultiSelectDropDown,
-} from "../components"
+import { DropDown, Input, InputDropDown } from "../components"
 import { deliverystatus, keyMapping, paymentstatus } from "../constants"
 
 const getNameByID = (id, list, tableName) => {
@@ -83,17 +78,11 @@ const AddForm = () => {
       } else if (tableName === "inventoryorder") {
         await axios.post("/add_inventoryorder", {
           ...formData,
+          date: currentDate,
           inventoryID: id,
-          inventoryOrderID: lastID + 1,
+          inventoryorderID: lastID + 1,
         })
-      }
-      // else if (tableName === "inventoryorderitem") {
-      //   await axios.post('/add_inventoryorderitem', {
-      //     ...formData,
-      //     inventoryOrderID: parseInt(id)
-      //   })
-      // }
-      else {
+      } else {
         await axios.post(`/add_${tableName}`, {
           ...formData,
           [`${tableName}ID`]: lastID + 1,
@@ -115,18 +104,13 @@ const AddForm = () => {
         setRestaurants(restRes.data)
       } else if (tableName === "inventoryorder") {
         const restRes = await axios.get("/restaurants")
-        const suppRes = await axios.get("/suppliers")
-        const empRes = await axios.get("/employees")
-        const invRes = await axios.get("/inventory")
-        console.log(invRes.data)
         setRestaurants(restRes.data)
+        const suppRes = await axios.get("/suppliers")
         setSuppliers(suppRes.data)
+        const empRes = await axios.get("/employees")
         setEmployees(empRes.data)
+        const invRes = await axios.get("/inventory")
         setInventory(invRes.data)
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          date: currentDate,
-        }))
       } else if (tableName === "customerorder") {
         const restRes = await axios.get("/restaurants")
         setRestaurants(restRes.data)
@@ -172,10 +156,6 @@ const AddForm = () => {
           items: [{ menuitemID: 0, quantity: 1 }],
         }))
       }
-      // else if (tableName === "inventoryorderitem" || tableName === "inventoryorder") {
-      //   const invRes = await axios.get("/inventory");
-      //   setInventory(invRes.data);
-      // }
     } catch (err) {
       console.log(err)
     }
@@ -439,6 +419,45 @@ const AddForm = () => {
                     defaultValue={getNameByID(id, employees, "employee")}
                   />
                 </div>
+              ) : key === "supplierName" ? (
+                <div>
+                  <label
+                    htmlFor="suppliers"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Supplier
+                  </label>
+                  <InputDropDown
+                    label="suppliers"
+                    options={suppliers}
+                    onChange={(newSupplierID) => {
+                      setFormData((prevFormData) => ({
+                        ...prevFormData,
+                        supplierID: newSupplierID,
+                      }))
+                    }}
+                  />
+                </div>
+              ) : key === "inventoryID" ? (
+                <div>
+                  <label
+                    htmlFor="inventory"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Inventory
+                  </label>
+                  <InputDropDown
+                    label="inventory"
+                    options={inventory}
+                    onChange={(newInventoryID) => {
+                      setFormData((prevFormData) => ({
+                        ...prevFormData,
+                        inventoryID: newInventoryID,
+                      }))
+                    }}
+                    defaultValue={getNameByID(id, inventory, "inventory")}
+                  />
+                </div>
               ) : (
                 <div>
                   <label
@@ -489,146 +508,6 @@ const AddForm = () => {
               )}
             </div>
           ))}
-        {(tableName === "inventoryorderitem" ||
-          tableName === "inventoryorder") && (
-          <div className="py-5">
-            <label
-              htmlFor="inventory"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Inventory Item
-            </label>
-            <MultiSelectDropDown
-              options={inventory}
-              onChange={(newOrderItemIDs) => {
-                setFormData((prevFormData) => ({
-                  ...prevFormData,
-                  inventoryID: newOrderItemIDs,
-                }))
-              }}
-            />
-          </div>
-        )}
-        {tableName === "inventoryorder" && (
-          <div className="py-5">
-            <label
-              htmlFor="restaurants"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Restaurant
-            </label>
-            <InputDropDown
-              label="restaurants"
-              options={restaurants}
-              onChange={(newRestaurantID) => {
-                setFormData((prevFormData) => ({
-                  ...prevFormData,
-                  restaurantID: newRestaurantID,
-                }))
-              }}
-            />
-          </div>
-        )}
-        {tableName === "inventoryorder" && (
-          <div className="py-5">
-            <label
-              htmlFor="suppliers"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Supplier
-            </label>
-            <InputDropDown
-              label="suppliers"
-              options={suppliers}
-              onChange={(newSupplierID) => {
-                setFormData((prevFormData) => ({
-                  ...prevFormData,
-                  supplierID: newSupplierID,
-                }))
-              }}
-            />
-          </div>
-        )}
-        {tableName === "inventoryorder" && (
-          <div className="py-5">
-            <label
-              htmlFor="employee"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Employee
-            </label>
-            <InputDropDown
-              label="employees"
-              options={employees}
-              onChange={(newEmployeeID) => {
-                setFormData((prevFormData) => ({
-                  ...prevFormData,
-                  employeeID: newEmployeeID,
-                }))
-              }}
-            />
-          </div>
-        )}
-        {tableName === "inventoryorder" && (
-          <>
-            <div>
-              <label
-                htmlFor="payment"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Date
-              </label>
-              <Input
-                type="date"
-                id="date"
-                name="date"
-                value={currentDate}
-                onChange={(e) => {
-                  setFormData((prevFormData) => ({
-                    ...prevFormData,
-                    date: e.target.value,
-                  }))
-                  setCurrentDate(e.target.value)
-                }}
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="payment"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Payment Status
-              </label>
-              <DropDown
-                options={paymentstatus}
-                onChange={(status) => {
-                  setFormData((prevFormData) => ({
-                    ...prevFormData,
-                    paymentStatus: status,
-                  }))
-                }}
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="delivery"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Delivery Status
-              </label>
-              <DropDown
-                options={deliverystatus}
-                defaultValue={deliverystatus[0]}
-                onChange={(status) => {
-                  setFormData((prevFormData) => ({
-                    ...prevFormData,
-                    deliveryStatus: status,
-                  }))
-                }}
-              />
-            </div>
-          </>
-        )}
         <div className="flex justify-end">
           <button
             type="submit"

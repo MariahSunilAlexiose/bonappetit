@@ -1,23 +1,28 @@
 import React, { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 import axios from "axios"
 
+import { PlusIcon } from "../assets/icons"
 import { Table } from "../components"
 
 const InventoryItem = () => {
+  const navigate = useNavigate()
   const { inventoryItemName } = useParams()
   const [inventoryItem, setInventoryItem] = useState([])
   const [inventoryOrders, setInventoryOrders] = useState([])
+  const [allOrders, setAllOrders] = useState([])
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await axios.get(`/get_inventoryItem/${inventoryItemName}`)
         setInventoryItem(res.data[0])
-        const orders = await axios.get(
+        const invOrders = await axios.get(
           `/get_inventoryorders/${inventoryItem.inventoryID}`
         )
-        setInventoryOrders(orders.data)
+        setInventoryOrders(invOrders.data)
+        const orders = await axios.get("/get_inventoryorders")
+        setAllOrders(orders.data)
       } catch (err) {
         console.log(err)
       }
@@ -32,8 +37,31 @@ const InventoryItem = () => {
       <h2>Quantity: {inventoryItem.quantity}</h2>
       <h2>Restaurant: {inventoryItem.restaurantName}</h2>
       <div className="pt-7">
-        <div>
+        <div className="flex justify-between">
           <h1>Inventory Item Orders</h1>
+          <button
+            className="mr-5 rounded-full bg-green-500 px-2 py-1 font-bold text-white hover:bg-green-700"
+            onClick={() => {
+              navigate("/add_form", {
+                state: {
+                  toBeAddedKeys: Object.keys(inventoryOrders[0]).filter(
+                    (key) =>
+                      key !== "inventoryorderID" &&
+                      key !== "supplierID" &&
+                      key !== "restaurantID" &&
+                      key !== "employeeID"
+                  ),
+                  tableName: "inventoryorder",
+                  id: inventoryItem.inventoryID,
+                  lastID: Math.max(
+                    ...allOrders.map((item) => item.inventoryorderID)
+                  ),
+                },
+              })
+            }}
+          >
+            <img alt="Plus Icon" src={PlusIcon} width={20} height={20} />
+          </button>
         </div>
         <Table data={inventoryOrders} tableName="inventoryorderitem" />
       </div>
