@@ -39,12 +39,7 @@ app.get("/", (req, res) => {
 
 // restaurants
 app.get("/restaurants", (req, res) => {
-  const sql = `
-    SELECT 
-      *
-    FROM
-      restaurant`
-  db.query(sql, (err, result) => {
+  db.query("SELECT * FROM restaurant", (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
       return res.status(500).json({ message: "Server error" })
@@ -54,109 +49,94 @@ app.get("/restaurants", (req, res) => {
 })
 
 app.get("/get_restaurant_by_name/:restaurantName", (req, res) => {
-  const { restaurantName } = req.params
-  const sql = `
-    SELECT
-      *
-    FROM
-      restaurant
-    WHERE
-      name = ?`
-  db.query(sql, [restaurantName], (err, result) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+  db.query(
+    "SELECT * FROM restaurant WHERE name = ?",
+    [req.params.restaurantName],
+    (err, result) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json(result)
     }
-    res.json(result)
-  })
+  )
 })
 
 app.get("/get_restaurant_by_id/:restaurantID", (req, res) => {
-  const { restaurantID } = req.params
-  const sql = `
-    SELECT
-      *
-    FROM
-      restaurant
-    WHERE
-      restaurantID = ?`
-  db.query(sql, [restaurantID], (err, result) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+  db.query(
+    "SELECT * FROM restaurant WHERE restaurantID = ?",
+    [req.params.restaurantID],
+    (err, result) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json(result)
     }
-    res.json(result)
-  })
+  )
 })
 
 app.delete("/delete_restaurant/:id", (req, res) => {
   const { id } = req.params
-  const deleteMenuItemSql = `
-    DELETE FROM 
-      menuitem
-    WHERE
-      restaurantID = ?`
-  const deleteEmployeeSql = `
-    DELETE FROM
-      employee
-    WHERE
-      restaurantID = ?`
-  const deleteRestaurantSql = `
-    DELETE FROM
-      restaurant
-    WHERE
-      restaurantID = ?`
-  const deleteInventorySql = `
-    DELETE FROM
-      inventory
-    WHERE
-      inventoryID = ?`
-  const deleteInventoryOrderItemSql = `
-    DELETE FROM
-      inventoryorderitem
-    WHERE
-      inventoryID = ?`
-  db.query(deleteInventoryOrderItemSql, [id], (err) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
-    }
-
-    db.query(deleteInventorySql, [id], (err) => {
+  db.query(
+    "DELETE FROM inventoryorderitem WHERE inventoryID = ?",
+    [id],
+    (err) => {
       if (err) {
         console.error("Error executing query:", err)
         return res.status(500).json({ message: "Server error" })
       }
 
-      db.query(deleteEmployeeSql, [id], (err) => {
-        if (err) {
-          console.error("Error executing query:", err)
-          return res.status(500).json({ message: "Server error" })
-        }
-
-        db.query(deleteMenuItemSql, [id], (err) => {
+      db.query(
+        "DELETE FROM inventoryorder WHERE inventoryID = ?",
+        [id],
+        (err) => {
           if (err) {
             console.error("Error executing query:", err)
             return res.status(500).json({ message: "Server error" })
           }
 
-          db.query(deleteRestaurantSql, [id], (err) => {
-            if (err) {
-              console.error("Error executing query:", err)
-              return res.status(500).json({ message: "Server error" })
-            }
+          db.query(
+            "DELETE FROM employee WHERE restaurantID = ?",
+            [id],
+            (err) => {
+              if (err) {
+                console.error("Error executing query:", err)
+                return res.status(500).json({ message: "Server error" })
+              }
 
-            res.json({ success: "Restaurant deleted successfully" })
-          })
-        })
-      })
-    })
-  })
+              db.query(
+                "DELETE FROM menuitem WHERE restaurantID = ?",
+                [id],
+                (err) => {
+                  if (err) {
+                    console.error("Error executing query:", err)
+                    return res.status(500).json({ message: "Server error" })
+                  }
+
+                  db.query(
+                    "DELETE FROM restaurant WHERE restaurantID = ?",
+                    [id],
+                    (err) => {
+                      if (err) {
+                        console.error("Error executing query:", err)
+                        return res.status(500).json({ message: "Server error" })
+                      }
+
+                      res.json({ success: "Restaurant deleted successfully" })
+                    }
+                  )
+                }
+              )
+            }
+          )
+        }
+      )
+    }
+  )
 })
 
 app.post("/add_restaurant", (req, res) => {
-  const sql =
-    "INSERT INTO restaurant (restaurantID, name, address, phone, rating) VALUES (?, ?, ?, ?, ?)"
   const values = [
     req.body.restaurantID,
     req.body.name,
@@ -164,20 +144,23 @@ app.post("/add_restaurant", (req, res) => {
     req.body.phone,
     req.body.rating,
   ]
-  db.query(sql, values, (err) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+  db.query(
+    "INSERT INTO restaurant (restaurantID, name, address, phone, rating) VALUES (?, ?, ?, ?, ?)",
+    values,
+    (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Restaurant added successfully!" })
     }
-    res.json({ success: "Restaurant added successfully!" })
-  })
+  )
 })
 
 // menu
 app.get("/get_menu/:restaurantName", (req, res) => {
-  const { restaurantName } = req.params
-  const sql = `
-    SELECT 
+  db.query(
+    `SELECT 
       *
     FROM 
       menuitem
@@ -188,53 +171,56 @@ app.get("/get_menu/:restaurantName", (req, res) => {
           FROM
             restaurant 
           WHERE 
-            name = ?)`
-  db.query(sql, [restaurantName], (err, result) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+            name = ?)`,
+    [req.params.restaurantName],
+    (err, result) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json(result)
     }
-    res.json(result)
-  })
+  )
 })
 
 app.get("/get_menu_by_id/:restaurantID", (req, res) => {
-  const { restaurantID } = req.params
-  const sql = `
-    SELECT 
+  db.query(
+    `SELECT 
       *
     FROM 
       menuitem
     WHERE 
-      restaurantID = ?`
-  db.query(sql, [restaurantID], (err, result) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+      restaurantID = ?`,
+    [req.params.restaurantID],
+    (err, result) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json(result)
     }
-    res.json(result)
-  })
+  )
 })
 
 app.delete("/delete_menuitem/:id", (req, res) => {
-  const { id } = req.params
-  const sql = `
-    DELETE FROM
-      menuitem
-    WHERE
-      menuitemID = ?`
-  db.query(sql, [id], (err) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+  db.query(
+    `DELETE FROM
+        menuitem
+      WHERE
+        menuitemID = ?`,
+    [req.params.id],
+    (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Menu item deleted successfully" })
     }
-    res.json({ success: "Menu item deleted successfully" })
-  })
+  )
 })
 
 app.get("/menuitems", (req, res) => {
-  const sql = "SELECT * FROM menuitem"
-  db.query(sql, (err, result) => {
+  db.query("SELECT * FROM menuitem", (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
       return res.status(500).json({ message: "Server error" })
@@ -244,32 +230,28 @@ app.get("/menuitems", (req, res) => {
 })
 
 app.post("/add_menuitem", (req, res) => {
-  const sql =
-    "INSERT INTO menuitem (menuitemID, name, price, description, restaurantID) VALUES (?, ?, ?, ?, ?)"
-  const values = [
-    req.body.menuitemID,
-    req.body.name,
-    req.body.price,
-    req.body.description,
-    req.body.restaurantID,
-  ]
-  db.query(sql, values, (err) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+  db.query(
+    "INSERT INTO menuitem (menuitemID, name, price, description, restaurantID) VALUES (?, ?, ?, ?, ?)",
+    [
+      req.body.menuitemID,
+      req.body.name,
+      req.body.price,
+      req.body.description,
+      req.body.restaurantID,
+    ],
+    (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Menu item added successfully!" })
     }
-    res.json({ success: "Menu item added successfully!" })
-  })
+  )
 })
 
 // customers
 app.get("/customers", (req, res) => {
-  const sql = `
-    SELECT 
-      *
-    FROM
-      customer`
-  db.query(sql, (err, result) => {
+  db.query("SELECT * FROM customer", (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
       return res.status(500).json({ message: "Server error" })
@@ -279,27 +261,23 @@ app.get("/customers", (req, res) => {
 })
 
 app.get("/get_customer/:name", (req, res) => {
-  const { name } = req.params
-  const sql = `
-    SELECT 
-      *
-    FROM
-      customer
-    WHERE
-      name = ?`
-  db.query(sql, [name], (err, result) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+  db.query(
+    "SELECT * FROM customer WHERE name = ?",
+    [req.params.name],
+    (err, result) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json(result)
     }
-    res.json(result)
-  })
+  )
 })
 
 app.delete("/delete_customer/:id", (req, res) => {
   const { id } = req.params
-  const deleteCustomerOrderItemSql = `
-    DELETE FROM
+  db.query(
+    `DELETE FROM
       customerorderitem
     WHERE
       customerorderID IN (
@@ -308,65 +286,61 @@ app.delete("/delete_customer/:id", (req, res) => {
         FROM
           customerorder
         WHERE
-          customerID = ?)`
-  const deleteCustomerOrderSql = `
-    DELETE FROM
-      customerorder
-    WHERE
-      customerID = ?`
-  const deleteCustomerSql = `
-    DELETE FROM
-      customer
-    WHERE
-      customerID = ?`
-  db.query(deleteCustomerOrderItemSql, [id], (err) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
-    }
-
-    db.query(deleteCustomerOrderSql, [id], (err) => {
+          customerID = ?)`,
+    [id],
+    (err) => {
       if (err) {
         console.error("Error executing query:", err)
         return res.status(500).json({ message: "Server error" })
       }
 
-      db.query(deleteCustomerSql, [id], (err) => {
-        if (err) {
-          console.error("Error executing query:", err)
-          return res.status(500).json({ message: "Server error" })
-        }
+      db.query(
+        "DELETE FROM customerorder WHERE customerID = ?",
+        [id],
+        (err) => {
+          if (err) {
+            console.error("Error executing query:", err)
+            return res.status(500).json({ message: "Server error" })
+          }
 
-        res.json({ success: "Customer deleted successfully" })
-      })
-    })
-  })
+          db.query("DELETE FROM customer WHERE customerID = ?", [id], (err) => {
+            if (err) {
+              console.error("Error executing query:", err)
+              return res.status(500).json({ message: "Server error" })
+            }
+
+            res.json({ success: "Customer deleted successfully" })
+          })
+        }
+      )
+    }
+  )
 })
 
 app.post("/add_customer", (req, res) => {
-  const sql =
-    "INSERT INTO customer (customerID, name, email, phone, address) VALUES (?, ?, ?, ?, ?)"
-  const values = [
-    req.body.customerID,
-    req.body.name,
-    req.body.email,
-    req.body.phone,
-    req.body.address,
-  ]
-  db.query(sql, values, (err) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+  db.query(
+    "INSERT INTO customer (customerID, name, email, phone, address) VALUES (?, ?, ?, ?, ?)",
+    [
+      req.body.customerID,
+      req.body.name,
+      req.body.email,
+      req.body.phone,
+      req.body.address,
+    ],
+    (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Customer added successfully!" })
     }
-    res.json({ success: "Customer added successfully!" })
-  })
+  )
 })
 
 // customer orders
 app.get("/customerorders/:custid", (req, res) => {
-  const { custid } = req.params
-  const sql = `
-    SELECT
+  db.query(
+    `SELECT
       co.*,
       (SELECT
           r.name
@@ -385,21 +359,22 @@ app.get("/customerorders/:custid", (req, res) => {
     FROM
       customerorder co
     WHERE
-      co.customerID = ?;`
-  db.query(sql, [custid], (err, result) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+      co.customerID = ?;`,
+    [req.params.custid],
+    (err, result) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json(result)
     }
-    res.json(result)
-  })
+  )
 })
 
 // customer order
 app.get("/customerorder/:id", (req, res) => {
-  const { id } = req.params
-  const sql = `
-    SELECT 
+  db.query(
+    `SELECT 
       co.*,
       (SELECT
         c.name
@@ -425,48 +400,47 @@ app.get("/customerorder/:id", (req, res) => {
     FROM
       customerorder co
     WHERE
-      co.customerorderID = ?;`
-  db.query(sql, [id], (err, result) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+      co.customerorderID = ?;`,
+    [req.params.id],
+    (err, result) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json(result)
     }
-    res.json(result)
-  })
+  )
 })
 
 app.delete("/delete_customerorder/:id", (req, res) => {
   const { id } = req.params
-  const deleteCustomerOrderItemSql = `
-    DELETE FROM
-      customerorderitem
-    WHERE
-      customerorderID = ?`
-  const deleteCustomerOrderSql = `
-    DELETE FROM
-      customerorder
-    WHERE
-      customerorderID = ?`
-  db.query(deleteCustomerOrderItemSql, [id], (err) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
-    }
-
-    db.query(deleteCustomerOrderSql, [id], (err) => {
+  db.query(
+    "DELETE FROM customerorderitem WHERE customerorderID = ?",
+    [id],
+    (err) => {
       if (err) {
         console.error("Error executing query:", err)
         return res.status(500).json({ message: "Server error" })
       }
 
-      res.json({ success: "Customer order deleted successfully" })
-    })
-  })
+      db.query(
+        "DELETE FROM customerorder WHERE customerorderID = ?",
+        [id],
+        (err) => {
+          if (err) {
+            console.error("Error executing query:", err)
+            return res.status(500).json({ message: "Server error" })
+          }
+
+          res.json({ success: "Customer order deleted successfully" })
+        }
+      )
+    }
+  )
 })
 
 app.get("/customerorders", (req, res) => {
-  const sql = "SELECT * FROM customerorder"
-  db.query(sql, (err, result) => {
+  db.query("SELECT * FROM customerorder", (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
       return res.status(500).json({ message: "Server error" })
@@ -476,27 +450,6 @@ app.get("/customerorders", (req, res) => {
 })
 
 app.post("/add_customerorder", (req, res) => {
-  const {
-    customerID,
-    date,
-    customerorderID,
-    items,
-    restaurantID,
-    paymentStatus,
-    deliveryStatus,
-    employeeID,
-  } = req.body
-
-  const orderSql = `
-    INSERT INTO customerorder (customerorderID, customerID, restaurantID, date, paymentStatus, deliveryStatus, employeeID)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `
-
-  const itemSql = `
-    INSERT INTO customerorderitem (customerorderID, menuitemID, quantity)
-    VALUES (?, ?, ?)
-  `
-
   db.beginTransaction((err) => {
     if (err) {
       return res
@@ -505,15 +458,15 @@ app.post("/add_customerorder", (req, res) => {
     }
 
     db.query(
-      orderSql,
+      "INSERT INTO customerorder (customerorderID, customerID, restaurantID, date, paymentStatus, deliveryStatus, employeeID) VALUES (?, ?, ?, ?, ?, ?, ?)",
       [
-        customerorderID,
-        customerID,
-        restaurantID,
-        date,
-        paymentStatus,
-        deliveryStatus,
-        employeeID,
+        req.body.customerorderID,
+        req.body.customerID,
+        req.body.restaurantID,
+        req.body.date,
+        req.body.paymentStatus,
+        req.body.deliveryStatus,
+        req.body.employeeID,
       ],
       (err) => {
         if (err) {
@@ -524,23 +477,26 @@ app.post("/add_customerorder", (req, res) => {
           })
         }
 
-        const orderItems = items.map((item) => [
-          customerorderID,
-          item.menuitemID,
-          item.quantity,
-        ])
-
-        // Using a nested query for each order item
-        const itemQueries = orderItems.map((orderItem) => {
-          return new Promise((resolve, reject) => {
-            db.query(itemSql, orderItem, (err) => {
-              if (err) {
-                return reject(err)
-              }
-              resolve()
+        const itemQueries = req.body.items
+          .map((item) => [
+            req.body.customerorderID,
+            item.menuitemID,
+            item.quantity,
+          ])
+          .map((orderItem) => {
+            return new Promise((resolve, reject) => {
+              db.query(
+                "INSERT INTO customerorderitem (customerorderID, menuitemID, quantity) VALUES (?, ?, ?)",
+                orderItem,
+                (err) => {
+                  if (err) {
+                    return reject(err)
+                  }
+                  resolve()
+                }
+              )
             })
           })
-        })
 
         Promise.all(itemQueries)
           .then(() => {
@@ -569,9 +525,8 @@ app.post("/add_customerorder", (req, res) => {
 
 // customer order item
 app.get("/get_customerorderitems/:orderId", (req, res) => {
-  const { orderId } = req.params
-  const sql = `
-    SELECT
+  db.query(
+    `SELECT
       c.*,
       (SELECT
         m.name
@@ -583,55 +538,49 @@ app.get("/get_customerorderitems/:orderId", (req, res) => {
     FROM 
       customerorderitem c
     WHERE 
-      c.customerorderID = ?`
-  db.query(sql, [orderId], (err, result) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+      c.customerorderID = ?`,
+    [req.params.orderId],
+    (err, result) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json(result)
     }
-    res.json(result)
-  })
+  )
 })
 
 app.delete("/delete_customerorderitem/:orderId/:itemId", (req, res) => {
-  const { orderId, itemId } = req.params
-  const sql = `
-    DELETE FROM
-      customerorderitem
-    WHERE
-      customerorderID = ?
-        AND
-      menuitemID = ?`
-  db.query(sql, [orderId, itemId], (err) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+  db.query(
+    "DELETE FROM customerorderitem WHERE customerorderID = ? AND menuitemID = ?",
+    [req.params.orderId, req.params.itemId],
+    (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Customer order item deleted successfully!" })
     }
-    res.json({ success: "Customer order item deleted successfully!" })
-  })
+  )
 })
 
 app.post("/add_customerorderitem", (req, res) => {
-  const { customerorderID, menuitemID, quantity } = req.body
-  const sql =
-    "INSERT INTO customerorderitem (customerorderID, menuitemID, quantity) VALUES (?, ?, ?)"
-  db.query(sql, [customerorderID, menuitemID, quantity], (err) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+  db.query(
+    "INSERT INTO customerorderitem (customerorderID, menuitemID, quantity) VALUES (?, ?, ?)",
+    [req.body.customerorderID, req.body.menuitemID, req.body.quantity],
+    (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Customer order item added successfully!" })
     }
-    res.json({ success: "Customer order item added successfully!" })
-  })
+  )
 })
 
 // employees
 app.get("/employees", (req, res) => {
-  const sql = `
-    SELECT 
-      *
-    FROM
-      employeesview`
-  db.query(sql, (err, result) => {
+  db.query("SELECT * FROM employeesview", (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
       return res.status(500).json({ message: "Server error" })
@@ -641,9 +590,8 @@ app.get("/employees", (req, res) => {
 })
 
 app.get("/get_employee/:employeeName", (req, res) => {
-  const { employeeName } = req.params
-  const sql = `
-    SELECT 
+  db.query(
+    `SELECT 
       e.*,
       (SELECT
         r.name
@@ -655,20 +603,21 @@ app.get("/get_employee/:employeeName", (req, res) => {
     FROM 
       employee e
     WHERE 
-      e.name = ?`
-  db.query(sql, [employeeName], (err, result) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+      e.name = ?`,
+    [req.params.employeeName],
+    (err, result) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json(result)
     }
-    res.json(result)
-  })
+  )
 })
 
 app.get("/get_employeeorders/:employeeID", (req, res) => {
-  const { employeeID } = req.params
-  const sql = `
-    SELECT 
+  db.query(
+    `SELECT 
       co.*,
       (SELECT
           c.name
@@ -687,119 +636,95 @@ app.get("/get_employeeorders/:employeeID", (req, res) => {
     FROM 
       customerorder co
     WHERE 
-      co.employeeID = ?`
-  db.query(sql, [employeeID], (err, result) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
-    }
-    res.json(result)
-  })
-})
-
-app.delete("/delete_employee/:id", (req, res) => {
-  const { id } = req.params
-  const deleteInventoryOrderSql = `
-    DELETE FROM
-      inventoryorder
-    WHERE
-      employeeID = ?`
-  const deleteCustomerOrderItemSql = `
-    DELETE FROM 
-      customerorderitem 
-    WHERE
-      customerorderID IN 
-        (SELECT
-            customerorderID
-          FROM
-            customerorder
-          WHERE
-            customerID = ?)`
-  const deleteCustomerOrderSql = `
-    DELETE FROM
-      customerorder
-    WHERE
-      customerID = ?`
-  const deleteEmployeeSql = `
-    DELETE FROM
-      employee
-    WHERE
-      employeeID = ?`
-
-  db.query(deleteInventoryOrderSql, [id], (err) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
-    }
-
-    db.query(deleteCustomerOrderItemSql, [id], (err) => {
+      co.employeeID = ?`,
+    [req.params.employeeID],
+    (err, result) => {
       if (err) {
         console.error("Error executing query:", err)
         return res.status(500).json({ message: "Server error" })
       }
+      res.json(result)
+    }
+  )
+})
 
-      db.query(deleteCustomerOrderSql, [id], (err) => {
+app.delete("/delete_employee/:id", (req, res) => {
+  const { id } = req.params
+  db.query("DELETE FROM inventoryorder WHERE employeeID = ?", [id], (err) => {
+    if (err) {
+      console.error("Error executing query:", err)
+      return res.status(500).json({ message: "Server error" })
+    }
+
+    db.query(
+      `DELETE FROM 
+          customerorderitem 
+        WHERE
+          customerorderID IN 
+            (SELECT
+                customerorderID
+              FROM
+                customerorder
+              WHERE
+                customerID = ?)`,
+      [id],
+      (err) => {
         if (err) {
           console.error("Error executing query:", err)
           return res.status(500).json({ message: "Server error" })
         }
 
-        db.query(deleteEmployeeSql, [id], (err) => {
-          if (err) {
-            console.error("Error executing query:", err)
-            return res.status(500).json({ message: "Server error" })
-          }
+        db.query(
+          "DELETE FROM customerorder WHERE customerID = ?",
+          [id],
+          (err) => {
+            if (err) {
+              console.error("Error executing query:", err)
+              return res.status(500).json({ message: "Server error" })
+            }
 
-          res.json({ success: "Employee deleted successfully" })
-        })
-      })
-    })
+            db.query(
+              "DELETE FROM employee WHERE employeeID = ?",
+              [id],
+              (err) => {
+                if (err) {
+                  console.error("Error executing query:", err)
+                  return res.status(500).json({ message: "Server error" })
+                }
+
+                res.json({ success: "Employee deleted successfully" })
+              }
+            )
+          }
+        )
+      }
+    )
   })
 })
 
 app.post("/add_employee", (req, res) => {
-  const sql =
-    "INSERT INTO employee (employeeID, name, role, phone, address, salary, restaurantID) VALUES (?, ?, ?, ?, ?, ?, ?)"
-  const values = [
-    req.body.employeeID,
-    req.body.name,
-    req.body.role,
-    req.body.phone,
-    req.body.address,
-    req.body.salary,
-    req.body.restaurantID,
-  ]
-  db.query(sql, values, (err) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+  db.query(
+    "INSERT INTO employee (employeeID, name, role, phone, address, salary, restaurantID) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    [
+      req.body.employeeID,
+      req.body.name,
+      req.body.role,
+      req.body.phone,
+      req.body.address,
+      req.body.salary,
+      req.body.restaurantID,
+    ],
+    (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Employee added successfully!" })
     }
-    res.json({ success: "Employee added successfully!" })
-  })
+  )
 })
 
 app.post("/add_employeeorder", (req, res) => {
-  const {
-    customerID,
-    date,
-    customerorderID,
-    items,
-    restaurantID,
-    paymentStatus,
-    deliveryStatus,
-    employeeID,
-  } = req.body
-
-  const orderSql = `
-    INSERT INTO customerorder (customerorderID, customerID, restaurantID, date, paymentStatus, deliveryStatus, employeeID)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `
-
-  const itemSql = `
-    INSERT INTO customerorderitem (customerorderID, menuitemID, quantity)
-    VALUES (?, ?, ?)
-  `
-
   db.beginTransaction((err) => {
     if (err) {
       return res
@@ -808,15 +733,15 @@ app.post("/add_employeeorder", (req, res) => {
     }
 
     db.query(
-      orderSql,
+      "INSERT INTO customerorder (customerorderID, customerID, restaurantID, date, paymentStatus, deliveryStatus, employeeID) VALUES (?, ?, ?, ?, ?, ?, ?)",
       [
-        customerorderID,
-        customerID,
-        restaurantID,
-        date,
-        paymentStatus,
-        deliveryStatus,
-        employeeID,
+        req.body.customerorderID,
+        req.body.customerID,
+        req.body.restaurantID,
+        req.body.date,
+        req.body.paymentStatus,
+        req.body.deliveryStatus,
+        req.body.employeeID,
       ],
       (err) => {
         if (err) {
@@ -827,23 +752,26 @@ app.post("/add_employeeorder", (req, res) => {
           })
         }
 
-        const orderItems = items.map((item) => [
-          customerorderID,
-          item.menuitemID,
-          item.quantity,
-        ])
-
-        // Using a nested query for each order item
-        const itemQueries = orderItems.map((orderItem) => {
-          return new Promise((resolve, reject) => {
-            db.query(itemSql, orderItem, (err) => {
-              if (err) {
-                return reject(err)
-              }
-              resolve()
+        const itemQueries = req.body.items
+          .map((item) => [
+            req.body.customerorderID,
+            item.menuitemID,
+            item.quantity,
+          ])
+          .map((orderItem) => {
+            return new Promise((resolve, reject) => {
+              db.query(
+                "INSERT INTO customerorderitem (customerorderID, menuitemID, quantity) VALUES (?, ?, ?)",
+                orderItem,
+                (err) => {
+                  if (err) {
+                    return reject(err)
+                  }
+                  resolve()
+                }
+              )
             })
           })
-        })
 
         Promise.all(itemQueries)
           .then(() => {
@@ -872,8 +800,8 @@ app.post("/add_employeeorder", (req, res) => {
 
 // inventory
 app.get("/inventory", (req, res) => {
-  const sql = `
-    SELECT 
+  db.query(
+    `SELECT 
       i.*,
       (SELECT
           r.name
@@ -883,20 +811,20 @@ app.get("/inventory", (req, res) => {
           r.restaurantID = i.restaurantID
       ) AS restaurantName
     FROM 
-      inventory i;`
-  db.query(sql, (err, result) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+      inventory i;`,
+    (err, result) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json(result)
     }
-    res.json(result)
-  })
+  )
 })
 
 app.get("/get_inventoryItem/:inventoryName", (req, res) => {
-  const { inventoryName } = req.params
-  const sql = `
-    SELECT 
+  db.query(
+    `SELECT 
       i.*,
       (SELECT
           r.name
@@ -908,61 +836,63 @@ app.get("/get_inventoryItem/:inventoryName", (req, res) => {
     FROM 
       inventory i
     WHERE 
-      i.name = ?`
-  db.query(sql, [inventoryName], (err, result) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
-    }
-    res.json(result)
-  })
-})
-
-app.delete("/delete_inventory/:id", (req, res) => {
-  const { id } = req.params
-  const deleteInventoryOrderItemSql = `
-    DELETE FROM
-      inventoryorderitem
-    WHERE
-      inventoryID = ?`
-  const deleteInventorySql = `
-    DELETE FROM
-      inventory
-    WHERE
-      inventoryID = ?`
-  db.query(deleteInventoryOrderItemSql, [id], (err) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
-    }
-    db.query(deleteInventorySql, [id], (err) => {
+      i.name = ?`,
+    [req.params.inventoryName],
+    (err, result) => {
       if (err) {
         console.error("Error executing query:", err)
         return res.status(500).json({ message: "Server error" })
       }
+      res.json(result)
+    }
+  )
+})
 
-      res.json({ success: "Inventory deleted successfully" })
-    })
-  })
+app.delete("/delete_inventory/:id", (req, res) => {
+  const { id } = req.params
+  db.query(
+    "DELETE FROM inventoryorderitem WHERE inventoryID = ?",
+    [id],
+    (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      db.query("DELETE FROM inventory WHERE inventoryID = ?", [id], (err) => {
+        if (err) {
+          console.error("Error executing query:", err)
+          return res.status(500).json({ message: "Server error" })
+        }
+
+        res.json({ success: "Inventory deleted successfully" })
+      })
+    }
+  )
 })
 
 app.post("/add_inventory", (req, res) => {
-  const { inventoryID, name, quantity, restaurantID } = req.body
-  const sql =
-    "INSERT INTO inventory (inventoryID, name, quantity, restaurantID) VALUES (?, ?, ?, ?)"
-  db.query(sql, [inventoryID, name, quantity, restaurantID], (err) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+  db.query(
+    "INSERT INTO inventory (inventoryID, name, quantity, restaurantID) VALUES (?, ?, ?, ?)",
+    [
+      req.body.inventoryID,
+      req.body.name,
+      req.body.quantity,
+      req.body.restaurantID,
+    ],
+    (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Inventory added successfully!" })
     }
-    res.json({ success: "Inventory added successfully!" })
-  })
+  )
 })
 
 // inventory orders
 app.get("/get_inventoryorders", (req, res) => {
-  const sql = `
-    SELECT 
+  db.query(
+    `SELECT 
       *,
       (SELECT
           r.name
@@ -988,20 +918,20 @@ app.get("/get_inventoryorders", (req, res) => {
     FROM 
       inventoryorderitem ioi
     JOIN 
-      inventoryorder io ON ioi.inventoryorderID = io.inventoryorderID`
-  db.query(sql, (err, result) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+      inventoryorder io ON ioi.inventoryorderID = io.inventoryorderID`,
+    (err, result) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json(result)
     }
-    res.json(result)
-  })
+  )
 })
 
 app.get("/get_inventoryorders/:inventoryID", (req, res) => {
-  const { inventoryID } = req.params
-  const sql = `
-    SELECT 
+  db.query(
+    `SELECT 
       *,
       (SELECT
           r.name
@@ -1029,20 +959,21 @@ app.get("/get_inventoryorders/:inventoryID", (req, res) => {
     JOIN 
       inventoryorder io ON ioi.inventoryorderID = io.inventoryorderID
     WHERE 
-      ioi.inventoryID = ?`
-  db.query(sql, [inventoryID], (err, result) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+      ioi.inventoryID = ?`,
+    [req.params.inventoryID],
+    (err, result) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json(result)
     }
-    res.json(result)
-  })
+  )
 })
 
 app.get("/get_inventoryorders_by_supplier/:supplierID", (req, res) => {
-  const { supplierID } = req.params
-  const sql = `
-    SELECT
+  db.query(
+    `SELECT
       *,
       (SELECT
           r.name
@@ -1061,20 +992,21 @@ app.get("/get_inventoryorders_by_supplier/:supplierID", (req, res) => {
     FROM
       inventoryorder io
     WHERE 
-      io.supplierID = ?`
-  db.query(sql, [supplierID], (err, result) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+      io.supplierID = ?`,
+    [req.params.supplierID],
+    (err, result) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json(result)
     }
-    res.json(result)
-  })
+  )
 })
 
 app.get("/get_inventoryorder/:orderID", (req, res) => {
-  const { orderID } = req.params
-  const sql = `
-    SELECT 
+  db.query(
+    `SELECT 
       *,
       (SELECT
           r.name
@@ -1100,14 +1032,16 @@ app.get("/get_inventoryorder/:orderID", (req, res) => {
     FROM 
       inventoryorder io
     WHERE 
-      io.inventoryorderID = ?`
-  db.query(sql, [orderID], (err, result) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+      io.inventoryorderID = ?`,
+    [req.params.orderID],
+    (err, result) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json(result)
     }
-    res.json(result)
-  })
+  )
 })
 
 app.post("/add_inventoryorder", (req, res) => {
@@ -1118,65 +1052,63 @@ app.post("/add_inventoryorder", (req, res) => {
         .json({ message: "Error starting transaction: " + err })
     }
 
-    const inventoryOrderSql =
-      "INSERT INTO inventoryorder (inventoryorderID, supplierID, employeeID, restaurantID, date, paymentStatus, deliveryStatus) VALUES (?, ?, ?, ?, ?, ?, ?)"
-    const inventoryOrderValues = [
-      req.body.inventoryorderID,
-      req.body.supplierID,
-      req.body.employeeID,
-      req.body.restaurantID,
-      req.body.date,
-      req.body.paymentStatus,
-      req.body.deliveryStatus,
-    ]
-
-    db.query(inventoryOrderSql, inventoryOrderValues, (err) => {
-      if (err) {
-        return db.rollback(() => {
-          res
-            .status(500)
-            .json({ message: "Error inserting into inventory order: " + err })
-        })
-      }
-
-      const orderItem = [
+    db.query(
+      "INSERT INTO inventoryorder (inventoryorderID, supplierID, employeeID, restaurantID, date, paymentStatus, deliveryStatus) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [
         req.body.inventoryorderID,
-        req.body.inventoryID,
-        req.body.quantity,
-        req.body.unitPrice,
-      ]
-
-      const inventoryOrderItemSql =
-        "INSERT INTO inventoryorderitem (inventoryOrderID, inventoryID, quantity, unitPrice) VALUES (?, ?, ?, ?)"
-
-      db.query(inventoryOrderItemSql, orderItem, (err) => {
+        req.body.supplierID,
+        req.body.employeeID,
+        req.body.restaurantID,
+        req.body.date,
+        req.body.paymentStatus,
+        req.body.deliveryStatus,
+      ],
+      (err) => {
         if (err) {
           return db.rollback(() => {
-            res.status(500).json({
-              message: "Error inserting into inventory order item: " + err,
-            })
+            res
+              .status(500)
+              .json({ message: "Error inserting into inventory order: " + err })
           })
         }
 
-        db.commit((err) => {
-          if (err) {
-            return db.rollback(() => {
-              res
-                .status(500)
-                .json({ message: "Error committing transaction: " + err })
+        db.query(
+          "INSERT INTO inventoryorderitem (inventoryOrderID, inventoryID, quantity, unitPrice) VALUES (?, ?, ?, ?)",
+          [
+            req.body.inventoryorderID,
+            req.body.inventoryID,
+            req.body.quantity,
+            req.body.unitPrice,
+          ],
+          (err) => {
+            if (err) {
+              return db.rollback(() => {
+                res.status(500).json({
+                  message: "Error inserting into inventory order item: " + err,
+                })
+              })
+            }
+
+            db.commit((err) => {
+              if (err) {
+                return db.rollback(() => {
+                  res
+                    .status(500)
+                    .json({ message: "Error committing transaction: " + err })
+                })
+              }
+              res.json({ success: "Inventory item order added successfully!" })
             })
           }
-          res.json({ success: "Inventory item order added successfully!" })
-        })
-      })
-    })
+        )
+      }
+    )
   })
 })
 
 app.get("/get_inventoryorderitems/:orderId", (req, res) => {
-  const { orderId } = req.params
-  const sql = `
-    SELECT 
+  db.query(
+    `SELECT 
       *, 
       (SELECT
           i.name
@@ -1188,71 +1120,62 @@ app.get("/get_inventoryorderitems/:orderId", (req, res) => {
     FROM 
       inventoryorderitem ioi
     WHERE 
-      ioi.inventoryorderID = ?`
-  db.query(sql, [orderId], (err, result) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+      ioi.inventoryorderID = ?`,
+    [req.params.orderId],
+    (err, result) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json(result)
     }
-    res.json(result)
-  })
+  )
 })
 
 app.delete("/delete_inventoryorder/:id", (req, res) => {
   const { id } = req.params
-  const deleteInventoryOrderItemSql = `
-    DELETE FROM
-      inventoryorderitem
-    WHERE
-      inventoryorderID = ?`
-  const deleteInventoryOrderSql = `
-    DELETE FROM
-      inventoryorder
-    WHERE
-      inventoryorderID = ?`
-  db.query(deleteInventoryOrderItemSql, [id], (err) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
-    }
-
-    db.query(deleteInventoryOrderSql, [id], (err) => {
+  db.query(
+    "DELETE FROM inventoryorderitem WHERE inventoryorderID = ?",
+    [id],
+    (err) => {
       if (err) {
         console.error("Error executing query:", err)
         return res.status(500).json({ message: "Server error" })
       }
 
-      res.json({ success: "Inventory deleted successfully" })
-    })
-  })
+      db.query(
+        "DELETE FROM inventoryorder WHERE inventoryorderID = ?",
+        [id],
+        (err) => {
+          if (err) {
+            console.error("Error executing query:", err)
+            return res.status(500).json({ message: "Server error" })
+          }
+
+          res.json({ success: "Inventory deleted successfully" })
+        }
+      )
+    }
+  )
 })
 
 app.delete("/delete_inventoryorderitem/:orderId/:itemId", (req, res) => {
-  const { orderId, itemId } = req.params
-  const sql = `
-    DELETE FROM
-      inventoryorderitem
-    WHERE
-      inventoryorderID = ?
-        AND
-      inventoryID = ?`
-  db.query(sql, [orderId, itemId], (err) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+  db.query(
+    "DELETE FROM inventoryorderitem WHERE inventoryorderID = ? AND inventoryID = ?",
+    [req.params.orderId, req.params.itemId],
+    (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Inventory order deleted successfully" })
     }
-    res.json({ success: "Inventory order deleted successfully" })
-  })
+  )
 })
 
 // supplier
 app.get("/suppliers", (req, res) => {
-  const sql = `
-    SELECT 
-      *
-    FROM
-      supplier`
-  db.query(sql, (err, result) => {
+  db.query("SELECT * FROM supplier", (err, result) => {
     if (err) {
       console.error("Error executing query:", err)
       return res.status(500).json({ message: "Server error" })
@@ -1262,42 +1185,28 @@ app.get("/suppliers", (req, res) => {
 })
 
 app.get("/get_supplier/:supplierName", (req, res) => {
-  const { supplierName } = req.params
-  const sql = `
-    SELECT 
-      *
-    FROM
-      supplier
-    WHERE
-      name = ?`
-  db.query(sql, [supplierName], (err, result) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+  db.query(
+    "SELECT * FROM supplier WHERE name = ?",
+    [req.params.supplierName],
+    (err, result) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json(result)
     }
-    res.json(result)
-  })
+  )
 })
 
 app.delete("/delete_supplier/:id", (req, res) => {
   const { id } = req.params
-  const deleteInventoryOrderSql = `
-    DELETE FROM
-      inventoryorder
-    WHERE
-      supplierID = ?`
-  const deleteSupplierSql = `
-    DELETE FROM
-      supplier
-    WHERE
-      supplierID = ?`
-  db.query(deleteInventoryOrderSql, [id], (err) => {
+  db.query("DELETE FROM inventoryorder WHERE supplierID = ?", [id], (err) => {
     if (err) {
       console.error("Error executing query:", err)
       return res.status(500).json({ message: "Server error" })
     }
 
-    db.query(deleteSupplierSql, [id], (err) => {
+    db.query("DELETE FROM supplier WHERE supplierID = ?", [id], (err) => {
       if (err) {
         console.error("Error executing query:", err)
         return res.status(500).json({ message: "Server error" })
@@ -1308,10 +1217,8 @@ app.delete("/delete_supplier/:id", (req, res) => {
 })
 
 app.post("/add_supplier", (req, res) => {
-  const sql =
-    "INSERT INTO supplier (supplierID, name, contactPerson, phone, address) VALUES (?, ?, ?, ?, ?)"
   db.query(
-    sql,
+    "INSERT INTO supplier (supplierID, name, contactPerson, phone, address) VALUES (?, ?, ?, ?, ?)",
     [
       req.body.supplierID,
       req.body.name,
@@ -1357,29 +1264,29 @@ app.post("/add_supplierorder", (req, res) => {
           })
         }
 
-        const itemQueries = req.body.items
-          .map((item) => [
-            req.body.inventoryorderID,
-            item.inventoryID,
-            item.quantity,
-            item.unitPrice,
-          ])
-          .map((orderItem) => {
-            return new Promise((resolve, reject) => {
-              db.query(
-                "INSERT INTO inventoryorderitem (inventoryorderID, inventoryID, quantity, unitPrice) VALUES (?, ?, ?, ?)",
-                orderItem,
-                (err) => {
-                  if (err) {
-                    return reject(err)
+        Promise.all(
+          req.body.items
+            .map((item) => [
+              req.body.inventoryorderID,
+              item.inventoryID,
+              item.quantity,
+              item.unitPrice,
+            ])
+            .map((orderItem) => {
+              return new Promise((resolve, reject) => {
+                db.query(
+                  "INSERT INTO inventoryorderitem (inventoryorderID, inventoryID, quantity, unitPrice) VALUES (?, ?, ?, ?)",
+                  orderItem,
+                  (err) => {
+                    if (err) {
+                      return reject(err)
+                    }
+                    resolve()
                   }
-                  resolve()
-                }
-              )
+                )
+              })
             })
-          })
-
-        Promise.all(itemQueries)
+        )
           .then(() => {
             db.commit((err) => {
               if (err) {
