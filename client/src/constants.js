@@ -57,3 +57,13 @@ export const formatDate = (dateString) => {
   const [month, day, year] = formattedDate.replace(",", "").split(" ")
   return `${day} ${month} ${year}`
 }
+
+export const displayNames = {
+  inventoryorder: "Inventory Order",
+  inventoryorderitem: "Inventory Order Item",
+  customerorder: "Customer Order",
+  customerorderitem: "Customer Order Item",
+  employeeorder: "Employee Order",
+  supplierorder: "Supplier Order",
+  supplierorderitem: "Supplier Order Item",
+}

@@ -1,26 +1,22 @@
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 
 import axios from "axios"
 
 import { DropDown, Input, InputDropDown } from "../components"
-import { deliverystatus, keyMapping, paymentstatus } from "../constants"
+import {
+  deliverystatus,
+  displayNames,
+  idMap,
+  keyMapping,
+  paymentstatus,
+} from "../constants"
 
 const getNameByID = (id, list, tableName) => {
-  let item = {}
-  if (tableName === "restaurant") {
-    item = list.find((r) => r.restaurantID === id)
-  } else if (tableName === "supplier") {
-    item = list.find((s) => s.supplierID === id)
-  } else if (tableName === "inventory") {
-    item = list.find((i) => i.inventoryID === id)
-  } else if (tableName === "employee") {
-    item = list.find((i) => i.employeeID === id)
-  } else if (tableName === "menuitem") {
-    item = list.find((i) => i.menuitemID === id)
-  } else if (tableName === "customer") {
-    item = list.find((i) => i.customerID === id)
-  }
+  const idField = idMap[tableName]
+  if (!idField) return ""
+
+  const item = list.find((i) => i[idField] === id)
   return item ? item.name : ""
 }
 
@@ -62,7 +58,6 @@ const AddForm = () => {
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: value,
-      // inventoryOrderID: parseInt(id)
     }))
   }
 
@@ -101,121 +96,117 @@ const AddForm = () => {
     }
   }
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
+    const apiMapping = {
+      employee: ["/restaurants"],
+      inventory: ["/restaurants"],
+      inventoryorder: [
+        "/restaurants",
+        "/suppliers",
+        "/employees",
+        "/inventory",
+      ],
+      customerorder: ["/restaurants", "/employees", "/customers"],
+      customerorderitem: [
+        `/get_menu_by_id/${id}`,
+        `/get_customerorderitems/${id}`,
+      ],
+      employeeorder: ["/restaurants", "/employees", "/customers"],
+      supplierorder: [
+        "/restaurants",
+        "/employees",
+        "/customers",
+        "/suppliers",
+        "/inventory",
+      ],
+      supplierorderitem: ["/inventory"],
+    }
+
+    const stateSetters = {
+      "/restaurants": setRestaurants,
+      "/suppliers": setSuppliers,
+      "/employees": setEmployees,
+      "/inventory": setInventory,
+      "/customers": setCustomers,
+    }
+
     try {
-      if (tableName === "employee") {
-        const restRes = await axios.get("/restaurants")
-        setRestaurants(restRes.data)
-      } else if (tableName === "inventory") {
-        const restRes = await axios.get("/restaurants")
-        setRestaurants(restRes.data)
-      } else if (tableName === "inventoryorder") {
-        const restRes = await axios.get("/restaurants")
-        setRestaurants(restRes.data)
-        const suppRes = await axios.get("/suppliers")
-        setSuppliers(suppRes.data)
-        const empRes = await axios.get("/employees")
-        setEmployees(empRes.data)
-        const invRes = await axios.get("/inventory")
-        setInventory(invRes.data)
-      } else if (tableName === "customerorder") {
-        const restRes = await axios.get("/restaurants")
-        setRestaurants(restRes.data)
-        const empRes = await axios.get("/employees")
-        setEmployees(empRes.data)
-        const cusRes = await axios.get("/customers")
-        setCustomers(cusRes.data)
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          date: currentDate,
-          customerID: id,
-          items: [{ menuitemID: 0, quantity: 1 }],
-        }))
-      } else if (tableName === "customerorderitem") {
-        const itemsRes = await axios.get(`/get_menu_by_id/${id}`)
-        console.log(itemsRes.data)
-        const resItems = await axios.get(`/get_customerorderitems/${id}`)
-        console.log(resItems.data)
-        const filteredMenuItems = itemsRes.data.filter(
-          (menuItem) =>
-            !resItems.data.some(
-              (customerOrderItem) =>
-                customerOrderItem.menuitemName === menuItem.name
-            )
-        )
-        setMenuitems(filteredMenuItems)
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          customerorderID: id,
-        }))
-      } else if (tableName === "employeeorder") {
-        const restRes = await axios.get("/restaurants")
-        setRestaurants(restRes.data)
-        const empRes = await axios.get("/employees")
-        setEmployees(empRes.data)
-        const cusRes = await axios.get("/customers")
-        setCustomers(cusRes.data)
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          date: currentDate,
-          employeeID: id,
-          customerorderID: lastID + 1,
-          items: [{ menuitemID: 0, quantity: 1 }],
-        }))
-      } else if (tableName === "supplierorder") {
-        const restRes = await axios.get("/restaurants")
-        setRestaurants(restRes.data)
-        const empRes = await axios.get("/employees")
-        setEmployees(empRes.data)
-        const cusRes = await axios.get("/customers")
-        setCustomers(cusRes.data)
-        const supRes = await axios.get("/suppliers")
-        setSuppliers(supRes.data)
-        const invRes = await axios.get("/inventory")
-        setInventory(invRes.data)
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          items: [{ inventoryID: 0, quantity: 1, unitPrice: 0 }],
-        }))
-      } else if (tableName === "supplierorderitem") {
-        const invRes = await axios.get("/inventory")
-        setInventory(invRes.data)
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          inventoryorderID: id,
-        }))
+      const endpoints = apiMapping[tableName]
+      if (endpoints) {
+        for (const endpoint of endpoints) {
+          const response = await axios.get(endpoint)
+          stateSetters[endpoint](response.data)
+        }
+
+        if (tableName === "customerorder") {
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            date: currentDate,
+            customerID: id,
+            items: [{ menuitemID: 0, quantity: 1 }],
+          }))
+        } else if (tableName === "customerorderitem") {
+          const itemsRes = await axios.get(`/get_menu_by_id/${id}`)
+          const resItems = await axios.get(`/get_customerorderitems/${id}`)
+          const filteredMenuItems = itemsRes.data.filter(
+            (menuItem) =>
+              !resItems.data.some(
+                (customerOrderItem) =>
+                  customerOrderItem.menuitemName === menuItem.name
+              )
+          )
+          setMenuitems(filteredMenuItems)
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            customerorderID: id,
+          }))
+        } else if (tableName === "employeeorder") {
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            date: currentDate,
+            employeeID: id,
+            customerorderID: lastID + 1,
+            items: [{ menuitemID: 0, quantity: 1 }],
+          }))
+        } else if (tableName === "supplierorder") {
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            items: [{ inventoryID: 0, quantity: 1, unitPrice: 0 }],
+          }))
+        } else if (tableName === "supplierorderitem") {
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            inventoryorderID: id,
+          }))
+        }
       }
     } catch (err) {
       console.log(err)
     }
-  }
+  }, [
+    tableName,
+    id,
+    currentDate,
+    lastID,
+    setFormData,
+    setRestaurants,
+    setSuppliers,
+    setEmployees,
+    setInventory,
+    setCustomers,
+    setMenuitems,
+  ])
 
   useEffect(() => {
     fetchData()
-  }, [tableName])
-
-  console.log(formData)
+  }, [tableName, fetchData])
 
   return (
     <div className="pt-10">
       <h1>
         Add to{" "}
-        {tableName === "inventoryorder"
-          ? "Inventory Order"
-          : tableName === "inventoryorderitem"
-            ? "Inventory Order Item"
-            : tableName === "customerorder"
-              ? "Customer Order"
-              : tableName === "customerorderitem"
-                ? "Customer Order Item"
-                : tableName === "employeeorder"
-                  ? "Employee Order"
-                  : tableName === "supplierorder"
-                    ? "Supplier Order"
-                    : tableName === "supplierorderitem"
-                      ? "Supplier Order Item"
-                      : tableName.charAt(0).toUpperCase() +
-                        tableName.slice(1).toLowerCase()}
+        {displayNames[tableName] ||
+          tableName.charAt(0).toUpperCase() + tableName.slice(1).toLowerCase()}
       </h1>
       <form onSubmit={handleSubmit}>
         {toBeAddedKeys &&
