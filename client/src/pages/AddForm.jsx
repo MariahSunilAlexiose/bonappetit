@@ -7,18 +7,10 @@ import { DropDown, Input, InputDropDown } from "../components"
 import {
   deliverystatus,
   displayNames,
-  idMap,
+  getNameByID,
   keyMapping,
   paymentstatus,
 } from "../constants"
-
-const getNameByID = (id, list, tableName) => {
-  const idField = idMap[tableName]
-  if (!idField) return ""
-
-  const item = list.find((i) => i[idField] === id)
-  return item ? item.name : ""
-}
 
 const AddForm = () => {
   const location = useLocation()

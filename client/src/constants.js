@@ -67,3 +67,11 @@ export const displayNames = {
   supplierorder: "Supplier Order",
   supplierorderitem: "Supplier Order Item",
 }
+
+export const getNameByID = (id, list, tableName) => {
+  const idField = idMap[tableName]
+  if (!idField) return ""
+
+  const item = list.find((i) => i[idField] === id)
+  return item ? item.name : ""
+}
