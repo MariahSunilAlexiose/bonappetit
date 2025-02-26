@@ -28,8 +28,8 @@
   },
   "lint-staged": {
     "*": [
-      "yarn lint",
-      "yarn prettier",
+      "eslint --fix",
+      "prettier --write",
       "git add -A"
     ]
   }
