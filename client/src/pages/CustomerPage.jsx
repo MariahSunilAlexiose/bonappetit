@@ -22,11 +22,10 @@ const CustomerPage = () => {
           `/customerorders/${res.data[0].customerID}`
         )
         setOrders(resOrders.data)
-        console.log(resOrders.data)
         const totalNo = await axios.get("/customerorders")
         setLastID(Math.max(...totalNo.data.map((item) => item.customerorderID)))
       } catch (err) {
-        console.log("Error fetching orders:", err)
+        console.log(err)
       }
     }
     fetchData()

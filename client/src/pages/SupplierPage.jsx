@@ -25,7 +25,7 @@ const SupplierPage = () => {
         const all = await axios.get(`/get_inventoryorders`)
         setLastID(Math.max(...all.data.map((item) => item.inventoryorderID)))
       } catch (err) {
-        console.log("Error fetching menu:", err)
+        console.log(err)
       }
     }
     fetchMenuData()

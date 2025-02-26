@@ -31,7 +31,7 @@ const RestaurantPage = () => {
         })
         setMenuTable(updatedMenu)
       } catch (err) {
-        console.log("Error fetching menu:", err)
+        console.log(err)
       }
     }
 
