@@ -377,6 +377,26 @@ app.post("/add_customer", (req, res) => {
   )
 })
 
+app.post("/edit_customer/:id", (req, res) => {
+  db.query(
+    "UPDATE customer SET name = ?, email = ?, phone = ?, address = ? WHERE customerID = ?",
+    [
+      req.body.name,
+      req.body.email,
+      req.body.phone,
+      req.body.address,
+      req.params.id,
+    ],
+    (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Customer updated successfully" })
+    }
+  )
+})
+
 // customer orders
 app.get("/customerorders/:custid", (req, res) => {
   db.query(
