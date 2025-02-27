@@ -277,7 +277,6 @@ const AddForm = () => {
                     label="restaurants"
                     options={restaurants}
                     onChange={handleRestaurantChange}
-                    defaultValue={getNameByID(id, restaurants, "restaurant")}
                   />
                   {restaurant &&
                     (tableName === "customerorder" ||
@@ -554,7 +553,10 @@ const AddForm = () => {
                         supplierID: newSupplierID,
                       }))
                     }}
-                    defaultValue={getNameByID(id, suppliers, "supplier")}
+                    defaultValue={
+                      tableName === "supplierorder" &&
+                      getNameByID(id, suppliers, "supplier")
+                    }
                   />
                 </div>
               ) : key === "inventoryID" || key === "inventoryName" ? (
