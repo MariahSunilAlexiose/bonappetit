@@ -7,6 +7,7 @@ import { DropDown, Input, InputDropDown } from "../components"
 import {
   deliverystatus,
   displayNames,
+  getNameByID,
   keyMapping,
   paymentstatus,
 } from "../constants"
@@ -40,7 +41,8 @@ const EditForm = () => {
         if (
           tableName === "employee" ||
           tableName === "customerorder" ||
-          tableName === "inventory"
+          tableName === "inventory" ||
+          tableName === "menuitem"
         ) {
           const restRes = await axios.get("/restaurants")
           setRestaurants(restRes.data)
@@ -207,13 +209,13 @@ const EditForm = () => {
                     }}
                   />
                 </div>
-              ) : key === "restaurantName" ? (
+              ) : key === "restaurantName" || key === "restaurantID" ? (
                 <div>
                   <label
                     htmlFor="restaurants"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Restaurants
+                    Restaurant
                   </label>
                   <InputDropDown
                     label="restaurants"
@@ -224,10 +226,18 @@ const EditForm = () => {
                         restaurantID: newRestaurantID,
                       }))
                     }}
-                    defaultValue={formData.restaurantName}
+                    defaultValue={
+                      key === "restaurantName"
+                        ? formData.restaurantName
+                        : getNameByID(
+                            formData.restaurantID,
+                            restaurants,
+                            "restaurant"
+                          )
+                    }
                   />
                 </div>
-              ) : key === "employeeName" ? (
+              ) : key === "employeeName" || key === "employeeID" ? (
                 <div>
                   <label
                     htmlFor="employee"
@@ -244,6 +254,15 @@ const EditForm = () => {
                         employeeID: newEmployeeID,
                       }))
                     }}
+                    defaultValue={
+                      key === "employeeName"
+                        ? formData.employeeName
+                        : getNameByID(
+                            formData.employeeID,
+                            employees,
+                            "employee"
+                          )
+                    }
                   />
                 </div>
               ) : key === "customerID" || key === "customerName" ? (
@@ -263,27 +282,15 @@ const EditForm = () => {
                         customerID: newCustomerID,
                       }))
                     }}
-                    defaultValue={formData.customerName}
-                  />
-                </div>
-              ) : key === "employeeID" ? (
-                <div>
-                  <label
-                    htmlFor="employee"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Employee
-                  </label>
-                  <InputDropDown
-                    label="employees"
-                    options={employees}
-                    onChange={(newEmployeeID) => {
-                      setFormData((prevFormData) => ({
-                        ...prevFormData,
-                        employeeID: newEmployeeID,
-                      }))
-                    }}
-                    defaultValue={formData.employeeName}
+                    defaultValue={
+                      key === "customerName"
+                        ? formData.customerName
+                        : getNameByID(
+                            formData.customerID,
+                            customers,
+                            "customer"
+                          )
+                    }
                   />
                 </div>
               ) : key === "supplierID" || key === "supplierName" ? (
@@ -303,7 +310,15 @@ const EditForm = () => {
                         supplierID: newSupplierID,
                       }))
                     }}
-                    defaultValue={formData.supplierName}
+                    defaultValue={
+                      key === "supplierName"
+                        ? formData.supplierName
+                        : getNameByID(
+                            formData.supplierID,
+                            suppliers,
+                            "supplier"
+                          )
+                    }
                   />
                 </div>
               ) : key === "inventoryID" || key === "inventoryName" ? (
@@ -323,10 +338,18 @@ const EditForm = () => {
                         inventoryID: newOrderItemID,
                       }))
                     }}
-                    defaultValue={formData.inventoryName}
+                    defaultValue={
+                      key === "inventoryName"
+                        ? formData.inventoryName
+                        : getNameByID(
+                            formData.inventoryID,
+                            inventory,
+                            "inventory"
+                          )
+                    }
                   />
                 </div>
-              ) : key === "menuitemName" ? (
+              ) : key === "menuitemName" || key === "menuitemID" ? (
                 <div>
                   <label
                     htmlFor="menuitem"
@@ -343,7 +366,15 @@ const EditForm = () => {
                         menuitemID: newMenuItemID,
                       }))
                     }}
-                    defaultValue={formData.menuitemName}
+                    defaultValue={
+                      key === "menuitemName"
+                        ? formData.menuitemName
+                        : getNameByID(
+                            formData.menuitemID,
+                            menuitems,
+                            "menuitem"
+                          )
+                    }
                   />
                 </div>
               ) : key === "quantity" ? (
