@@ -10,7 +10,6 @@ const RestaurantPage = () => {
   const { restaurantName } = useParams()
   const [restaurant, setRestaurant] = useState({})
   const [menu, setMenu] = useState([])
-  const [menuTable, setMenuTable] = useState([])
 
   const navigate = useNavigate()
   const [lastID, setLastID] = useState(0)
@@ -24,12 +23,6 @@ const RestaurantPage = () => {
         setLastID(Math.max(...totalNo.data.map((item) => item.menuitemID)))
         const resMenu = await axios.get(`/get_menu/${restaurantName}`)
         setMenu(resMenu.data)
-        const updatedMenu = resMenu.data.map((item) => {
-          // eslint-disable-next-line no-unused-vars
-          const { restaurantID, ...rest } = item
-          return { ...rest }
-        })
-        setMenuTable(updatedMenu)
       } catch (err) {
         console.log(err)
       }
@@ -54,9 +47,7 @@ const RestaurantPage = () => {
               state: {
                 toBeAddedKeys:
                   menu.length > 0
-                    ? Object.keys(menu[0]).filter(
-                        (key) => key !== "restaurantID" && key !== "menuitemID"
-                      )
+                    ? Object.keys(menu[0]).filter((key) => key !== "menuitemID")
                     : ["name", "price", "description"],
                 lastID: lastID,
                 tableName: "menuitem",
@@ -68,7 +59,7 @@ const RestaurantPage = () => {
           <img alt="Plus Icon" src={PlusIcon} width={20} height={20} />
         </button>
       </div>
-      <Table data={menuTable} tableName="menuitem" />
+      <Table data={menu} tableName="menuitem" />
     </div>
   )
 }

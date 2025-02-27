@@ -112,6 +112,7 @@ const AddForm = () => {
         "/inventory",
       ],
       supplierorderitem: ["/inventory"],
+      menuitem: ["/restaurants"],
     }
 
     const stateSetters = {
@@ -264,7 +265,7 @@ const AddForm = () => {
                     }}
                   />
                 </div>
-              ) : key === "restaurantName" ? (
+              ) : key === "restaurantID" || key === "restaurantName" ? (
                 <div>
                   <label
                     htmlFor="restaurants"
@@ -276,6 +277,7 @@ const AddForm = () => {
                     label="restaurants"
                     options={restaurants}
                     onChange={handleRestaurantChange}
+                    defaultValue={getNameByID(id, restaurants, "restaurant")}
                   />
                   {restaurant &&
                     (tableName === "customerorder" ||

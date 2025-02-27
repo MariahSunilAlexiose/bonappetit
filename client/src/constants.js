@@ -66,6 +66,7 @@ export const displayNames = {
   employeeorder: "Employee Order",
   supplierorder: "Supplier Order",
   supplierorderitem: "Supplier Order Item",
+  menuitem: "Menu Item",
 }
 
 export const getNameByID = (id, list, tableName) => {

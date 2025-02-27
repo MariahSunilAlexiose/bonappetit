@@ -97,6 +97,13 @@ const Table = ({ tableName, data }) => {
       paymentStatus: item.paymentStatus,
       deliveryStatus: item.deliveryStatus,
     }))
+  } else if (tableName === "menuitem") {
+    filteredData = data.map((item) => ({
+      menuitemID: item.menuitemID,
+      name: item.name,
+      price: item.price,
+      description: item.description,
+    }))
   } else {
     filteredData = data
   }
@@ -175,7 +182,7 @@ const Table = ({ tableName, data }) => {
                     navigate("/edit_form", {
                       state: {
                         tableName,
-                        dataToBeUpdated: row,
+                        dataToBeUpdated: data.find((d) => d.id === row.id),
                       },
                     })
                   }}
