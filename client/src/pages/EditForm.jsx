@@ -12,15 +12,12 @@ import {
   paymentstatus,
 } from "../constants"
 
-function formatDate(isoString) {
-  if (!isoString) return "" // Handle cases where isoString is undefined or null
-  const date = new Date(isoString)
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, "0")
-  const day = String(date.getDate()).padStart(2, "0")
-  const hours = String(date.getHours()).padStart(2, "0")
-  const minutes = String(date.getMinutes()).padStart(2, "0")
-  return `${year}-${month}-${day}T${hours}:${minutes}`
+const formatDate = (dateStr) => {
+  const dateObj = new Date(dateStr)
+  const year = dateObj.getFullYear()
+  const month = String(dateObj.getMonth() + 1).padStart(2, "0")
+  const day = String(dateObj.getDate()).padStart(2, "0")
+  return `${year}-${month}-${day}`
 }
 
 const EditForm = () => {
@@ -34,6 +31,7 @@ const EditForm = () => {
   const [employees, setEmployees] = useState([])
   const [formData, setFormData] = useState(dataToBeUpdated)
   const [customers, setCustomers] = useState([])
+  const [isFormatted, setIsFormatted] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -191,21 +189,24 @@ const EditForm = () => {
               ) : key === "date" ? (
                 <div>
                   <label
-                    htmlFor="payment"
+                    htmlFor="date"
                     className="block text-sm font-medium text-gray-700"
                   >
                     Date
                   </label>
                   <Input
-                    type="datetime"
+                    type="date"
                     id="date"
                     name="date"
-                    value={formatDate(formData.date)}
+                    value={
+                      isFormatted ? formatDate(formData.date) : formData.date
+                    }
                     onChange={(e) => {
                       setFormData((prevFormData) => ({
                         ...prevFormData,
                         date: e.target.value,
                       }))
+                      setIsFormatted(false)
                     }}
                   />
                 </div>
