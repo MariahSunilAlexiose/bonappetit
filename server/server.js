@@ -583,6 +583,28 @@ app.post("/add_customerorder", (req, res) => {
   })
 })
 
+app.post("/edit_customerorder/:id", (req, res) => {
+  db.query(
+    "UPDATE customerorder SET customerID = ?, restaurantID = ?, date = ?, paymentStatus = ?, deliveryStatus = ?, employeeID = ? WHERE customerorderID = ?",
+    [
+      req.body.customerID,
+      req.body.restaurantID,
+      req.body.date,
+      req.body.paymentStatus,
+      req.body.deliveryStatus,
+      req.body.employeeID,
+      req.params.id,
+    ],
+    (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Customer order updated successfully" })
+    }
+  )
+})
+
 // customer order item
 app.get("/get_customerorderitems/:orderId", (req, res) => {
   db.query(

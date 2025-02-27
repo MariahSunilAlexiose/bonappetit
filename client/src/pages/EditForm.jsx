@@ -38,7 +38,6 @@ const EditForm = () => {
       try {
         if (
           tableName === "employee" ||
-          tableName === "customerorder" ||
           tableName === "inventory" ||
           tableName === "menuitem"
         ) {
@@ -97,6 +96,18 @@ const EditForm = () => {
             ...restData,
             restaurantID: restRes.data.find((r) => r.name === restaurantName)
               .restaurantID,
+          })
+        } else if (tableName === "customerorder") {
+          const restRes = await axios.get("/restaurants")
+          setRestaurants(restRes.data)
+          const empRes = await axios.get("/employees")
+          setEmployees(empRes.data)
+          const cusRes = await axios.get("/customers")
+          setCustomers(cusRes.data)
+          // eslint-disable-next-line no-unused-vars
+          const { restaurantName, employeeName, ...restData } = dataToBeUpdated
+          setFormData({
+            ...restData,
           })
         }
       } catch (err) {
