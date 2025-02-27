@@ -269,6 +269,26 @@ app.post("/add_menuitem", (req, res) => {
   )
 })
 
+app.post("/edit_menuitem/:id", (req, res) => {
+  db.query(
+    "UPDATE menuitem SET name = ?, price = ?, description = ?, restaurantID = ? WHERE menuitemID = ?",
+    [
+      req.body.name,
+      req.body.price,
+      req.body.description,
+      req.body.restaurantID,
+      req.params.id,
+    ],
+    (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Menu item updated successfully" })
+    }
+  )
+})
+
 // customers
 app.get("/customers", (req, res) => {
   db.query("SELECT * FROM customer", (err, result) => {
