@@ -140,7 +140,8 @@ const EditForm = () => {
       <h1>
         Edit in{" "}
         {displayNames[tableName] ||
-          tableName.charAt(0).toUpperCase() + tableName.slice(1).toLowerCase()}
+          tableName.charAt(0).toUpperCase() +
+            tableName.slice(1).toLowerCase()}{" "}
         Table
       </h1>
       <form onSubmit={handleSubmit}>
@@ -413,7 +414,7 @@ const EditForm = () => {
         <div className="flex justify-end">
           <button
             type="submit"
-            className="mt-4 rounded bg-blue-500 p-2 text-white"
+            className="mr-5 mt-4 rounded bg-blue-500 p-2 text-white"
           >
             Update
           </button>
