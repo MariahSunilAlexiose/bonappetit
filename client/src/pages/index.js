@@ -2,6 +2,7 @@ import AddForm from "./AddForm"
 import CustomerOrder from "./CustomerOrder"
 import CustomerPage from "./CustomerPage"
 import Customers from "./Customers"
+import EditForm from "./EditForm"
 import EmployeePage from "./EmployeePage"
 import Employees from "./Employees"
 import Inventory from "./Inventory"
@@ -13,6 +14,7 @@ import SupplierPage from "./SupplierPage"
 import Suppliers from "./Suppliers"
 
 export {
+  EditForm,
   AddForm,
   SupplierOrder,
   SupplierPage,
