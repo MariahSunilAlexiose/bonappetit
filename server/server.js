@@ -723,39 +723,6 @@ app.get("/get_employee/:employeeName", (req, res) => {
   )
 })
 
-app.get("/get_employeeorders/:employeeID", (req, res) => {
-  db.query(
-    `SELECT 
-      co.*,
-      (SELECT
-          c.name
-        FROM
-          customer c
-        WHERE
-          c.customerID = co.customerID
-      ) AS customerName,
-      (SELECT
-          r.name
-        FROM
-          restaurant r
-        WHERE
-          r.restaurantID = co.restaurantID
-      ) AS restaurantName
-    FROM 
-      customerorder co
-    WHERE 
-      co.employeeID = ?`,
-    [req.params.employeeID],
-    (err, result) => {
-      if (err) {
-        console.error("Error executing query:", err)
-        return res.status(500).json({ message: "Server error" })
-      }
-      res.json(result)
-    }
-  )
-})
-
 app.delete("/delete_employee/:id", (req, res) => {
   const { id } = req.params
   db.query("DELETE FROM inventoryorder WHERE employeeID = ?", [id], (err) => {
@@ -828,6 +795,62 @@ app.post("/add_employee", (req, res) => {
         return res.status(500).json({ message: "Server error" })
       }
       res.json({ success: "Employee added successfully!" })
+    }
+  )
+})
+
+app.post("/edit_employee/:id", (req, res) => {
+  db.query(
+    "UPDATE employee SET name = ?, role = ?, phone = ?, address = ?, salary = ?, restaurantID = ? WHERE employeeID = ?",
+    [
+      req.body.name,
+      req.body.role,
+      req.body.phone,
+      req.body.address,
+      req.body.salary,
+      req.body.restaurantID,
+      req.params.id,
+    ],
+    (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Employee updated successfully" })
+    }
+  )
+})
+
+// employee order
+app.get("/get_employeeorders/:employeeID", (req, res) => {
+  db.query(
+    `SELECT 
+      co.*,
+      (SELECT
+          c.name
+        FROM
+          customer c
+        WHERE
+          c.customerID = co.customerID
+      ) AS customerName,
+      (SELECT
+          r.name
+        FROM
+          restaurant r
+        WHERE
+          r.restaurantID = co.restaurantID
+      ) AS restaurantName
+    FROM 
+      customerorder co
+    WHERE 
+      co.employeeID = ?`,
+    [req.params.employeeID],
+    (err, result) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json(result)
     }
   )
 })
