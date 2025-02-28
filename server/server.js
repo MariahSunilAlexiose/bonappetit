@@ -1443,6 +1443,27 @@ app.post("/add_supplier", (req, res) => {
   )
 })
 
+app.post("/edit_supplier/:id", (req, res) => {
+  db.query(
+    "UPDATE supplier SET name = ?, contactPerson = ?, phone = ?, address = ? WHERE supplierID = ?",
+    [
+      req.body.name,
+      req.body.contactPerson,
+      req.body.phone,
+      req.body.address,
+      req.params.id,
+    ],
+    (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Supplier updated successfully" })
+    }
+  )
+})
+
+// supplier order
 app.post("/add_supplierorder", (req, res) => {
   db.beginTransaction((err) => {
     if (err) {
