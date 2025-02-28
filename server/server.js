@@ -1020,6 +1020,20 @@ app.post("/add_inventory", (req, res) => {
   )
 })
 
+app.post("/edit_inventory/:id", (req, res) => {
+  db.query(
+    "UPDATE inventory SET name = ?, quantity = ?, restaurantID = ? WHERE inventoryID = ?",
+    [req.body.name, req.body.quantity, req.body.restaurantID, req.params.id],
+    (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Inventory updated successfully" })
+    }
+  )
+})
+
 // inventory orders
 app.get("/get_inventoryorders", (req, res) => {
   db.query(
