@@ -75,9 +75,6 @@ const EditForm = () => {
             restaurantID: restRes.data.find((r) => r.name === restaurantName)
               .restaurantID,
           })
-        } else if (tableName === "employeeorder") {
-          const cusRes = await axios.get("/customers")
-          setCustomers(cusRes.data)
         } else if (tableName === "supplierorder") {
           const supRes = await axios.get("/suppliers")
           setSuppliers(supRes.data)
@@ -89,7 +86,10 @@ const EditForm = () => {
             restaurantID: restRes.data.find((r) => r.name === restaurantName)
               .restaurantID,
           })
-        } else if (tableName === "customerorder") {
+        } else if (
+          tableName === "customerorder" ||
+          tableName === "employeeorder"
+        ) {
           const restRes = await axios.get("/restaurants")
           setRestaurants(restRes.data)
           const empRes = await axios.get("/employees")
@@ -97,7 +97,8 @@ const EditForm = () => {
           const cusRes = await axios.get("/customers")
           setCustomers(cusRes.data)
           // eslint-disable-next-line no-unused-vars
-          const { restaurantName, employeeName, ...restData } = dataToBeUpdated
+          const { restaurantName, employeeName, customerName, ...restData } =
+            dataToBeUpdated
           setFormData({
             ...restData,
           })
@@ -130,6 +131,10 @@ const EditForm = () => {
             }
           )
         }
+      } else if (tableName === "employeeorder") {
+        await axios.post(`/edit_customerorder/${formData.customerorderID}`, {
+          ...formData,
+        })
       } else {
         await axios.post(`/edit_${tableName}/${formData[`${tableName}ID`]}`, {
           ...formData,
@@ -162,7 +167,12 @@ const EditForm = () => {
       </h1>
       <form onSubmit={handleSubmit}>
         {Object.keys(formData)
-          .filter((key) => key !== `${tableName}ID`)
+          .filter((key) => {
+            if (tableName === "employeeorder" && key === "customerorderID") {
+              return false
+            }
+            return key !== `${tableName}ID`
+          })
           .map((key) => (
             <div key={key} className="py-5">
               {key === "paymentStatus" ? (
