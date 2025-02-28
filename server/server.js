@@ -616,7 +616,14 @@ app.get("/get_customerorderitems/:orderId", (req, res) => {
         menuitem m
       WHERE
         m.menuitemID = c.menuitemID
-      ) AS menuitemName
+      ) AS menuitemName,
+      (SELECT
+        co.restaurantID
+      FROM
+        customerorder co
+      WHERE
+        co.customerorderID = c.customerorderID
+      ) AS restaurantID 
     FROM 
       customerorderitem c
     WHERE 
@@ -656,6 +663,25 @@ app.post("/add_customerorderitem", (req, res) => {
         return res.status(500).json({ message: "Server error" })
       }
       res.json({ success: "Customer order item added successfully!" })
+    }
+  )
+})
+
+app.post("/edit_customerorderitem/:orderId", (req, res) => {
+  db.query(
+    "UPDATE customerorderitem SET menuitemID = ?, quantity = ? WHERE customerorderID = ? AND menuitemID = ?",
+    [
+      req.body.newMenuitemID,
+      req.body.quantity,
+      req.params.orderId,
+      req.body.menuitemID,
+    ],
+    (err) => {
+      if (err) {
+        console.error("Something unexpected has occurred", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Customer order item updated successfully" })
     }
   )
 })

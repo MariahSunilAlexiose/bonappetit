@@ -23,7 +23,7 @@ const formatDate = (dateStr) => {
 const EditForm = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { tableName, dataToBeUpdated, customerOrderID } = location.state || {}
+  const { tableName, dataToBeUpdated } = location.state || {}
   const [restaurants, setRestaurants] = useState([])
   const [inventory, setInventory] = useState([])
   const [menuitems, setMenuitems] = useState([])
@@ -50,24 +50,16 @@ const EditForm = () => {
               .restaurantID,
           })
         } else if (tableName === "customerorderitem") {
-          const order = await axios.get(`/customerorder/${customerOrderID}`)
           const res = await axios.get(
-            `/get_menu/${order.data[0].restaurantName}`
+            `/get_menu_by_id/${formData.restaurantID}`
           )
           setMenuitems(res.data)
-          const updatedData = dataToBeUpdated.map((item) => {
-            const { menuItemName, ...restData } = item
-            const matchingMenuItem = res.data.find(
-              (r) => r.name === menuItemName
-            )
-            return {
-              ...restData,
-              menuitemID: matchingMenuItem
-                ? matchingMenuItem.menuitemID
-                : undefined,
-            }
+          // eslint-disable-next-line no-unused-vars
+          const { customerorderID, restaurantID, menuitemName, ...restData } =
+            dataToBeUpdated
+          setFormData({
+            ...restData,
           })
-          setFormData(updatedData)
         } else if (tableName === "inventoryorder") {
           const empRes = await axios.get("/employees")
           setEmployees(empRes.data)
@@ -115,21 +107,34 @@ const EditForm = () => {
       }
     }
     fetchData()
-  }, [customerOrderID, dataToBeUpdated, tableName])
-
-  let toBeUpdatedKeysList = []
-
-  toBeUpdatedKeysList = Object.keys(formData).filter(
-    (key) => key !== `${tableName}ID`
-  )
+  }, [dataToBeUpdated, tableName])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     e.stopPropagation()
     try {
-      await axios.post(`/edit_${tableName}/${formData[`${tableName}ID`]}`, {
-        ...formData,
-      })
+      if (tableName === "customerorderitem") {
+        if (!formData.newMenuitemID) {
+          await axios.post(
+            `/edit_customerorderitem/${dataToBeUpdated.customerorderID}`,
+            {
+              ...formData,
+              newMenuitemID: dataToBeUpdated.menuitemID,
+            }
+          )
+        } else {
+          await axios.post(
+            `/edit_customerorderitem/${dataToBeUpdated.customerorderID}`,
+            {
+              ...formData,
+            }
+          )
+        }
+      } else {
+        await axios.post(`/edit_${tableName}/${formData[`${tableName}ID`]}`, {
+          ...formData,
+        })
+      }
       navigate(-1)
     } catch (err) {
       console.error("Error in editting:", err)
@@ -156,254 +161,244 @@ const EditForm = () => {
         Table
       </h1>
       <form onSubmit={handleSubmit}>
-        {tableName !== "customerorderitem" &&
-          toBeUpdatedKeysList.map((key) => (
-            <div key={key} className="py-5">
-              {key === "paymentStatus" ? (
-                <div>
-                  <label
-                    htmlFor="payment"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Payment Status
-                  </label>
-                  <DropDown
-                    options={paymentstatus}
-                    onChange={(status) => {
-                      setFormData((prevFormData) => ({
-                        ...prevFormData,
-                        paymentStatus: status,
-                      }))
-                    }}
-                    defaultValue={formData.paymentStatus}
-                  />
-                </div>
-              ) : key === "deliveryStatus" ? (
-                <div>
-                  <label
-                    htmlFor="delivery"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Delivery Status
-                  </label>
-                  <DropDown
-                    options={deliverystatus}
-                    onChange={(status) => {
-                      setFormData((prevFormData) => ({
-                        ...prevFormData,
-                        deliveryStatus: status,
-                      }))
-                    }}
-                    defaultValue={formData.deliveryStatus}
-                  />
-                </div>
-              ) : key === "date" ? (
-                <div>
-                  <label
-                    htmlFor="date"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Date
-                  </label>
-                  <Input
-                    type="date"
-                    id="date"
-                    name="date"
-                    value={
-                      isFormatted ? formatDate(formData.date) : formData.date
-                    }
-                    onChange={(e) => {
-                      setFormData((prevFormData) => ({
-                        ...prevFormData,
-                        date: e.target.value,
-                      }))
-                      setIsFormatted(false)
-                    }}
-                  />
-                </div>
-              ) : key === "restaurantName" || key === "restaurantID" ? (
-                <div>
-                  <label
-                    htmlFor="restaurants"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Restaurant
-                  </label>
-                  <InputDropDown
-                    label="restaurants"
-                    options={restaurants}
-                    onChange={(newRestaurantID) => {
-                      setFormData((prevFormData) => ({
-                        ...prevFormData,
-                        restaurantID: newRestaurantID,
-                      }))
-                    }}
-                    defaultValue={
-                      key === "restaurantName"
-                        ? formData.restaurantName
-                        : getNameByID(
-                            formData.restaurantID,
-                            restaurants,
-                            "restaurant"
-                          )
-                    }
-                  />
-                </div>
-              ) : key === "employeeName" || key === "employeeID" ? (
-                <div>
-                  <label
-                    htmlFor="employee"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Employee
-                  </label>
-                  <InputDropDown
-                    label="employees"
-                    options={employees}
-                    onChange={(newEmployeeID) => {
-                      setFormData((prevFormData) => ({
-                        ...prevFormData,
-                        employeeID: newEmployeeID,
-                      }))
-                    }}
-                    defaultValue={
-                      key === "employeeName"
-                        ? formData.employeeName
-                        : getNameByID(
-                            formData.employeeID,
-                            employees,
-                            "employee"
-                          )
-                    }
-                  />
-                </div>
-              ) : key === "customerID" || key === "customerName" ? (
-                <div>
-                  <label
-                    htmlFor="customer"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Customer
-                  </label>
-                  <InputDropDown
-                    label="customers"
-                    options={customers}
-                    onChange={(newCustomerID) => {
-                      setFormData((prevFormData) => ({
-                        ...prevFormData,
-                        customerID: newCustomerID,
-                      }))
-                    }}
-                    defaultValue={
-                      key === "customerName"
-                        ? formData.customerName
-                        : getNameByID(
-                            formData.customerID,
-                            customers,
-                            "customer"
-                          )
-                    }
-                  />
-                </div>
-              ) : key === "supplierID" || key === "supplierName" ? (
-                <div>
-                  <label
-                    htmlFor="suppliers"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Suppliers
-                  </label>
-                  <InputDropDown
-                    label="suppliers"
-                    options={suppliers}
-                    onChange={(newSupplierID) => {
-                      setFormData((prevFormData) => ({
-                        ...prevFormData,
-                        supplierID: newSupplierID,
-                      }))
-                    }}
-                    defaultValue={
-                      key === "supplierName"
-                        ? formData.supplierName
-                        : getNameByID(
-                            formData.supplierID,
-                            suppliers,
-                            "supplier"
-                          )
-                    }
-                  />
-                </div>
-              ) : key === "inventoryID" || key === "inventoryName" ? (
-                <div>
-                  <label
-                    htmlFor="inventoryorderitem"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Inventory
-                  </label>
-                  <InputDropDown
-                    label="inventory"
-                    options={inventory}
-                    onChange={(newOrderItemID) => {
-                      setFormData((prevFormData) => ({
-                        ...prevFormData,
-                        inventoryID: newOrderItemID,
-                      }))
-                    }}
-                    defaultValue={
-                      key === "inventoryName"
-                        ? formData.inventoryName
-                        : getNameByID(
-                            formData.inventoryID,
-                            inventory,
-                            "inventory"
-                          )
-                    }
-                  />
-                </div>
-              ) : key === "menuitemName" || key === "menuitemID" ? (
-                <div>
-                  <label
-                    htmlFor="menuitem"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Menu Item
-                  </label>
-                  <InputDropDown
-                    label="menuitem"
-                    options={menuitems}
-                    onChange={(newMenuItemID) => {
-                      setFormData((prevFormData) => ({
-                        ...prevFormData,
-                        menuitemID: newMenuItemID,
-                      }))
-                    }}
-                    defaultValue={
-                      key === "menuitemName"
-                        ? formData.menuitemName
-                        : getNameByID(
-                            formData.menuitemID,
-                            menuitems,
-                            "menuitem"
-                          )
-                    }
-                  />
-                </div>
-              ) : key === "quantity" ? (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Quantity
-                  </label>
-                  <Input
-                    name="quantity"
-                    type="number"
-                    value={formData.quantity || ""}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    min={1}
-                    required
-                  />
-                </div>
-              ) : (
+        {Object.keys(formData).map((key) => (
+          <div key={key} className="py-5">
+            {key === "paymentStatus" ? (
+              <div>
+                <label
+                  htmlFor="payment"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Payment Status
+                </label>
+                <DropDown
+                  options={paymentstatus}
+                  onChange={(status) => {
+                    setFormData((prevFormData) => ({
+                      ...prevFormData,
+                      paymentStatus: status,
+                    }))
+                  }}
+                  defaultValue={formData.paymentStatus}
+                />
+              </div>
+            ) : key === "deliveryStatus" ? (
+              <div>
+                <label
+                  htmlFor="delivery"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Delivery Status
+                </label>
+                <DropDown
+                  options={deliverystatus}
+                  onChange={(status) => {
+                    setFormData((prevFormData) => ({
+                      ...prevFormData,
+                      deliveryStatus: status,
+                    }))
+                  }}
+                  defaultValue={formData.deliveryStatus}
+                />
+              </div>
+            ) : key === "date" ? (
+              <div>
+                <label
+                  htmlFor="date"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Date
+                </label>
+                <Input
+                  type="date"
+                  id="date"
+                  name="date"
+                  value={
+                    isFormatted ? formatDate(formData.date) : formData.date
+                  }
+                  onChange={(e) => {
+                    setFormData((prevFormData) => ({
+                      ...prevFormData,
+                      date: e.target.value,
+                    }))
+                    setIsFormatted(false)
+                  }}
+                />
+              </div>
+            ) : key === "restaurantName" || key === "restaurantID" ? (
+              <div>
+                <label
+                  htmlFor="restaurants"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Restaurant
+                </label>
+                <InputDropDown
+                  label="restaurants"
+                  options={restaurants}
+                  onChange={(newRestaurantID) => {
+                    setFormData((prevFormData) => ({
+                      ...prevFormData,
+                      restaurantID: newRestaurantID,
+                    }))
+                  }}
+                  defaultValue={
+                    key === "restaurantName"
+                      ? formData.restaurantName
+                      : getNameByID(
+                          formData.restaurantID,
+                          restaurants,
+                          "restaurant"
+                        )
+                  }
+                />
+              </div>
+            ) : key === "employeeID" || key === "employeeName" ? (
+              <div>
+                <label
+                  htmlFor="employee"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Employee
+                </label>
+                <InputDropDown
+                  label="employees"
+                  options={employees}
+                  onChange={(newEmployeeID) => {
+                    setFormData((prevFormData) => ({
+                      ...prevFormData,
+                      employeeID: newEmployeeID,
+                    }))
+                  }}
+                  defaultValue={
+                    key === "employeeName"
+                      ? formData.employeeName
+                      : getNameByID(formData.employeeID, employees, "employee")
+                  }
+                />
+              </div>
+            ) : key === "customerID" || key === "customerName" ? (
+              <div>
+                <label
+                  htmlFor="customer"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Customer
+                </label>
+                <InputDropDown
+                  label="customers"
+                  options={customers}
+                  onChange={(newCustomerID) => {
+                    setFormData((prevFormData) => ({
+                      ...prevFormData,
+                      customerID: newCustomerID,
+                    }))
+                  }}
+                  defaultValue={
+                    key === "customerName"
+                      ? formData.customerName
+                      : getNameByID(formData.customerID, customers, "customer")
+                  }
+                />
+              </div>
+            ) : key === "supplierID" || key === "supplierName" ? (
+              <div>
+                <label
+                  htmlFor="suppliers"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Suppliers
+                </label>
+                <InputDropDown
+                  label="suppliers"
+                  options={suppliers}
+                  onChange={(newSupplierID) => {
+                    setFormData((prevFormData) => ({
+                      ...prevFormData,
+                      supplierID: newSupplierID,
+                    }))
+                  }}
+                  defaultValue={
+                    key === "supplierName"
+                      ? formData.supplierName
+                      : getNameByID(formData.supplierID, suppliers, "supplier")
+                  }
+                />
+              </div>
+            ) : key === "inventoryID" || key === "inventoryName" ? (
+              <div>
+                <label
+                  htmlFor="inventoryorderitem"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Inventory
+                </label>
+                <InputDropDown
+                  label="inventory"
+                  options={inventory}
+                  onChange={(newOrderItemID) => {
+                    setFormData((prevFormData) => ({
+                      ...prevFormData,
+                      inventoryID: newOrderItemID,
+                    }))
+                  }}
+                  defaultValue={
+                    key === "inventoryName"
+                      ? formData.inventoryName
+                      : getNameByID(
+                          formData.inventoryID,
+                          inventory,
+                          "inventory"
+                        )
+                  }
+                />
+              </div>
+            ) : key === "menuitemID" || key === "menuitemName" ? (
+              <div>
+                <label
+                  htmlFor="menuitem"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Menu Item
+                </label>
+                <InputDropDown
+                  label="menuitem"
+                  options={menuitems}
+                  onChange={(newOrderItemID) => {
+                    setFormData((prevFormData) => ({
+                      ...prevFormData,
+                      newMenuitemID: newOrderItemID || prevFormData.menuitemID,
+                    }))
+                  }}
+                  defaultValue={getNameByID(
+                    formData.menuitemID,
+                    menuitems,
+                    "menuitem"
+                  )}
+                />
+              </div>
+            ) : key === "quantity" ? (
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Quantity
+                </label>
+                <Input
+                  name="quantity"
+                  type="number"
+                  value={formData.quantity || ""}
+                  onChange={(e) => {
+                    setFormData((prevFormData) => ({
+                      ...prevFormData,
+                      quantity: e.target.value,
+                    }))
+                  }}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  min={1}
+                  required
+                />
+              </div>
+            ) : (
+              key !== "newMenuitemID" && (
                 <div>
                   <label
                     htmlFor={key}
@@ -451,9 +446,10 @@ const EditForm = () => {
                     required
                   />
                 </div>
-              )}
-            </div>
-          ))}
+              )
+            )}
+          </div>
+        ))}
         <div className="flex justify-end">
           <button
             type="submit"
