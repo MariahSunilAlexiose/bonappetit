@@ -102,6 +102,21 @@ const EditForm = () => {
           setFormData({
             ...restData,
           })
+        } else if (tableName === "inventoryorderitem") {
+          const invRes = await axios.get("/inventory")
+          setInventory(invRes.data)
+          const supRes = await axios.get("/suppliers")
+          setSuppliers(supRes.data)
+          const empRes = await axios.get("/employees")
+          setEmployees(empRes.data)
+          const restRes = await axios.get("/restaurants")
+          setRestaurants(restRes.data)
+          // eslint-disable-next-line no-unused-vars
+          const { supplierName, employeeName, restaurantName, ...restData } =
+            dataToBeUpdated
+          setFormData({
+            ...restData,
+          })
         }
       } catch (err) {
         console.log(err)
@@ -135,6 +150,10 @@ const EditForm = () => {
         await axios.post(`/edit_customerorder/${formData.customerorderID}`, {
           ...formData,
         })
+      } else if (tableName === "inventoryorderitem") {
+        await axios.post(`/edit_inventoryorder/${formData.inventoryorderID}`, {
+          ...formData,
+        })
       } else {
         await axios.post(`/edit_${tableName}/${formData[`${tableName}ID`]}`, {
           ...formData,
@@ -142,7 +161,7 @@ const EditForm = () => {
       }
       navigate(-1)
     } catch (err) {
-      console.error("Error in editting:", err)
+      console.error("Error in editing:", err)
     }
   }
 
@@ -168,7 +187,10 @@ const EditForm = () => {
       <form onSubmit={handleSubmit}>
         {Object.keys(formData)
           .filter((key) => {
-            if (tableName === "employeeorder" && key === "customerorderID") {
+            if (
+              (tableName === "employeeorder" && key === "customerorderID") ||
+              (tableName === "inventoryorderitem" && key === "inventoryorderID")
+            ) {
               return false
             }
             return key !== `${tableName}ID`

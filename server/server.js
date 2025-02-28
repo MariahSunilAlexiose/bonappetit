@@ -1218,7 +1218,7 @@ app.post("/add_inventoryorder", (req, res) => {
         }
 
         db.query(
-          "INSERT INTO inventoryorderitem (inventoryOrderID, inventoryID, quantity, unitPrice) VALUES (?, ?, ?, ?)",
+          "INSERT INTO inventoryorderitem (inventoryorderID, inventoryID, quantity, unitPrice) VALUES (?, ?, ?, ?)",
           [
             req.body.inventoryorderID,
             req.body.inventoryID,
@@ -1316,6 +1316,68 @@ app.delete("/delete_inventoryorderitem/:orderId/:itemId", (req, res) => {
       res.json({ success: "Inventory order deleted successfully" })
     }
   )
+})
+
+app.post("/edit_inventoryorder/:id", (req, res) => {
+  db.beginTransaction((err) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ message: "Error starting transaction: " + err })
+    }
+
+    db.query(
+      "UPDATE inventoryorder SET supplierID = ?, employeeID = ?, restaurantID = ?, date = ?, paymentStatus = ?, deliveryStatus = ? WHERE inventoryorderID = ?",
+      [
+        req.body.supplierID,
+        req.body.employeeID,
+        req.body.restaurantID,
+        req.body.date,
+        req.body.paymentStatus,
+        req.body.deliveryStatus,
+        req.params.id,
+      ],
+      (err) => {
+        if (err) {
+          return db.rollback(() => {
+            res.status(500).json({
+              message: "Error in editing into inventory order: " + err,
+            })
+          })
+        }
+
+        db.query(
+          "UPDATE inventoryorderitem SET quantity = ?, unitPrice = ? WHERE inventoryorderID = ? AND inventoryID = ?",
+          [
+            req.body.quantity,
+            req.body.unitPrice,
+            req.params.id,
+            req.body.inventoryID,
+          ],
+          (err) => {
+            if (err) {
+              return db.rollback(() => {
+                res.status(500).json({
+                  message: "Error in editing into inventory order item: " + err,
+                })
+              })
+            }
+
+            db.commit((err) => {
+              if (err) {
+                return db.rollback(() => {
+                  res
+                    .status(500)
+                    .json({ message: "Error committing transaction: " + err })
+                })
+              }
+              res.json({ success: "Inventory item order added successfully!" })
+            })
+          }
+        )
+      }
+    )
+  })
 })
 
 // supplier
