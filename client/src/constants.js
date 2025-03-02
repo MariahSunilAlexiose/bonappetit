@@ -144,3 +144,34 @@ export const filterMapping = {
     salary: item.salary,
   }),
 }
+
+export const AddFormApiMapping = {
+  employee: ["/restaurants"],
+  inventory: ["/restaurants"],
+  inventoryorder: ["/restaurants", "/suppliers", "/employees", "/inventory"],
+  customerorder: ["/restaurants", "/employees", "/customers"],
+  employeeorder: ["/restaurants", "/employees", "/customers"],
+  supplierorder: [
+    "/restaurants",
+    "/employees",
+    "/customers",
+    "/suppliers",
+    "/inventory",
+  ],
+  supplierorderitem: ["/inventory"],
+  menuitem: ["/restaurants"],
+}
+
+export const createStateSetters = (
+  setRestaurants,
+  setInventory,
+  setSuppliers,
+  setEmployees,
+  setCustomers
+) => ({
+  "/restaurants": setRestaurants,
+  "/suppliers": setSuppliers,
+  "/employees": setEmployees,
+  "/inventory": setInventory,
+  "/customers": setCustomers,
+})
