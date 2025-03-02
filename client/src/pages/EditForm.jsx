@@ -5,20 +5,15 @@ import axios from "axios"
 
 import { DropDown, Input, InputDropDown } from "../components"
 import {
+  createStateSetters,
   deliverystatus,
   displayNames,
+  EditFormApiMapping,
+  formFormatDate,
   getNameByID,
   keyMapping,
   paymentstatus,
 } from "../constants"
-
-const formatDate = (dateStr) => {
-  const dateObj = new Date(dateStr)
-  const year = dateObj.getFullYear()
-  const month = String(dateObj.getMonth() + 1).padStart(2, "0")
-  const day = String(dateObj.getDate()).padStart(2, "0")
-  return `${year}-${month}-${day}`
-}
 
 const EditForm = () => {
   const location = useLocation()
@@ -33,97 +28,36 @@ const EditForm = () => {
   const [customers, setCustomers] = useState([])
   const [isFormatted, setIsFormatted] = useState(true)
 
+  const stateSetters = createStateSetters(
+    setRestaurants,
+    setInventory,
+    setSuppliers,
+    setEmployees,
+    setCustomers
+  )
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (
-          tableName === "employee" ||
-          tableName === "inventory" ||
-          tableName === "menuitem"
-        ) {
-          const restRes = await axios.get("/restaurants")
-          setRestaurants(restRes.data)
-          const { restaurantName, ...restData } = dataToBeUpdated
-          setFormData({
-            ...restData,
-            restaurantID: restRes.data.find((r) => r.name === restaurantName)
-              .restaurantID,
-          })
-        } else if (tableName === "customerorderitem") {
+        const endpoints = EditFormApiMapping[tableName]
+        if (endpoints) {
+          for (const endpoint of endpoints) {
+            const response = await axios.get(endpoint)
+            stateSetters[endpoint](response.data)
+          }
+        }
+        if (tableName === "customerorderitem") {
           const res = await axios.get(
             `/get_menu_by_id/${formData.restaurantID}`
           )
           setMenuitems(res.data)
-          // eslint-disable-next-line no-unused-vars
-          const { customerorderID, restaurantID, menuitemName, ...restData } =
-            dataToBeUpdated
-          setFormData({
-            ...restData,
-          })
-        } else if (tableName === "inventoryorder") {
-          const empRes = await axios.get("/employees")
-          setEmployees(empRes.data)
-          const invRes = await axios.get("/inventory")
-          setInventory(invRes.data)
-          const restRes = await axios.get("/restaurants")
-          setRestaurants(restRes.data)
-          const { restaurantName, employeeName, ...restData } = dataToBeUpdated
-          setFormData({
-            ...restData,
-            employeeID: empRes.data.find((e) => e.name === employeeName)
-              .employeeID,
-            restaurantID: restRes.data.find((r) => r.name === restaurantName)
-              .restaurantID,
-          })
-        } else if (tableName === "supplierorder") {
-          const supRes = await axios.get("/suppliers")
-          setSuppliers(supRes.data)
-          const restRes = await axios.get("/restaurants")
-          setRestaurants(restRes.data)
-          const { restaurantName, ...restData } = dataToBeUpdated
-          setFormData({
-            ...restData,
-            restaurantID: restRes.data.find((r) => r.name === restaurantName)
-              .restaurantID,
-          })
-        } else if (
-          tableName === "customerorder" ||
-          tableName === "employeeorder"
-        ) {
-          const restRes = await axios.get("/restaurants")
-          setRestaurants(restRes.data)
-          const empRes = await axios.get("/employees")
-          setEmployees(empRes.data)
-          const cusRes = await axios.get("/customers")
-          setCustomers(cusRes.data)
-          // eslint-disable-next-line no-unused-vars
-          const { restaurantName, employeeName, customerName, ...restData } =
-            dataToBeUpdated
-          setFormData({
-            ...restData,
-          })
-        } else if (tableName === "inventoryorderitem") {
-          const invRes = await axios.get("/inventory")
-          setInventory(invRes.data)
-          const supRes = await axios.get("/suppliers")
-          setSuppliers(supRes.data)
-          const empRes = await axios.get("/employees")
-          setEmployees(empRes.data)
-          const restRes = await axios.get("/restaurants")
-          setRestaurants(restRes.data)
-          // eslint-disable-next-line no-unused-vars
-          const { supplierName, employeeName, restaurantName, ...restData } =
-            dataToBeUpdated
-          setFormData({
-            ...restData,
-          })
         }
       } catch (err) {
         console.log(err)
       }
     }
     fetchData()
-  }, [dataToBeUpdated, tableName])
+  }, [dataToBeUpdated, tableName, formData.restaurantID, stateSetters])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -165,14 +99,6 @@ const EditForm = () => {
     }
   }
 
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }))
-  }
-
   console.log(formData)
 
   return (
@@ -189,11 +115,15 @@ const EditForm = () => {
           .filter((key) => {
             if (
               (tableName === "employeeorder" && key === "customerorderID") ||
-              (tableName === "inventoryorderitem" && key === "inventoryorderID")
+              (tableName === "inventoryorderitem" &&
+                key === "inventoryorderID") ||
+              (tableName === "customerorderitem" &&
+                (key === "customerorderID" || key === "restaurantID")) ||
+              key === "newMenuitemID"
             ) {
               return false
             }
-            return key !== `${tableName}ID`
+            return key !== `${tableName}ID` && !key.endsWith("Name")
           })
           .map((key) => (
             <div key={key} className="py-5">
@@ -248,7 +178,9 @@ const EditForm = () => {
                     id="date"
                     name="date"
                     value={
-                      isFormatted ? formatDate(formData.date) : formData.date
+                      isFormatted
+                        ? formFormatDate(formData.date)
+                        : formData.date
                     }
                     onChange={(e) => {
                       setFormData((prevFormData) => ({
@@ -259,7 +191,7 @@ const EditForm = () => {
                     }}
                   />
                 </div>
-              ) : key === "restaurantName" || key === "restaurantID" ? (
+              ) : key === "restaurantID" ? (
                 <div>
                   <label
                     htmlFor="restaurants"
@@ -276,18 +208,14 @@ const EditForm = () => {
                         restaurantID: newRestaurantID,
                       }))
                     }}
-                    defaultValue={
-                      key === "restaurantName"
-                        ? formData.restaurantName
-                        : getNameByID(
-                            formData.restaurantID,
-                            restaurants,
-                            "restaurant"
-                          )
-                    }
+                    defaultValue={getNameByID(
+                      formData.restaurantID,
+                      restaurants,
+                      "restaurant"
+                    )}
                   />
                 </div>
-              ) : key === "employeeID" || key === "employeeName" ? (
+              ) : key === "employeeID" ? (
                 <div>
                   <label
                     htmlFor="employee"
@@ -304,18 +232,14 @@ const EditForm = () => {
                         employeeID: newEmployeeID,
                       }))
                     }}
-                    defaultValue={
-                      key === "employeeName"
-                        ? formData.employeeName
-                        : getNameByID(
-                            formData.employeeID,
-                            employees,
-                            "employee"
-                          )
-                    }
+                    defaultValue={getNameByID(
+                      formData.employeeID,
+                      employees,
+                      "employee"
+                    )}
                   />
                 </div>
-              ) : key === "customerID" || key === "customerName" ? (
+              ) : key === "customerID" ? (
                 <div>
                   <label
                     htmlFor="customer"
@@ -332,24 +256,20 @@ const EditForm = () => {
                         customerID: newCustomerID,
                       }))
                     }}
-                    defaultValue={
-                      key === "customerName"
-                        ? formData.customerName
-                        : getNameByID(
-                            formData.customerID,
-                            customers,
-                            "customer"
-                          )
-                    }
+                    defaultValue={getNameByID(
+                      formData.customerID,
+                      customers,
+                      "customer"
+                    )}
                   />
                 </div>
-              ) : key === "supplierID" || key === "supplierName" ? (
+              ) : key === "supplierID" ? (
                 <div>
                   <label
                     htmlFor="suppliers"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Suppliers
+                    Supplier
                   </label>
                   <InputDropDown
                     label="suppliers"
@@ -360,18 +280,14 @@ const EditForm = () => {
                         supplierID: newSupplierID,
                       }))
                     }}
-                    defaultValue={
-                      key === "supplierName"
-                        ? formData.supplierName
-                        : getNameByID(
-                            formData.supplierID,
-                            suppliers,
-                            "supplier"
-                          )
-                    }
+                    defaultValue={getNameByID(
+                      formData.supplierID,
+                      suppliers,
+                      "supplier"
+                    )}
                   />
                 </div>
-              ) : key === "inventoryID" || key === "inventoryName" ? (
+              ) : key === "inventoryID" ? (
                 <div>
                   <label
                     htmlFor="inventoryorderitem"
@@ -388,18 +304,14 @@ const EditForm = () => {
                         inventoryID: newOrderItemID,
                       }))
                     }}
-                    defaultValue={
-                      key === "inventoryName"
-                        ? formData.inventoryName
-                        : getNameByID(
-                            formData.inventoryID,
-                            inventory,
-                            "inventory"
-                          )
-                    }
+                    defaultValue={getNameByID(
+                      formData.inventoryID,
+                      inventory,
+                      "inventory"
+                    )}
                   />
                 </div>
-              ) : key === "menuitemID" || key === "menuitemName" ? (
+              ) : key === "menuitemID" ? (
                 <div>
                   <label
                     htmlFor="menuitem"
@@ -445,55 +357,59 @@ const EditForm = () => {
                   />
                 </div>
               ) : (
-                key !== "newMenuitemID" && (
-                  <div>
-                    <label
-                      htmlFor={key}
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      {keyMapping[key] || key}
-                    </label>
-                    <Input
-                      name={key}
-                      type={
-                        key === "rating" ||
-                        key === "salary" ||
-                        key === "unitPrice" ||
-                        key === "price" ||
-                        key === "quantity"
-                          ? "number"
-                          : key === "phone"
-                            ? "tel"
-                            : key === "email"
-                              ? "email"
-                              : "text"
-                      }
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                      step={
-                        key === "rating"
-                          ? "0.1"
-                          : key === "salary" ||
-                              key === "unitPrice" ||
-                              key === "price"
-                            ? "0.01"
+                <div>
+                  <label
+                    htmlFor={key}
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    {keyMapping[key] || key}
+                  </label>
+                  <Input
+                    name={key}
+                    type={
+                      key === "rating" ||
+                      key === "salary" ||
+                      key === "unitPrice" ||
+                      key === "price" ||
+                      key === "quantity"
+                        ? "number"
+                        : key === "phone"
+                          ? "tel"
+                          : key === "email"
+                            ? "email"
+                            : "text"
+                    }
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    step={
+                      key === "rating"
+                        ? "0.1"
+                        : key === "salary" ||
+                            key === "unitPrice" ||
+                            key === "price"
+                          ? "0.01"
+                          : undefined
+                    }
+                    min={
+                      key === "rating" || key === "unitPrice"
+                        ? "0"
+                        : key === "salary"
+                          ? "17.30"
+                          : key === "quantity"
+                            ? "1"
                             : undefined
-                      }
-                      min={
-                        key === "rating" || key === "unitPrice"
-                          ? "0"
-                          : key === "salary"
-                            ? "17.30"
-                            : key === "quantity"
-                              ? "1"
-                              : undefined
-                      }
-                      max={key === "rating" ? "5" : undefined}
-                      value={formData[key] || ""}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                )
+                    }
+                    max={key === "rating" ? "5" : undefined}
+                    value={formData[key] || ""}
+                    onChange={(e) => {
+                      const { name, value } = e.target
+                      setFormData((prevFormData) => ({
+                        ...prevFormData,
+                        [name]: value,
+                      }))
+                    }}
+                    required
+                  />
+                </div>
               )}
             </div>
           ))}

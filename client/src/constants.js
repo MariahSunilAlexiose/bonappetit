@@ -175,3 +175,28 @@ export const createStateSetters = (
   "/inventory": setInventory,
   "/customers": setCustomers,
 })
+
+export const formFormatDate = (dateStr) => {
+  const dateObj = new Date(dateStr)
+  const year = dateObj.getFullYear()
+  const month = String(dateObj.getMonth() + 1).padStart(2, "0")
+  const day = String(dateObj.getDate()).padStart(2, "0")
+  return `${year}-${month}-${day}`
+}
+
+export const EditFormApiMapping = {
+  employee: ["/restaurants"],
+  inventory: ["/restaurants"],
+  menuitem: ["/restaurants"],
+  inventoryorder: ["/restaurants", "/employees", "/inventory"],
+  supplierorder: ["/restaurants", "/employees", "/suppliers"],
+  customerorder: ["/restaurants", "/employees", "/customers"],
+  employeeorder: ["/restaurants", "/employees", "/customers"],
+  inventoryorderitem: [
+    "/restaurants",
+    "/employees",
+    "/inventory",
+    "/suppliers",
+  ],
+  supplierorderitem: ["/inventory"],
+}
