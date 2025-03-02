@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import PropTypes from "prop-types"
 
-import { formatDate, idMap, keyMapping } from "../constants"
+import { filterMapping, formatDate, idMap, keyMapping } from "../constants"
 
 import Pagination from "./Pagination"
 
@@ -38,75 +38,10 @@ const Table = ({ tableName, data }) => {
   const [itemsPerPage] = useState(5)
   const lastItemIndex = currentPage * itemsPerPage
   const firstItemIndex = lastItemIndex - itemsPerPage
-  let filteredData
-  if (tableName === "customerorderitem") {
-    filteredData = data.map((item) => ({
-      menuitemName: item.menuitemName,
-      quantity: item.quantity,
-    }))
-  } else if (tableName === "inventoryorderitem") {
-    filteredData = data.map((item) => ({
-      inventoryorderID: item.inventoryorderID,
-      date: item.date,
-      restaurantName: item.restaurantName,
-      supplierName: item.supplierName,
-      unitPrice: item.unitPrice,
-      quantity: item.quantity,
-      employeeName: item.employeeName,
-      paymentStatus: item.paymentStatus,
-      deliveryStatus: item.deliveryStatus,
-    }))
-  } else if (tableName === "supplierorderitem") {
-    filteredData = data.map((item) => ({
-      inventoryorderID: item.inventoryorderID,
-      inventoryName: item.inventoryName,
-      quantity: item.quantity,
-      unitPrice: item.unitPrice,
-    }))
-  } else if (tableName === "customerorder") {
-    filteredData = data.map((item) => ({
-      customerorderID: item.customerorderID,
-      date: item.date,
-      restaurantName: item.restaurantName,
-      employeeName: item.employeeName,
-      paymentStatus: item.paymentStatus,
-      deliveryStatus: item.deliveryStatus,
-    }))
-  } else if (tableName === "employeeorder") {
-    filteredData = data.map((item) => ({
-      customerorderID: item.customerorderID,
-      date: item.date,
-      customerName: item.customerName,
-      restaurantName: item.restaurantName,
-      paymentStatus: item.paymentStatus,
-      deliveryStatus: item.deliveryStatus,
-    }))
-  } else if (tableName === "inventory") {
-    filteredData = data.map((item) => ({
-      inventoryID: item.inventoryID,
-      name: item.name,
-      quantity: item.quantity,
-      restaurantName: item.restaurantName,
-    }))
-  } else if (tableName === "supplierorder") {
-    filteredData = data.map((item) => ({
-      inventoryorderID: item.inventoryorderID,
-      date: item.date,
-      restaurantName: item.restaurantName,
-      employeeName: item.employeeName,
-      paymentStatus: item.paymentStatus,
-      deliveryStatus: item.deliveryStatus,
-    }))
-  } else if (tableName === "menuitem") {
-    filteredData = data.map((item) => ({
-      menuitemID: item.menuitemID,
-      name: item.name,
-      price: item.price,
-      description: item.description,
-    }))
-  } else {
-    filteredData = data
-  }
+
+  const filteredData = filterMapping[tableName]
+    ? data.map(filterMapping[tableName])
+    : data
 
   const currentItems = filteredData.slice(firstItemIndex, lastItemIndex)
 

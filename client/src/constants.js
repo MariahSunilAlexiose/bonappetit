@@ -76,3 +76,71 @@ export const getNameByID = (id, list, tableName) => {
   const item = list.find((i) => i[idField] === id)
   return item ? item.name : ""
 }
+
+export const filterMapping = {
+  customerorderitem: (item) => ({
+    menuitemName: item.menuitemName,
+    quantity: item.quantity,
+  }),
+  inventoryorderitem: (item) => ({
+    inventoryorderID: item.inventoryorderID,
+    date: item.date,
+    restaurantName: item.restaurantName,
+    supplierName: item.supplierName,
+    employeeName: item.employeeName,
+    unitPrice: item.unitPrice,
+    quantity: item.quantity,
+    paymentStatus: item.paymentStatus,
+    deliveryStatus: item.deliveryStatus,
+  }),
+  supplierorderitem: (item) => ({
+    inventoryName: item.inventoryName,
+    quantity: item.quantity,
+    unitPrice: item.unitPrice,
+  }),
+  customerorder: (item) => ({
+    customerorderID: item.customerorderID,
+    date: item.date,
+    restaurantName: item.restaurantName,
+    employeeName: item.employeeName,
+    paymentStatus: item.paymentStatus,
+    deliveryStatus: item.deliveryStatus,
+  }),
+  employeeorder: (item) => ({
+    customerorderID: item.customerorderID,
+    date: item.date,
+    customerName: item.customerName,
+    restaurantName: item.restaurantName,
+    paymentStatus: item.paymentStatus,
+    deliveryStatus: item.deliveryStatus,
+  }),
+  inventory: (item) => ({
+    inventoryID: item.inventoryID,
+    name: item.name,
+    quantity: item.quantity,
+    restaurantName: item.restaurantName,
+  }),
+  supplierorder: (item) => ({
+    inventoryorderID: item.inventoryorderID,
+    date: item.date,
+    restaurantName: item.restaurantName,
+    employeeName: item.employeeName,
+    paymentStatus: item.paymentStatus,
+    deliveryStatus: item.deliveryStatus,
+  }),
+  menuitem: (item) => ({
+    menuitemID: item.menuitemID,
+    name: item.name,
+    price: item.price,
+    description: item.description,
+  }),
+  employee: (item) => ({
+    employeeID: item.employeeID,
+    name: item.name,
+    restaurantName: item.restaurantName,
+    role: item.role,
+    phone: item.phone,
+    address: item.address,
+    salary: item.salary,
+  }),
+}
