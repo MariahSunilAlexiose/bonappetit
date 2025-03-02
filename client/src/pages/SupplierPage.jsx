@@ -23,7 +23,11 @@ const SupplierPage = () => {
         )
         setSupplierOrders(orders.data)
         const all = await axios.get(`/get_inventoryorders`)
-        setLastID(Math.max(...all.data.map((item) => item.inventoryorderID)))
+        setLastID(
+          all.data.length > 0
+            ? Math.max(...all.data.map((item) => item.inventoryorderID))
+            : 0
+        )
       } catch (err) {
         console.log(err)
       }
@@ -45,12 +49,14 @@ const SupplierPage = () => {
           onClick={() =>
             navigate("/add_form", {
               state: {
-                toBeAddedKeys: Object.keys(supplierOrders[0]).filter(
-                  (key) =>
-                    key !== "inventoryorderID" &&
-                    key !== "restaurantID" &&
-                    key !== "employeeID"
-                ),
+                toBeAddedKeys: [
+                  "supplierID",
+                  "employeeID",
+                  "restaurantID",
+                  "date",
+                  "paymentStatus",
+                  "deliveryStatus",
+                ],
                 lastID: lastID,
                 tableName: "supplierorder",
                 id: supplier.supplierID,

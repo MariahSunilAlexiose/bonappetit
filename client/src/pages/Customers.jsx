@@ -31,10 +31,11 @@ const Customers = () => {
           onClick={() =>
             navigate("/add_form", {
               state: {
-                toBeAddedKeys: Object.keys(customers[0]).filter(
-                  (key) => key !== "customerID"
-                ),
-                lastID: Math.max(...customers.map((item) => item.customerID)),
+                toBeAddedKeys: ["name", "email", "phone", "address"],
+                lastID:
+                  customers.length > 0
+                    ? Math.max(...customers.map((item) => item.customerID))
+                    : 0,
                 tableName: "customer",
               },
             })

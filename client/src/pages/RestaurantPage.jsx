@@ -20,7 +20,11 @@ const RestaurantPage = () => {
         const res = await axios.get(`/get_restaurant_by_name/${restaurantName}`)
         setRestaurant(res.data[0])
         const totalNo = await axios.get("/menuitems")
-        setLastID(Math.max(...totalNo.data.map((item) => item.menuitemID)))
+        setLastID(
+          totalNo.data.length > 0
+            ? Math.max(...totalNo.data.map((item) => item.menuitemID))
+            : 0
+        )
         const resMenu = await axios.get(`/get_menu/${restaurantName}`)
         setMenu(resMenu.data)
       } catch (err) {
@@ -45,10 +49,7 @@ const RestaurantPage = () => {
           onClick={() => {
             navigate("/add_form", {
               state: {
-                toBeAddedKeys:
-                  menu.length > 0
-                    ? Object.keys(menu[0]).filter((key) => key !== "menuitemID")
-                    : ["name", "price", "description"],
+                toBeAddedKeys: ["name", "price", "description"],
                 lastID: lastID,
                 tableName: "menuitem",
                 id: restaurant.restaurantID,

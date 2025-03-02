@@ -50,10 +50,12 @@ const SupplierOrder = () => {
             onClick={() =>
               navigate("/add_form", {
                 state: {
-                  toBeAddedKeys: Object.keys(supplierOrderItems[0]).filter(
-                    (key) => key !== "inventoryorderID" && key !== "inventoryID"
-                  ),
-                  // lastID: Math.max(...supplierOrderItems.map((item) => item.suorderID)),
+                  toBeAddedKeys: [
+                    "inventoryorderID",
+                    "inventoryID",
+                    "quantity",
+                    "unitPrice",
+                  ],
                   tableName: "supplierorderitem",
                   id: orderID,
                 },

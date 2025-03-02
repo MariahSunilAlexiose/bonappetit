@@ -23,7 +23,11 @@ const CustomerPage = () => {
         )
         setOrders(resOrders.data)
         const totalNo = await axios.get("/customerorders")
-        setLastID(Math.max(...totalNo.data.map((item) => item.customerorderID)))
+        setLastID(
+          totalNo.data.length > 0
+            ? Math.max(...totalNo.data.map((item) => item.customerorderID))
+            : 0
+        )
       } catch (err) {
         console.log(err)
       }
@@ -45,22 +49,14 @@ const CustomerPage = () => {
           onClick={() => {
             navigate("/add_form", {
               state: {
-                toBeAddedKeys:
-                  orders.length > 0
-                    ? Object.keys(orders[0]).filter(
-                        (key) =>
-                          key !== "customerorderID" &&
-                          key !== "employeeID" &&
-                          key !== "restaurantID"
-                      )
-                    : [
-                        "customerID",
-                        "date",
-                        "employeeName",
-                        "paymentStatus",
-                        "deliveryStatus",
-                        "restaurantName",
-                      ],
+                toBeAddedKeys: [
+                  "customerID",
+                  "date",
+                  "restaurantID",
+                  "employeeID",
+                  "paymentStatus",
+                  "deliveryStatus",
+                ],
                 lastID: lastID,
                 tableName: "customerorder",
                 id: customer.customerID,

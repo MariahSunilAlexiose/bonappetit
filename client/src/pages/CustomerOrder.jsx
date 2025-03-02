@@ -50,9 +50,7 @@ const CustomerOrder = () => {
             onClick={() => {
               navigate("/add_form", {
                 state: {
-                  toBeAddedKeys: Object.keys(customerOrderItems[0]).filter(
-                    (key) => key !== "customerorderID" && key !== "menuitemID"
-                  ),
+                  toBeAddedKeys: ["menuitemID", "quantity", "restaurantID"],
                   tableName: "customerorderitem",
                   id: orderID,
                 },

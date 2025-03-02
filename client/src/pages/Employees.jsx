@@ -31,9 +31,14 @@ const Employees = () => {
           onClick={() =>
             navigate("/add_form", {
               state: {
-                toBeAddedKeys: Object.keys(employees[0]).filter(
-                  (key) => key !== "employeeID"
-                ),
+                toBeAddedKeys: [
+                  "name",
+                  "restaurantID",
+                  "role",
+                  "phone",
+                  "address",
+                  "salary",
+                ],
                 lastID: employees.length
                   ? Math.max(...employees.map((item) => item.employeeID))
                   : 0,

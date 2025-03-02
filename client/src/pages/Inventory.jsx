@@ -31,10 +31,11 @@ const Inventory = () => {
           onClick={() =>
             navigate("/add_form", {
               state: {
-                toBeAddedKeys: Object.keys(inventory[0]).filter(
-                  (key) => key !== "inventoryID" && key !== "restaurantID"
-                ),
-                lastID: Math.max(...inventory.map((item) => item.inventoryID)),
+                toBeAddedKeys: ["name", "quantity", "restaurantID"],
+                lastID:
+                  inventory.length > 0
+                    ? Math.max(...inventory.map((item) => item.inventoryID))
+                    : 0,
                 tableName: "inventory",
               },
             })

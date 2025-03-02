@@ -31,12 +31,11 @@ const Restaurants = () => {
           onClick={() =>
             navigate("/add_form", {
               state: {
-                toBeAddedKeys: Object.keys(restaurants[0]).filter(
-                  (key) => key !== "restaurantID"
-                ),
-                lastID: Math.max(
-                  ...restaurants.map((item) => item.restaurantID)
-                ),
+                toBeAddedKeys: ["name", "phone", "address", "rating"],
+                lastID:
+                  restaurants.length > 0
+                    ? Math.max(...restaurants.map((item) => item.restaurantID))
+                    : 0,
                 tableName: "restaurant",
               },
             })

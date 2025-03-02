@@ -31,10 +31,11 @@ const Suppliers = () => {
           onClick={() =>
             navigate("/add_form", {
               state: {
-                toBeAddedKeys: Object.keys(suppliers[0]).filter(
-                  (key) => key !== "supplierID"
-                ),
-                lastID: Math.max(...suppliers.map((item) => item.supplierID)),
+                toBeAddedKeys: ["name", "contactPerson", "phone", "address"],
+                lastID:
+                  suppliers.length > 0
+                    ? Math.max(...suppliers.map((item) => item.supplierID))
+                    : 0,
                 tableName: "supplier",
               },
             })
