@@ -79,7 +79,7 @@ app.get("/get_restaurant_by_id/:restaurantID", (req, res) => {
 app.delete("/delete_restaurant/:id", (req, res) => {
   const { id } = req.params
   db.query(
-    "DELETE FROM inventoryorderitem WHERE inventoryID = ?",
+    "DELETE FROM inventoryorderitem WHERE inventoryorderID = (SELECT inventoryorderID FROM inventoryorder WHERE restaurantID = ?)",
     [id],
     (err) => {
       if (err) {
@@ -88,7 +88,7 @@ app.delete("/delete_restaurant/:id", (req, res) => {
       }
 
       db.query(
-        "DELETE FROM inventoryorder WHERE inventoryID = ?",
+        "DELETE FROM inventoryorder WHERE restaurantID = ?",
         [id],
         (err) => {
           if (err) {
@@ -688,13 +688,25 @@ app.post("/edit_customerorderitem/:orderId", (req, res) => {
 
 // employees
 app.get("/employees", (req, res) => {
-  db.query("SELECT * FROM employeesview", (err, result) => {
-    if (err) {
-      console.error("Error executing query:", err)
-      return res.status(500).json({ message: "Server error" })
+  db.query(
+    `SELECT 
+      e.*, 
+      (SELECT 
+        r.name 
+        FROM 
+          restaurant r 
+        WHERE 
+          r.restaurantID = e.restaurantID
+      ) AS restaurantName 
+      FROM employee e`,
+    (err, result) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json(result)
     }
-    res.json(result)
-  })
+  )
 })
 
 app.get("/get_employee/:employeeName", (req, res) => {
