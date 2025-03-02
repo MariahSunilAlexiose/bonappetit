@@ -88,6 +88,27 @@ const EditForm = () => {
         await axios.post(`/edit_inventoryorder/${formData.inventoryorderID}`, {
           ...formData,
         })
+      } else if (tableName === "supplierorder") {
+        await axios.post(`/edit_supplierorder/${formData.inventoryorderID}`, {
+          ...formData,
+        })
+      } else if (tableName === "supplierorderitem") {
+        if (!formData.newInventoryID) {
+          await axios.post(
+            `/edit_supplierorderitem/${formData.inventoryorderID}`,
+            {
+              ...formData,
+              newInventoryID: dataToBeUpdated.inventoryID,
+            }
+          )
+        } else {
+          await axios.post(
+            `/edit_supplierorderitem/${formData.inventoryorderID}`,
+            {
+              ...formData,
+            }
+          )
+        }
       } else {
         await axios.post(`/edit_${tableName}/${formData[`${tableName}ID`]}`, {
           ...formData,
@@ -119,7 +140,9 @@ const EditForm = () => {
                 key === "inventoryorderID") ||
               (tableName === "customerorderitem" &&
                 (key === "customerorderID" || key === "restaurantID")) ||
-              key === "newMenuitemID"
+              key === "newMenuitemID" ||
+              (tableName === "supplierorder" && key === "inventoryorderID") ||
+              (tableName === "supplierorderitem" && key === "inventoryorderID")
             ) {
               return false
             }
@@ -299,10 +322,15 @@ const EditForm = () => {
                     label="inventory"
                     options={inventory}
                     onChange={(newOrderItemID) => {
-                      setFormData((prevFormData) => ({
-                        ...prevFormData,
-                        inventoryID: newOrderItemID,
-                      }))
+                      tableName === "supplierorderitem"
+                        ? setFormData((prevFormData) => ({
+                            ...prevFormData,
+                            newInventoryID: newOrderItemID,
+                          }))
+                        : setFormData((prevFormData) => ({
+                            ...prevFormData,
+                            inventoryID: newOrderItemID,
+                          }))
                     }}
                     defaultValue={getNameByID(
                       formData.inventoryID,

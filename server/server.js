@@ -1569,3 +1569,45 @@ app.post("/add_supplierorderitem", (req, res) => {
     }
   )
 })
+
+app.post("/edit_supplierorder/:id", (req, res) => {
+  db.query(
+    "UPDATE inventoryorder SET supplierID = ?, employeeID = ?, restaurantID = ?, date = ?, paymentStatus = ?, deliveryStatus = ? WHERE inventoryorderID = ?",
+    [
+      req.body.supplierID,
+      req.body.employeeID,
+      req.body.restaurantID,
+      req.body.date,
+      req.body.paymentStatus,
+      req.body.deliveryStatus,
+      req.params.id,
+    ],
+    (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Inventory order added successfully!" })
+    }
+  )
+})
+
+app.post("/edit_supplierorderitem/:id", (req, res) => {
+  db.query(
+    "UPDATE inventoryorderitem SET inventoryID = ?, quantity = ?, unitPrice = ? WHERE inventoryorderID = ? AND inventoryID = ?",
+    [
+      req.body.newInventoryID,
+      req.body.quantity,
+      req.body.unitPrice,
+      req.params.id,
+      req.body.inventoryID,
+    ],
+    (err) => {
+      if (err) {
+        console.error("Error executing query:", err)
+        return res.status(500).json({ message: "Server error" })
+      }
+      res.json({ success: "Inventory order item updated successfully" })
+    }
+  )
+})
