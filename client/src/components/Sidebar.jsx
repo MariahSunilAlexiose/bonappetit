@@ -1,5 +1,5 @@
-import React, { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import React, { useEffect, useState } from "react"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 
 import { motion } from "framer-motion"
 
@@ -45,6 +45,7 @@ const Sidebar = () => {
   const [selected, setSelected] = useState(-1)
   const [expanded, setExpanded] = useState(true)
   const navigate = useNavigate()
+  const location = useLocation()
   const sidebarVariants = {
     true: {
       left: "0",
@@ -53,6 +54,14 @@ const Sidebar = () => {
       left: "-60%",
     },
   }
+
+  useEffect(() => {
+    const currentPath = location.pathname
+    const currentIndex = SidebarData.findIndex(
+      (item) => item.page === currentPath
+    )
+    setSelected(currentIndex)
+  }, [location.pathname])
 
   return (
     <>
