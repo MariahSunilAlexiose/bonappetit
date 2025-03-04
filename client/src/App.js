@@ -26,6 +26,7 @@ function App() {
         <div className="bg-[rgba(255, 255, 255, 0.54)] md:grid-cols-1fr grid h-[97%] w-[97%] grid-cols-[11rem_auto] gap-4 overflow-hidden rounded-2xl lg:grid-cols-[15%_85%] lg:overflow-y-scroll">
           <Sidebar />
           <Routes>
+            <Route path="/" element={<Restaurants />} />
             <Route path="/restaurants" element={<Restaurants />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/employees" element={<Employees />} />
